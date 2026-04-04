@@ -370,9 +370,9 @@
       #maic-w-input:focus{border-color:${P};background:#fff}
       #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
       
-      #maic-w-social { position:absolute; bottom:8px; display:flex; gap:10px; pointer-events:none; z-index:1; transition:all .4s; }
-      .maic-w-pos-right #maic-w-social { right:72px; flex-direction:row-reverse; }
-      .maic-w-pos-left #maic-w-social { left:72px; }
+      #maic-w-social { position:absolute; bottom:8px; display:flex; gap:10px; pointer-events:none; z-index:10; transition:all .4s; }
+      #maic-w-social.maic-w-pos-right { right:72px; flex-direction:row-reverse; }
+      #maic-w-social.maic-w-pos-left { left:72px; }
       #maic-w-social.maic-w-social-show { pointer-events:auto; }
       .maic-w-social-icon { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; box-shadow:0 4px 12px rgba(0,0,0,0.15); opacity:0; transform:scale(0.5); transition:all .3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
