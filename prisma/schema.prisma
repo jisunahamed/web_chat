@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -14,6 +14,7 @@ model User {
   password  String
   name      String
   company   String?
+  role      String   @default("user")
   apiKey    String   @unique @default(uuid()) @map("api_key")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -34,7 +35,7 @@ model Agent {
   collectLeads   Boolean  @default(false) @map("collect_leads")
   allowedDomains String?  @map("allowed_domains")
   primaryColor   String   @default("#6C5CE7") @map("primary_color")
-  welcomeMessage String   @default("Hi there! 👋 How can I help you today?") @map("welcome_message")
+  welcomeMessage String   @default("Hi there! How can I help you today?") @map("welcome_message")
   botAvatar      String?  @map("bot_avatar")
   isActive       Boolean  @default(true) @map("is_active")
   createdAt      DateTime @default(now()) @map("created_at")
@@ -98,4 +99,13 @@ model WebhookLog {
 
   agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
   @@map("webhook_logs")
+}
+
+model Settings {
+  id        String   @id @default("global")
+  aiModel   String   @default("gpt-4o-mini") @map("ai_model")
+  aiBaseUrl String?  @map("ai_base_url")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
 }
