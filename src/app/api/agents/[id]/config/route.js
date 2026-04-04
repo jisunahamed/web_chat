@@ -30,6 +30,7 @@ export async function GET(request, { params }) {
         welcomeMessage: true,
         botAvatar: true,
         collectLeads: true,
+        socialLinks: true,
       },
     });
 

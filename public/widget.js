@@ -35,6 +35,7 @@
     botName:        attr('data-bot-name')       || 'AI Assistant',
     welcome:        attr('data-welcome')        || 'Hi there! 👋 How can I help you today?',
     botAvatar:      attr('data-bot-avatar')     || '',
+    socialLinks:    {},
   };
 
   if (!CONFIG.agentId || !CONFIG.apiKey) {
@@ -51,7 +52,6 @@
       .then(d => {
         if (d.config) {
           const c = d.config;
-          // Only apply server settings if user didn't override via data- attributes
           if (!attr('data-primary-color') && c.primaryColor) CONFIG.primaryColor = c.primaryColor;
           if (!attr('data-secondary-color') && c.secondaryColor) CONFIG.secondaryColor = c.secondaryColor;
           if (!attr('data-use-gradient') && c.useGradient !== undefined) CONFIG.useGradient = c.useGradient;
@@ -59,6 +59,7 @@
           if (!attr('data-bot-name') && c.name) CONFIG.botName = c.name;
           if (!attr('data-welcome') && c.welcomeMessage) CONFIG.welcome = c.welcomeMessage;
           if (!attr('data-bot-avatar') && c.botAvatar) CONFIG.botAvatar = c.botAvatar;
+          CONFIG.socialLinks = c.socialLinks || {};
         }
       })
       .catch(() => {});
@@ -113,6 +114,7 @@
     const leadSubBtn = $('#maic-w-lsub');
     const iconChat = $('#maic-w-ic-chat');
     const iconClose = $('#maic-w-ic-close');
+    const socialLayer = $('#maic-w-social');
 
     // Events
     triggerBtn.addEventListener('click', toggle);
@@ -122,16 +124,49 @@
     input.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
     leadSubBtn.addEventListener('click', submitLead);
 
+    // Initial Social Icons Render (since chat starts closed)
+    if (socialLayer) {
+      renderSocial(socialLayer);
+      setTimeout(() => socialLayer.classList.add('maic-w-social-show'), 500);
+    }
+
     function toggle() {
       isOpen = !isOpen;
       chatWin.classList.toggle('maic-w-hidden', !isOpen);
       iconChat.style.display = isOpen ? 'none' : 'block';
       iconClose.style.display = isOpen ? 'block' : 'none';
+
+      if (socialLayer) {
+        if (isOpen) {
+          socialLayer.classList.remove('maic-w-social-show');
+          setTimeout(() => socialLayer.innerHTML = '', 400);
+        } else {
+          renderSocial(socialLayer);
+          setTimeout(() => socialLayer.classList.add('maic-w-social-show'), 50);
+        }
+      }
+
       if (isOpen) {
         if (msgArea.children.length === 0) addMsg('bot', CONFIG.welcome);
         input.focus();
         scroll();
       }
+    }
+
+    function renderSocial(cont) {
+      cont.innerHTML = '';
+      const sl = CONFIG.socialLinks;
+      const icons = [];
+      if (sl.messenger) icons.push({ url: 'https://m.me/' + sl.messenger, color: '#0084FF', svg: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>' });
+      if (sl.whatsapp) icons.push({ url: 'https://wa.me/' + sl.whatsapp.replace(/\D/g,''), color: '#25D366', svg: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>' });
+      if (sl.telegram) icons.push({ url: 'https://t.me/' + sl.telegram, color: '#0088CC', svg: '<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.14 17.01c-.13.01-.26 0-.38-.05-.12-.05-.23-.13-.31-.22-.08-.1-.13-.21-.15-.34-.02-.13-.01-.26.04-.38l.45-1.25.13-.36-1.58-.75c-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.88.03-.24.37-.48 1.01-.74 3.94-1.72 6.56-2.85 7.87-3.39 3.75-1.55 4.53-1.82 5.04-1.83.11 0 .36.03.52.16.14.11.18.26.2.37.03.11.03.3.01.46z"/></svg>' });
+
+      icons.forEach((ic, i) => {
+        const a = document.createElement('a');
+        a.href = ic.url; a.target = '_blank'; a.className = 'maic-w-social-icon';
+        a.style.background = ic.color; a.style.transitionDelay = (i * 0.05) + 's';
+        a.innerHTML = ic.svg; cont.appendChild(a);
+      });
     }
 
     function send() {
@@ -246,9 +281,8 @@
   // ─── HTML ─────────────────────────────────────────
   function buildHTML(c) {
     const pos = c.position;
-    const th = c.theme;
-    const triggerR = th === 'minimal' ? '16px' : '50%';
     return `
+      <div id="maic-w-social" class="maic-w-pos-${pos}"></div>
       <button id="maic-w-trigger" aria-label="Open chat">
         <svg id="maic-w-ic-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <svg id="maic-w-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -268,9 +302,12 @@
           <input id="maic-w-lcontact" placeholder="Email or WhatsApp number"/>
           <button id="maic-w-lsub">Submit</button>
         </div>
-        <div id="maic-w-bar">
-          <textarea id="maic-w-input" rows="1" placeholder="Type a message…"></textarea>
-          <button id="maic-w-send" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        <div id="maic-w-footer">
+          <div id="maic-w-bar">
+            <textarea id="maic-w-input" rows="1" placeholder="Type a message…"></textarea>
+            <button id="maic-w-send" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+          <div class="maic-w-branding">Powered by <a href="https://inmetech.com" target="_blank">InmeTech.com</a></div>
         </div>
       </div>`;
   }
@@ -285,7 +322,6 @@
     const pos = c.position;
     const th = c.theme;
 
-    // Theme-based values
     const triggerR = th === 'minimal' ? '16px' : '50%';
     const chatR = th === 'minimal' ? '12px' : th === 'glass' ? '24px' : '28px';
     const msgR = th === 'minimal' ? '10px' : th === 'glass' ? '16px' : '22px';
@@ -302,52 +338,51 @@
       : grad;
 
     return `
-      #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.5}
-      #maic-w-trigger{width:62px;height:62px;border-radius:${triggerR};border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:transform .35s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
+      #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5}
+      #maic-w-trigger{width:62px;height:62px;border-radius:${triggerR};border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:transform .35s;position:relative;z-index:2}
       #maic-w-trigger:hover{transform:scale(1.1) translateY(-3px)}
-      #maic-w-trigger::before{content:'';position:absolute;inset:-5px;border-radius:${triggerR};background:${P};opacity:0;animation:mwp 2.5s ease-in-out infinite;z-index:-1}
+      #maic-w-trigger::before{content:'';position:absolute;inset:-5px;border-radius:${triggerR};background:${P};opacity:0;animation:mwp 2.5s infinite;z-index:-1}
       @keyframes mwp{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.2;transform:scale(1.3)}}
 
-      #maic-w-chat{position:absolute;bottom:80px;${pos}:0;width:380px;max-height:620px;background:${chatBg};border-radius:${chatR};box-shadow:${chatShadow};display:flex;flex-direction:column;overflow:hidden;transition:opacity .35s,transform .35s cubic-bezier(.34,1.56,.64,1);border:${chatBorder};transform-origin:bottom ${pos};${blurVal}}
+      #maic-w-chat{position:absolute;bottom:80px;${pos}:0;width:380px;max-height:620px;background:${chatBg};border-radius:${chatR};box-shadow:${chatShadow};display:flex;flex-direction:column;overflow:hidden;transition:all .35s;border:${chatBorder};transform-origin:bottom ${pos};${blurVal}}
       #maic-w-chat.maic-w-hidden{opacity:0;transform:scale(.85) translateY(20px);pointer-events:none}
-      #maic-w-chat:not(.maic-w-hidden){opacity:1;transform:scale(1) translateY(0)}
-
-      #maic-w-header{background:${headerBg};color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-top-left-radius:${headerR};border-top-right-radius:${headerR};${headerBlur}}
+      #maic-w-header{background:${headerBg};color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;${headerBlur}}
       .maic-w-hleft{display:flex;align-items:center;gap:12px}
-      .maic-w-hav{width:44px;height:44px;border-radius:${th==='minimal'?'10px':'50%'};background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,0.3)}
-      .maic-w-hname{font-weight:700;font-size:15px;letter-spacing:-.3px}
-      .maic-w-hstatus{font-size:12px;opacity:.9;display:flex;align-items:center;gap:6px;font-weight:500}
-      .maic-w-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;animation:mwb 2s ease-in-out infinite;box-shadow:0 0 6px #4ade80}
-      @keyframes mwb{0%,100%{opacity:1}50%{opacity:.5}}
-      #maic-w-min{background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:${th==='minimal'?'8px':'10px'};display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
-      #maic-w-min:hover{background:rgba(255,255,255,.28);transform:scale(1.05)}
+      .maic-w-hav{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;background-size:cover;border:2px solid rgba(255,255,255,0.3)}
+      .maic-w-hname{font-weight:700;font-size:15px}
+      .maic-w-hstatus{font-size:12px;opacity:.9;display:flex;align-items:center;gap:6px}
+      .maic-w-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80}
+      #maic-w-min{background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-      #maic-w-messages{flex:1 1 auto;overflow-y:auto;padding:22px 18px;display:flex;flex-direction:column;gap:14px;min-height:260px;max-height:380px;background:${areaBg}}
-      #maic-w-messages::-webkit-scrollbar{width:5px}#maic-w-messages::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
-      .maic-w-msg{max-width:84%;padding:11px 15px;border-radius:${msgR};font-size:14px;line-height:1.5;word-break:break-word;animation:mwf .4s cubic-bezier(0.16,1,0.3,1) both}
-      @keyframes mwf{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-      .maic-w-bot{align-self:flex-start;background:${msgBg};color:#1e293b;border:${th==='glass'?'1px solid rgba(255,255,255,0.35)':'1px solid #e2e8f0'};border-bottom-left-radius:${th==='minimal'?'2px':'4px'};box-shadow:0 1px 4px rgba(0,0,0,.04);${th==='glass'?'backdrop-filter:blur(8px);':''}}
-      .maic-w-usr{align-self:flex-end;background:${grad};color:#fff;border-bottom-right-radius:${th==='minimal'?'2px':'4px'};box-shadow:0 3px 10px rgba(0,0,0,.1)}
+      #maic-w-messages{flex:1;overflow-y:auto;padding:22px 18px;display:flex;flex-direction:column;gap:14px;min-height:260px;background:${areaBg}}
+      .maic-w-msg{max-width:84%;padding:11px 15px;border-radius:${msgR};font-size:14px;line-height:1.5;animation:mwf .3s both}
+      @keyframes mwf{from{opacity:0;transform:translateY(10px)}}
+      .maic-w-bot{background:${msgBg};color:#1e293b;border:1px solid #e2e8f0;border-bottom-left-radius:4px}
+      .maic-w-usr{align-self:flex-end;background:${grad};color:#fff;border-bottom-right-radius:4px}
       .maic-w-row{display:flex;gap:9px;align-items:flex-end}
-      .maic-w-av{width:28px;height:28px;border-radius:${th==='minimal'?'8px':'50%'};background:${P}15;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${P};flex-shrink:0;background-size:cover;background-position:center;border:1px solid ${P}25}
-      .maic-w-time{font-size:10.5px;margin-top:5px;opacity:.6;font-weight:500}
-      .maic-w-usr .maic-w-time{color:rgba(255,255,255,.75);text-align:right}
-      .maic-w-dots{display:flex;gap:5px;padding:13px 16px}.maic-w-dots span{width:7px;height:7px;border-radius:50%;background:${P};opacity:.6;animation:mwd 1.4s ease-in-out infinite}.maic-w-dots span:nth-child(2){animation-delay:.15s}.maic-w-dots span:nth-child(3){animation-delay:.3s}
-      @keyframes mwd{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+      .maic-w-av{width:28px;height:28px;border-radius:50%;background:${P}15;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${P};flex-shrink:0;background-size:cover;border:1px solid ${P}25}
+      .maic-w-time{font-size:10px;margin-top:4px;opacity:.5}
+      .maic-w-usr .maic-w-time{text-align:right}
+      .maic-w-dots{display:flex;gap:5px;padding:12px 15px}.maic-w-dots span{width:7px;height:7px;border-radius:50%;background:${P};opacity:.4;animation:mwd 1.4s infinite}.maic-w-dots span:nth-child(2){animation-delay:.15s}.maic-w-dots span:nth-child(3){animation-delay:.3s}
+      @keyframes mwd{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 
-      #maic-w-lead{padding:16px 20px;background:#fff;border-top:1px solid #e2e8f0;display:flex;flex-direction:column;gap:10px}
-      #maic-w-lead.maic-w-hidden{display:none}
-      .maic-w-ltitle{margin:0;font-weight:600;font-size:13px;color:#334155}
-      #maic-w-lead input{border:1px solid #cbd5e1;border-radius:${th==='minimal'?'8px':'12px'};padding:10px 14px;font-size:13.5px;font-family:inherit;outline:none;transition:all .2s;background:#f8fafc}
-      #maic-w-lead input:focus{border-color:${P};background:#fff;box-shadow:0 0 0 3px ${P}15}
-      #maic-w-lsub{background:${grad};color:#fff;border:none;border-radius:${th==='minimal'?'8px':'12px'};padding:11px;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 3px 10px ${P}30}#maic-w-lsub:hover{transform:translateY(-1px)}
-      #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:14px 18px;border-top:1px solid #e2e8f0;background:#fff;flex-shrink:0}
-      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:${th==='minimal'?'10px':'18px'};padding:11px 16px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;line-height:1.5;transition:all .2s;background:#f8fafc}
-      #maic-w-input:focus{border-color:${P};background:#fff;box-shadow:0 0 0 3px ${P}15}
-      #maic-w-send{width:44px;height:44px;border-radius:${th==='minimal'?'10px':'14px'};border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 3px 10px ${P}25}
-      #maic-w-send:hover{transform:scale(1.06) translateY(-2px)}
-      @media(max-width:480px){#maic-wgt{bottom:14px;${pos}:14px}#maic-w-chat{width:calc(100vw - 28px);max-height:calc(100vh - 110px);bottom:78px;${pos}:0}#maic-w-trigger{width:54px;height:54px}#maic-w-messages{max-height:calc(100vh - 280px)}}
-      .maic-w-msg code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px;color:#ef4444}
+      #maic-w-footer{background:#fff;border-top:1px solid #e2e8f0}
+      .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:#94a3b8}
+      .maic-w-branding a{color:${P};text-decoration:none;font-weight:600}
+      #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:12px 18px;background:transparent}
+      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:18px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:#f8fafc}
+      #maic-w-input:focus{border-color:${P};background:#fff}
+      #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+      
+      #maic-w-social { position:absolute; bottom:8px; display:flex; gap:10px; pointer-events:none; z-index:1; transition:all .4s; }
+      .maic-w-pos-right #maic-w-social { right:72px; flex-direction:row-reverse; }
+      .maic-w-pos-left #maic-w-social { left:72px; }
+      #maic-w-social.maic-w-social-show { pointer-events:auto; }
+      .maic-w-social-icon { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; box-shadow:0 4px 12px rgba(0,0,0,0.15); opacity:0; transform:scale(0.5); transition:all .3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+      .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
+      .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
+
+      @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
     `;
   }
 
