@@ -76,6 +76,7 @@ export default function AdminPage() {
           <div className="form-group">
             <label>AI Model</label>
             <select className="form-input" value={model} onChange={e => setModel(e.target.value)}>
+              <option value="openai-gpt-oss-120b">OpenAI GPT OSS 120B</option>
               <option value="gpt-4o-mini">GPT-4o Mini</option>
               <option value="gpt-4o">GPT-4o</option>
               <option value="gpt-4-turbo">GPT-4 Turbo</option>

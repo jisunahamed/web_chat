@@ -33,7 +33,7 @@ export async function POST(request) {
     }
 
     // Get global model — safe fallback if settings table doesn't exist yet
-    let globalModel = 'gpt-4o-mini';
+    let globalModel = 'openai-gpt-oss-120b';
     try {
       const settings = await prisma.$queryRaw`SELECT ai_model FROM settings WHERE id = 'global' LIMIT 1`;
       if (settings?.[0]?.ai_model) globalModel = settings[0].ai_model;
