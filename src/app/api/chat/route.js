@@ -39,8 +39,8 @@ export async function POST(request) {
     }
 
     // 3. Get global AI settings (base URL, API key, and model from admin panel)
-    let aiBaseUrl = null;
-    let aiModel = agent.model; // fallback to agent's creation model
+    let aiBaseUrl = 'https://inference.do-ai.run/v1'; // Permanent default
+    let aiModel = 'openai-gpt-oss-120b'; // Permanent default
     let aiApiKey = null;
     
     try {

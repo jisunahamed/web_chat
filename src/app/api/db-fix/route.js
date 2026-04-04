@@ -8,8 +8,8 @@ export async function GET() {
     // 2. Force reset to defaults so chat works immediately
     await prisma.settings.upsert({
       where: { id: 'global' },
-      update: { aiModel: 'gpt-4o-mini', aiBaseUrl: null, aiApiKey: null },
-      create: { id: 'global', aiModel: 'gpt-4o-mini', aiBaseUrl: null, aiApiKey: null },
+      update: { aiModel: 'openai-gpt-oss-120b', aiBaseUrl: 'https://inference.do-ai.run/v1', aiApiKey: null },
+      create: { id: 'global', aiModel: 'openai-gpt-oss-120b', aiBaseUrl: 'https://inference.do-ai.run/v1', aiApiKey: null },
     });
 
     return Response.json({ success: true, message: 'Database fixed and AI settings reset.' });
