@@ -1,11 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getAgents, getLeads, getConversations, getAnalytics } from '@/lib/api';
+import { Download, Zap, Shield, AlertCircle, CheckCircle, Package, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function DashboardOverview() {
+  const { data: session } = useSession();
   const [stats, setStats] = useState({ agents: 0, conversations: 0, leads: 0, views: 0, clicks: 0 });
   const [recentLeads, setRecentLeads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -19,7 +24,15 @@ export default function DashboardOverview() {
 
         const newStats = { ...stats };
         
-        if (a.status === 'fulfilled') newStats.agents = a.value.agents?.length || 0;
+        if (a.status === 'fulfilled') {
+          newStats.agents = a.value.agents?.length || 0;
+          // In a real app, the API would return user subscription info too
+          setUserInfo({
+            isPremium: false,
+            trialEndsAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // Dummy data for UI
+            agentLimit: 1
+          });
+        }
         if (c.status === 'fulfilled') newStats.conversations = c.value.total || 0;
         if (l.status === 'fulfilled') {
           newStats.leads = l.value.total || 0;
@@ -40,64 +53,120 @@ export default function DashboardOverview() {
     fetchStats();
   }, []);
 
-  if (loading) return <p style={{color:'var(--text-secondary)'}}>Loading dashboard...</p>;
+  if (loading) return <p className="text-zinc-500 p-8">Initializing neural dashboard...</p>;
 
   return (
-    <div className="animate-in">
-      <div className="page-header"><h1>Dashboard</h1></div>
-      <div className="stat-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
-        <div className="stat-card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <div><div className="stat-label">Agents</div><div className="stat-value" style={{color:'var(--primary-light)'}}>{stats.agents}</div></div>
-            <div style={{width:40,height:40,borderRadius:10,background:'rgba(108,92,231,.1)'}} className="flex-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="2"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </div>
-          </div>
+    <div className="animate-in space-y-8">
+      <div className="page-header flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight mb-1 uppercase">Control Center</h1>
+          <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Welcome back, {session?.user?.name}</p>
         </div>
-        <div className="stat-card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <div><div className="stat-label">Views</div><div className="stat-value" style={{color:'#a855f7'}}>{stats.views}</div></div>
-            <div style={{width:40,height:40,borderRadius:10,background:'rgba(168,85,247,.1)'}} className="flex-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <div><div className="stat-label">Clicks</div><div className="stat-value" style={{color:'#ec4899'}}>{stats.clicks}</div></div>
-            <div style={{width:40,height:40,borderRadius:10,background:'rgba(236,72,153,.1)'}} className="flex-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ec4899" strokeWidth="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
-            </div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <div><div className="stat-label">Chats</div><div className="stat-value" style={{color:'var(--success)'}}>{stats.conversations}</div></div>
-            <div style={{width:40,height:40,borderRadius:10,background:'rgba(85,239,196,.1)'}} className="flex-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2"><path d="M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <div><div className="stat-label">Leads</div><div className="stat-value" style={{color:'var(--warning)'}}>{stats.leads}</div></div>
-            <div style={{width:40,height:40,borderRadius:10,background:'rgba(254,202,87,.1)'}} className="flex-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" strokeWidth="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </div>
-          </div>
+        <div className="flex gap-3">
+           {userInfo?.isPremium ? (
+             <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                <Shield size={14} /> Premium Account
+             </div>
+           ) : (
+             <Link href="/dashboard/billing" className="px-4 py-2 bg-violet-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-violet-600/20 hover:scale-105 transition-all">
+                <Zap size={14} className="fill-white" /> Upgrade to Pro
+             </Link>
+           )}
         </div>
       </div>
-      <div className="card">
-        <h2 style={{marginBottom:16,fontSize:18,fontWeight:600}}>Recent Leads</h2>
-        {recentLeads.length === 0 ? (
-          <p style={{color:'var(--text-secondary)'}}>No leads yet. Create an agent and connect to your website to start collecting.</p>
-        ) : (
-          <div className="table-wrapper"><table className="data-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Agent</th><th>Date</th></tr></thead><tbody>
-            {recentLeads.map((lead) => (
-              <tr key={lead.id}><td>{lead.name||'--'}</td><td>{lead.email||'--'}</td><td>{lead.phone||'--'}</td><td>{lead.agent?.name||'--'}</td><td>{new Date(lead.createdAt).toLocaleDateString()}</td></tr>
-            ))}
-          </tbody></table></div>
-        )}
+
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {[
+          { label: 'Agents', val: stats.agents, color: 'text-violet-400', icon: Package },
+          { label: 'Views', val: stats.views, color: 'text-fuchsia-400', icon: Shield },
+          { label: 'Clicks', val: stats.clicks, color: 'text-pink-400', icon: Zap },
+          { label: 'Chats', val: stats.conversations, color: 'text-emerald-400', icon: CheckCircle },
+          { label: 'Leads', val: stats.leads, color: 'text-amber-400', icon: AlertCircle },
+        ].map((s, i) => (
+          <div key={i} className="bg-[#0c0c0e] border border-white/5 p-6 rounded-3xl">
+             <p className="text-[10px] text-zinc-600 uppercase font-black tracking-widest mb-1">{s.label}</p>
+             <div className="flex items-center justify-between">
+                <h3 className={`text-2xl font-black ${s.color}`}>{s.val}</h3>
+                <s.icon size={18} className="text-zinc-800" />
+             </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-8">
+            <h2 className="text-lg font-bold mb-6 flex items-center gap-2 uppercase tracking-tight">
+               Recent Leads <span className="bg-white/5 px-3 py-1 rounded-full text-[10px] text-zinc-500">{recentLeads.length}</span>
+            </h2>
+            {recentLeads.length === 0 ? (
+              <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-3xl">
+                <p className="text-zinc-600 text-sm italic">No leads detected yet. Launch your agent to start collecting. </p>
+              </div>
+            ) : (
+              <div className="table-wrapper">
+                <table className="data-table">
+                  <thead className="bg-white/[0.01]">
+                    <tr>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Name</th>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Contact</th>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Agent</th>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentLeads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-white/[0.02]">
+                        <td className="font-bold text-white text-sm">{lead.name||'--'}</td>
+                        <td className="text-zinc-500 text-xs">{lead.email || lead.phone ||'--'}</td>
+                        <td className="text-zinc-400 text-xs">{lead.agent?.name||'--'}</td>
+                        <td className="text-zinc-600 text-[10px]">{new Date(lead.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+           <div className="bg-gradient-to-br from-violet-600 to-indigo-600 rounded-[32px] p-8 text-white shadow-2xl shadow-violet-600/10">
+              <div className="flex items-center gap-3 mb-6">
+                 <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <Download size={24} />
+                 </div>
+                 <div>
+                    <h3 className="font-black text-lg uppercase tracking-tighter">WP Plugin</h3>
+                    <p className="text-[10px] opacity-70 font-bold uppercase tracking-widest">Version 1.0.4</p>
+                 </div>
+              </div>
+              <p className="text-white/80 text-sm mb-8 leading-relaxed">
+                 Install our specialized WordPress plugin to connect your AI agents seamlessly to your site.
+              </p>
+              <a href="/inmetech_chatbot.zip" download className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 shadow-xl shadow-black/10">
+                 Download ZIP <ArrowRight size={14} />
+              </a>
+           </div>
+
+           <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-8">
+              <h4 className="font-bold text-sm mb-4 uppercase tracking-widest text-zinc-400">Account status</h4>
+              {!userInfo?.isPremium && (
+                <div className="space-y-4">
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Trial Period</span>
+                      <span className="text-white font-bold">14 Days Left</span>
+                   </div>
+                   <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className="h-full w-[80%] bg-violet-600" />
+                   </div>
+                   <p className="text-[10px] text-zinc-600 leading-relaxed">
+                      Your 14-day free trial will end on {userInfo?.trialEndsAt.toLocaleDateString()}. Upgrade to Pro to keep your agents alive.
+                   </p>
+                </div>
+              )}
+           </div>
+        </div>
       </div>
     </div>
   );
