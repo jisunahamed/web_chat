@@ -245,46 +245,47 @@
     const pos = c.position;
     return `
       #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.5}
-      #maic-w-trigger{width:60px;height:60px;border-radius:50%;border:none;background:${P};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
-      #maic-w-trigger:hover{transform:scale(1.08)}
+      #maic-w-trigger{width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg, ${P}, #9b59b6);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.25);transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
+      #maic-w-trigger:hover{transform:scale(1.08) translateY(-4px)}
       #maic-w-trigger::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:${P};opacity:0;animation:mwp 2.5s ease-in-out infinite;z-index:-1}
       @keyframes mwp{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.25;transform:scale(1.25)}}
-      #maic-w-chat{position:absolute;bottom:76px;${pos}:0;width:380px;max-height:560px;background:#fff;border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.15);display:flex;flex-direction:column;overflow:hidden;transition:opacity .3s,transform .3s cubic-bezier(.34,1.56,.64,1);border:1px solid #e5e7eb;transform-origin:bottom ${pos}}
+      #maic-w-chat{position:absolute;bottom:84px;${pos}:0;width:380px;max-height:600px;background:#ffffff;border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;transition:opacity .35s,transform .35s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(0,0,0,0.08);transform-origin:bottom ${pos}}
       #maic-w-chat.maic-w-hidden{opacity:0;transform:scale(.85) translateY(20px);pointer-events:none}
       #maic-w-chat:not(.maic-w-hidden){opacity:1;transform:scale(1) translateY(0)}
-      #maic-w-header{background:${P};color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-      .maic-w-hleft{display:flex;align-items:center;gap:12px}
-      .maic-w-hav{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;background-size:cover;background-position:center}
-      .maic-w-hname{font-weight:600;font-size:15px}
-      .maic-w-hstatus{font-size:12px;opacity:.85;display:flex;align-items:center;gap:5px}
-      .maic-w-dot{width:7px;height:7px;border-radius:50%;background:#55efc4;display:inline-block;animation:mwb 2s ease-in-out infinite}
-      @keyframes mwb{0%,100%{opacity:1}50%{opacity:.4}}
-      #maic-w-min{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
-      #maic-w-min:hover{background:rgba(255,255,255,.3)}
-      #maic-w-messages{flex:1 1 auto;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;min-height:250px;max-height:360px;background:#f7f8fa}
-      #maic-w-messages::-webkit-scrollbar{width:5px}#maic-w-messages::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:10px}
-      .maic-w-msg{max-width:82%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.55;word-break:break-word;animation:mwf .3s ease both}
-      @keyframes mwf{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-      .maic-w-bot{align-self:flex-start;background:#fff;color:#1a1a2e;border:1px solid #e5e7eb;border-bottom-left-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-      .maic-w-usr{align-self:flex-end;background:${P};color:#fff;border-bottom-right-radius:4px}
-      .maic-w-row{display:flex;gap:8px;align-items:flex-end}
-      .maic-w-av{width:28px;height:28px;border-radius:50%;background:${P}22;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${P};flex-shrink:0;background-size:cover;background-position:center}
-      .maic-w-time{font-size:11px;margin-top:4px;opacity:.6}
-      .maic-w-usr .maic-w-time{color:rgba(255,255,255,.7);text-align:right}
-      .maic-w-dots{display:flex;gap:4px;padding:12px 16px}.maic-w-dots span{width:8px;height:8px;border-radius:50%;background:#adb5bd;animation:mwd 1.4s ease-in-out infinite}.maic-w-dots span:nth-child(2){animation-delay:.15s}.maic-w-dots span:nth-child(3){animation-delay:.3s}
+      #maic-w-header{background:linear-gradient(135deg, ${P}, #9b59b6);color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-top-left-radius:24px;border-top-right-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05);z-index:10}
+      .maic-w-hleft{display:flex;align-items:center;gap:14px}
+      .maic-w-hav{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,0.4);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+      .maic-w-hname{font-weight:700;font-size:16px;letter-spacing:-0.3px}
+      .maic-w-hstatus{font-size:13px;opacity:.9;display:flex;align-items:center;gap:6px;font-weight:500}
+      .maic-w-dot{width:8px;height:8px;border-radius:50%;background:#55efc4;display:inline-block;animation:mwb 2s ease-in-out infinite;box-shadow:0 0 8px #55efc4}
+      @keyframes mwb{0%,100%{opacity:1}50%{opacity:.5}}
+      #maic-w-min{background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s ease;backdrop-filter:blur(4px)}
+      #maic-w-min:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+      #maic-w-messages{flex:1 1 auto;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:16px;min-height:280px;max-height:400px;background:#f8fafc}
+      #maic-w-messages::-webkit-scrollbar{width:6px}#maic-w-messages::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
+      .maic-w-msg{max-width:85%;padding:12px 16px;border-radius:18px;font-size:14.5px;line-height:1.5;word-break:break-word;animation:mwf .4s cubic-bezier(0.16, 1, 0.3, 1) both;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+      @keyframes mwf{from{opacity:0;transform:translateY(12px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+      .maic-w-bot{align-self:flex-start;background:#fff;color:#0f172a;border:1px solid #e2e8f0;border-bottom-left-radius:6px}
+      .maic-w-usr{align-self:flex-end;background:linear-gradient(135deg, ${P}, #9b59b6);color:#fff;border-bottom-right-radius:6px}
+      .maic-w-row{display:flex;gap:10px;align-items:flex-end}
+      .maic-w-av{width:30px;height:30px;border-radius:50%;background:${P}15;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${P};flex-shrink:0;background-size:cover;background-position:center;border:1px solid ${P}30}
+      .maic-w-time{font-size:11px;margin-top:6px;opacity:.65;font-weight:500}
+      .maic-w-usr .maic-w-time{color:rgba(255,255,255,.8);text-align:right}
+      .maic-w-dots{display:flex;gap:5px;padding:14px 18px}.maic-w-dots span{width:8px;height:8px;border-radius:50%;background:${P};animation:mwd 1.4s ease-in-out infinite}.maic-w-dots span:nth-child(2){animation-delay:.15s}.maic-w-dots span:nth-child(3){animation-delay:.3s}
       @keyframes mwd{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-      #maic-w-lead{padding:14px 16px;background:#fff;border-top:1px solid #e5e7eb;display:flex;flex-direction:column;gap:8px}
+      #maic-w-lead{padding:18px 24px;background:#fff;border-top:1px solid #e2e8f0;display:flex;flex-direction:column;gap:12px;box-shadow:0 -4px 12px rgba(0,0,0,0.02);z-index:2}
       #maic-w-lead.maic-w-hidden{display:none}
-      .maic-w-ltitle{margin:0;font-weight:600;font-size:13px}
-      #maic-w-lead input{border:1px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
-      #maic-w-lead input:focus{border-color:${P}}
-      #maic-w-lsub{background:${P};color:#fff;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}#maic-w-lsub:hover{opacity:.9}
-      #maic-w-bar{display:flex;align-items:flex-end;gap:8px;padding:12px 14px;border-top:1px solid #e5e7eb;background:#fff;flex-shrink:0}
-      #maic-w-input{flex:1;border:1px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:100px;line-height:1.4;transition:border-color .2s}
-      #maic-w-input:focus{border-color:${P}}
-      #maic-w-send{width:40px;height:40px;border-radius:12px;border:none;background:${P};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s}#maic-w-send:hover{transform:scale(1.05)}
-      @media(max-width:480px){#maic-wgt{bottom:12px;${pos}:12px}#maic-w-chat{width:calc(100vw - 24px);max-height:calc(100vh - 100px);bottom:72px;${pos}:-12px}#maic-w-trigger{width:54px;height:54px}#maic-w-messages{max-height:calc(100vh - 260px)}}
-      .maic-w-msg code{background:#f0f0f0;padding:1px 5px;border-radius:4px;font-size:13px}
+      .maic-w-ltitle{margin:0;font-weight:600;font-size:14px;color:#0f172a}
+      #maic-w-lead input{border:1px solid #cbd5e1;border-radius:10px;padding:12px 14px;font-size:14px;font-family:inherit;outline:none;transition:all .2s;background:#f8fafc}
+      #maic-w-lead input:focus{border-color:${P};background:#fff;box-shadow:0 0 0 3px ${P}20}
+      #maic-w-lsub{background:linear-gradient(135deg, ${P}, #9b59b6);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px ${P}40}#maic-w-lsub:hover{transform:translateY(-1px);box-shadow:0 6px 16px ${P}60}
+      #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:16px 20px;border-top:1px solid #e2e8f0;background:#fff;flex-shrink:0;z-index:2}
+      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:16px;padding:12px 16px;font-size:15px;font-family:inherit;resize:none;outline:none;max-height:120px;line-height:1.5;transition:all .2s;background:#f8fafc}
+      #maic-w-input:focus{border-color:${P};background:#fff;box-shadow:0 0 0 3px ${P}20}
+      #maic-w-send{width:46px;height:46px;border-radius:14px;border:none;background:linear-gradient(135deg, ${P}, #9b59b6);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 4px 12px ${P}30}
+      #maic-w-send:hover{transform:scale(1.05) translateY(-2px);box-shadow:0 6px 16px ${P}40}
+      @media(max-width:480px){#maic-wgt{bottom:16px;${pos}:16px}#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px);bottom:80px;${pos}:0}#maic-w-trigger{width:56px;height:56px}#maic-w-messages{max-height:calc(100vh - 280px)}}
+      .maic-w-msg code{background:#f1f5f9;padding:2px 6px;border-radius:6px;font-size:13.5px;color:#ef4444}
     `;
   }
 
