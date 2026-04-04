@@ -30,6 +30,9 @@ function WidgetPreview({ form }) {
   const cardBorder = t === 'glass' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.06)';
   const backdropFilter = t === 'glass' ? 'blur(16px)' : 'none';
 
+  const sl = form.socialLinks || {};
+  const hasSocial = sl.messenger || sl.whatsapp || sl.telegram;
+
   return (
     <div style={{width:'100%',maxWidth:350,display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
       {/* Chat Window */}
@@ -67,18 +70,42 @@ function WidgetPreview({ form }) {
           </div>
         </div>
 
-        {/* Input */}
-        <div style={{display:'flex',alignItems:'center',gap:8,padding:'14px 16px',borderTop:'1px solid #e2e8f0',background:'#fff'}}>
-          <div style={{flex:1,border:'1px solid #cbd5e1',borderRadius:t==='minimal'?6:14,padding:'9px 14px',fontSize:13.5,color:'#94a3b8',background:'#f8fafc'}}>Type a message...</div>
-          <div style={{width:38,height:38,borderRadius:t==='minimal'?6:12,background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        {/* Input & Footer Branding */}
+        <div style={{background:'#fff',borderTop:'1px solid #e2e8f0'}}>
+           <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 16px'}}>
+            <div style={{flex:1,border:'1px solid #cbd5e1',borderRadius:t==='minimal'?6:14,padding:'9px 14px',fontSize:13.5,color:'#94a3b8',background:'#f8fafc'}}>Type a message...</div>
+            <div style={{width:38,height:38,borderRadius:t==='minimal'?6:12,background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+          </div>
+          <div style={{textAlign:'center',paddingBottom:8,fontSize:11,color:'#94a3b8'}}>
+            Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
           </div>
         </div>
       </div>
 
-      {/* Trigger */}
-      <div style={{alignSelf:'flex-end',width:56,height:56,borderRadius:t==='minimal'?14:'50%',background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 6px 20px rgba(0,0,0,0.2)'}}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      {/* Trigger & Social Icons */}
+      <div style={{alignSelf:'flex-end',display:'flex',alignItems:'center',gap:12, position: 'relative'}}>
+        {/* Animated Social Icons (Slide-out effect simulation) */}
+        {sl.messenger && (
+          <div style={{width:42,height:42,borderRadius:'50%',background:'#0084FF',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>
+          </div>
+        )}
+        {sl.whatsapp && (
+          <div style={{width:42,height:42,borderRadius:'50%',background:'#25D366',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>
+          </div>
+        )}
+        {sl.telegram && (
+          <div style={{width:42,height:42,borderRadius:'50%',background:'#0088CC',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.88.03-.24.37-.48 1.01-.74 3.94-1.72 6.56-2.85 7.87-3.39 3.75-1.55 4.53-1.82 5.04-1.83.11 0 .36.03.52.16.14.11.18.26.2.37.03.11.03.3.01.46z"/></svg>
+          </div>
+        )}
+
+        <div style={{width:56,height:56,borderRadius:t==='minimal'?14:'50%',background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 6px 20px rgba(0,0,0,0.2)'}}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
       </div>
     </div>
   );
@@ -95,12 +122,11 @@ export default function AgentsPage() {
   const [showTypeSelection, setShowTypeSelection] = useState(false);
 
   const defaultForm = {
-    name: '', companyName: '', systemPrompt: '', websiteUrl: '', tone: 'friendly',
-    webhookUrl: '', collectLeads: false,
     welcomeMessage: 'Hi there! 👋 How can I help you today?',
     primaryColor: '#7C3AED', secondaryColor: '#EC4899',
     useGradient: false, widgetTheme: 'bubble', botAvatar: '',
-    integrationType: 'both'
+    integrationType: 'both',
+    socialLinks: { messenger: '', whatsapp: '', telegram: '' }
   };
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
@@ -108,6 +134,7 @@ export default function AgentsPage() {
   const [saving, setSaving] = useState(false);
 
   const upd = (key) => (e) => { const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value; setForm({ ...form, [key]: val }); };
+  const updSocial = (key) => (e) => { setForm({ ...form, socialLinks: { ...(form.socialLinks || {}), [key]: e.target.value } }); };
   const loadAgents = () => { getAgents().then(d => setAgents(d.agents || [])).catch(() => {}).finally(() => setLoading(false)); };
 
   useEffect(() => { loadAgents(); getMe().then(d => setApiKey(d.user.apiKey)).catch(() => {}); }, []);
@@ -123,7 +150,8 @@ export default function AgentsPage() {
       primaryColor: agent.primaryColor || '#7C3AED',
       secondaryColor: agent.secondaryColor || '#EC4899',
       useGradient: Boolean(agent.useGradient), widgetTheme: agent.widgetTheme || 'bubble',
-      botAvatar: agent.botAvatar || ''
+      botAvatar: agent.botAvatar || '',
+      socialLinks: agent.socialLinks || { messenger: '', whatsapp: '', telegram: '' }
     });
     setEditingAgent(agent);
   };
@@ -331,7 +359,24 @@ export default function AgentsPage() {
                 )}
 
                 <div className="form-group"><label>Website URL</label><input className="form-input" placeholder="https://..." value={form.websiteUrl} onChange={upd('websiteUrl')} /></div>
-                <div className="form-group"><label>Webhook URL</label><input className="form-input" placeholder="https://hooks...." value={form.webhookUrl} onChange={upd('webhookUrl')} /></div>
+
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12, display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Social Media Links (Connect directly to platforms)</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div className="form-group">
+                      <label style={{ fontSize: 12 }}>WhatsApp Number</label>
+                      <input className="form-input" placeholder="e.g. 88017..." value={form.socialLinks?.whatsapp || ''} onChange={updSocial('whatsapp')} />
+                    </div>
+                    <div className="form-group">
+                      <label style={{ fontSize: 12 }}>Messenger Username</label>
+                      <input className="form-input" placeholder="e.g. inmetech" value={form.socialLinks?.messenger || ''} onChange={updSocial('messenger')} />
+                    </div>
+                    <div className="form-group">
+                      <label style={{ fontSize: 12 }}>Telegram Username</label>
+                      <input className="form-input" placeholder="e.g. inme_tech" value={form.socialLinks?.telegram || ''} onChange={updSocial('telegram')} />
+                    </div>
+                  </div>
+                </div>
 
                 <div className="form-group">
                   <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: 'var(--bg-input)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>

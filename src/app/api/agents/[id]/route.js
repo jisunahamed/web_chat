@@ -29,7 +29,7 @@ export async function PUT(request, { params }) {
   const body = await request.json();
   const allowed = [
     'name', 'companyName', 'integrationType', 'systemPrompt', 'websiteUrl', 'tone', 'model',
-    'webhookUrl', 'collectLeads', 'allowedDomains', 'primaryColor',
+    'socialLinks', 'collectLeads', 'allowedDomains', 'primaryColor',
     'secondaryColor', 'useGradient', 'widgetTheme',
     'welcomeMessage', 'botAvatar', 'isActive',
   ];
