@@ -100,8 +100,8 @@ select.form-input{cursor:pointer}
 .code-block .copy-btn:hover{color:var(--text);border-color:var(--primary)}
 
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
-.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:fadeIn .25s ease}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;z-index:1000;padding:40px 24px;overflow-y:auto}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:fadeIn .25s ease;margin:auto}
 .modal h2{font-size:20px;font-weight:700;margin-bottom:20px}
 .modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
 
