@@ -11,6 +11,7 @@ export default function AgentsPage() {
   const [form, setForm] = useState({ name:'', systemPrompt:'', websiteUrl:'', tone:'friendly', webhookUrl:'', collectLeads:false, welcomeMessage:'Hi there! How can I help you today?' });
   const [error, setError] = useState('');
   const [copied, setCopied] = useState('');
+  const [creating, setCreating] = useState(false);
 
   const update = (key) => (e) => { const val = e.target.type==='checkbox' ? e.target.checked : e.target.value; setForm({...form,[key]:val}); };
   const loadAgents = () => { getAgents().then(d => setAgents(d.agents||[])).catch(()=>{}).finally(()=>setLoading(false)); };
@@ -18,8 +19,18 @@ export default function AgentsPage() {
   useEffect(() => { loadAgents(); getMe().then(d => setApiKey(d.user.apiKey)).catch(()=>{}); }, []);
 
   const handleCreate = async (e) => {
-    e.preventDefault(); setError('');
-    try { await createAgent(form); setShowModal(false); setForm({ name:'', systemPrompt:'', websiteUrl:'', tone:'friendly', webhookUrl:'', collectLeads:false, welcomeMessage:'Hi there! How can I help you today?' }); loadAgents(); } catch(err) { setError(err.message); }
+    e.preventDefault(); setError(''); setCreating(true);
+    try {
+      await createAgent(form);
+      setShowModal(false);
+      setForm({ name:'', systemPrompt:'', websiteUrl:'', tone:'friendly', webhookUrl:'', collectLeads:false, welcomeMessage:'Hi there! How can I help you today?' });
+      loadAgents();
+    } catch(err) {
+      console.error('Agent creation failed:', err);
+      setError(err.message || 'Unknown error occurred');
+    } finally {
+      setCreating(false);
+    }
   };
 
   const handleDelete = async (id) => { if(!confirm('Delete this agent? All conversations and leads will be permanently deleted.')) return; try { await deleteAgent(id); loadAgents(); } catch(err) { alert(err.message); } };
@@ -90,7 +101,7 @@ export default function AgentsPage() {
               <div className="form-group"><label>Webhook URL (optional)</label><input className="form-input" placeholder="https://hooks.yourapp.com/..." value={form.webhookUrl} onChange={update('webhookUrl')} /></div>
               <div className="form-group"><label>Welcome Message</label><input className="form-input" value={form.welcomeMessage} onChange={update('welcomeMessage')} /></div>
               <div className="form-group"><label style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}><input type="checkbox" checked={form.collectLeads} onChange={update('collectLeads')} /> Enable lead collection</label></div>
-              <div className="modal-actions"><button type="button" className="btn btn-secondary" onClick={()=>setShowModal(false)}>Cancel</button><button type="submit" className="btn btn-primary">Create Agent</button></div>
+              <div className="modal-actions"><button type="button" className="btn btn-secondary" onClick={()=>setShowModal(false)}>Cancel</button><button type="submit" className="btn btn-primary" disabled={creating}>{creating ? 'Creating...' : 'Create Agent'}</button></div>
             </form>
           </div>
         </div>
