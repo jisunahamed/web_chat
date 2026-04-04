@@ -2,7 +2,14 @@ import prisma from '@/lib/db';
 import { getUserByApiKey } from '@/lib/auth';
 
 export async function OPTIONS() {
-  return new Response(null, { status: 204 });
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Api-Key, Authorization',
+    },
+  });
 }
 
 // POST /api/lead — Submit lead (public, API key auth)

@@ -5,33 +5,48 @@ import { dispatchWebhook } from '@/lib/webhook';
 
 // Handle CORS preflight
 export async function OPTIONS() {
-  return new Response(null, { status: 204 });
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Api-Key, Authorization',
+    },
+  });
 }
 
-// POST /api/chat — Core chat endpoint
+// POST /api/chat
 export async function POST(request) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Api-Key, Authorization',
+  };
+
   try {
-    const { agent_id, session_id, message, user_info } = await request.json();
+    const body = await request.json();
+    const { agent_id, session_id, message, user_info } = body;
 
     if (!agent_id || !session_id || !message) {
-      return Response.json({ error: 'agent_id, session_id, and message are required.' }, { status: 400 });
+      return Response.json({ error: 'agent_id, session_id, and message are required.' }, { status: 400, headers: corsHeaders });
     }
 
-    // 1. Validate API key → User → Agent
+    // 1. Validate API key
     const user = await getUserByApiKey(request);
     if (!user) {
-      return Response.json({ error: 'Invalid API key.' }, { status: 401 });
+      return Response.json({ error: 'Invalid API key.' }, { status: 401, headers: corsHeaders });
     }
 
+    // 2. Get agent
     const agent = await prisma.agent.findFirst({
       where: { id: agent_id, userId: user.id, isActive: true },
     });
 
     if (!agent) {
-      return Response.json({ error: 'Agent not found or inactive.' }, { status: 404 });
+      return Response.json({ error: 'Agent not found or inactive.' }, { status: 404, headers: corsHeaders });
     }
 
-    // 2. Get or create conversation
+    // 3. Get or create conversation
     let conversation = await prisma.conversation.findUnique({
       where: { agentId_sessionId: { agentId: agent_id, sessionId: session_id } },
     });
@@ -47,7 +62,7 @@ export async function POST(request) {
       });
     }
 
-    // 3. Fetch conversation history
+    // 4. Fetch history
     const history = await prisma.message.findMany({
       where: { conversationId: conversation.id },
       orderBy: { createdAt: 'asc' },
@@ -55,16 +70,25 @@ export async function POST(request) {
       select: { role: true, content: true },
     });
 
-    // 4. Call OpenAI
-    const reply = await getChatCompletion({
-      systemPrompt: agent.systemPrompt,
-      model: agent.model,
-      history,
-      userMessage: message,
-      tone: agent.tone,
-    });
+    // 5. Call AI
+    let reply;
+    try {
+      reply = await getChatCompletion({
+        systemPrompt: agent.systemPrompt,
+        model: agent.model,
+        history,
+        userMessage: message,
+        tone: agent.tone,
+      });
+    } catch (aiErr) {
+      console.error('OpenAI error:', aiErr.message);
+      return Response.json({
+        error: 'AI service error.',
+        detail: aiErr.message,
+      }, { status: 502, headers: corsHeaders });
+    }
 
-    // 5. Store messages
+    // 6. Store messages
     await prisma.message.createMany({
       data: [
         { conversationId: conversation.id, role: 'user', content: message },
@@ -72,13 +96,12 @@ export async function POST(request) {
       ],
     });
 
-    // 6. Collect user data?
+    // 7. Lead collection check
     const collectUserData = agent.collectLeads && !(user_info?.name && (user_info?.email || user_info?.phone));
 
-    // 7. Webhook on intent
+    // 8. Webhook
     const intentKeywords = ['support', 'help', 'buy', 'purchase', 'order', 'pricing', 'demo'];
     const hasIntent = intentKeywords.some((kw) => message.toLowerCase().includes(kw));
-
     if (hasIntent && agent.webhookUrl) {
       dispatchWebhook({
         agentId: agent.id,
@@ -88,10 +111,12 @@ export async function POST(request) {
       }).catch(() => {});
     }
 
-    // 8. Respond
-    return Response.json({ reply, collect_user_data: collectUserData });
+    return Response.json({ reply, collect_user_data: collectUserData }, { headers: corsHeaders });
   } catch (err) {
     console.error('Chat error:', err);
-    return Response.json({ error: 'Failed to process chat message.' }, { status: 500 });
+    return Response.json({
+      error: 'Failed to process chat message.',
+      detail: err.message,
+    }, { status: 500, headers: corsHeaders });
   }
 }
