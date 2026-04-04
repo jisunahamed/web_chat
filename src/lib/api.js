@@ -6,8 +6,13 @@ export async function apiFetch(path, options = {}) {
     ...(options.headers || {}),
   };
   const res = await fetch(path, { ...options, headers });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || data.error || 'Request failed');
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    throw new Error(`Server returned an invalid response (Status: ${res.status}).`);
+  }
+  if (!res.ok) throw new Error(data?.detail || data?.error || 'Request failed');
   return data;
 }
 

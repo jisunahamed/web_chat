@@ -6,14 +6,16 @@ export async function GET(request) {
   const { user, error } = await requireAdmin(request);
   if (error) return error;
 
-  let settings = await prisma.settings.findUnique({ where: { id: 'global' } });
-  if (!settings) {
-    settings = await prisma.settings.create({ data: { id: 'global', aiModel: 'openai-gpt-oss-120b' } });
+  try {
+    let settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+    if (!settings) {
+      settings = await prisma.settings.create({ data: { id: 'global', aiModel: 'openai-gpt-oss-120b' } });
+    }
+    return Response.json({ settings });
+  } catch (err) {
+    console.error('Admin settings GET error:', err);
+    return Response.json({ error: 'Database error. Did you run the SQL command?', detail: err.message }, { status: 500 });
   }
-
-  // Do not expose full API key to frontend for security? Actually since it's the admin, it's fine.
-  // Or we just return a masked version if it exists.
-  return Response.json({ settings });
 }
 
 // PUT /api/admin/settings
@@ -21,22 +23,28 @@ export async function PUT(request) {
   const { user, error } = await requireAdmin(request);
   if (error) return error;
 
-  const body = await request.json();
+  try {
+    const body = await request.json();
 
-  const settings = await prisma.settings.upsert({
-    where: { id: 'global' },
-    update: {
-      ...(body.aiModel !== undefined && { aiModel: body.aiModel }),
-      ...(body.aiBaseUrl !== undefined && { aiBaseUrl: body.aiBaseUrl }),
-      ...(body.aiApiKey !== undefined && { aiApiKey: body.aiApiKey }),
-    },
-    create: {
-      id: 'global',
-      aiModel: body.aiModel || 'openai-gpt-oss-120b',
-      aiBaseUrl: body.aiBaseUrl || null,
-      aiApiKey: body.aiApiKey || null,
-    },
-  });
+    const settings = await prisma.settings.upsert({
+      where: { id: 'global' },
+      update: {
+        ...(body.aiModel !== undefined && { aiModel: body.aiModel }),
+        ...(body.aiBaseUrl !== undefined && { aiBaseUrl: body.aiBaseUrl }),
+        ...(body.aiApiKey !== undefined && { aiApiKey: body.aiApiKey }),
+      },
+      create: {
+        id: 'global',
+        aiModel: body.aiModel || 'openai-gpt-oss-120b',
+        aiBaseUrl: body.aiBaseUrl || null,
+        aiApiKey: body.aiApiKey || null,
+      },
+    });
 
-  return Response.json({ settings });
+    return Response.json({ settings });
+  } catch (err) {
+    console.error('Admin settings PUT error:', err);
+    return Response.json({ error: 'Database error. Did you run the SQL command?', detail: err.message }, { status: 500 });
+  }
 }
+
