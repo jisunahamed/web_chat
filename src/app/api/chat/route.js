@@ -38,11 +38,18 @@ export async function POST(request) {
       return Response.json({ error: 'Agent not found or inactive.' }, { status: 404, headers: cors });
     }
 
-    // 3. Get global AI settings (base URL from admin panel)
+    // 3. Get global AI settings (base URL, API key, and model from admin panel)
     let aiBaseUrl = null;
+    let aiModel = agent.model; // fallback to agent's creation model
+    let aiApiKey = null;
+    
     try {
-      const settings = await prisma.$queryRaw`SELECT ai_model, ai_base_url FROM settings WHERE id = 'global' LIMIT 1`;
-      if (settings?.[0]?.ai_base_url) aiBaseUrl = settings[0].ai_base_url;
+      const settings = await prisma.$queryRaw`SELECT ai_model, ai_base_url, ai_api_key FROM settings WHERE id = 'global' LIMIT 1`;
+      if (settings?.[0]) {
+        if (settings[0].ai_base_url) aiBaseUrl = settings[0].ai_base_url;
+        if (settings[0].ai_model) aiModel = settings[0].ai_model;
+        if (settings[0].ai_api_key) aiApiKey = settings[0].ai_api_key;
+      }
     } catch (e) {
       console.log('Settings lookup failed:', e.message);
     }
@@ -67,16 +74,17 @@ export async function POST(request) {
       select: { role: true, content: true },
     });
 
-    // 6. Call AI with base URL from settings
+    // 6. Call AI with settings from Admin panel
     let reply;
     try {
       reply = await getChatCompletion({
         systemPrompt: agent.systemPrompt,
-        model: agent.model,
+        model: aiModel,
         history,
         userMessage: message,
         tone: agent.tone,
         baseUrl: aiBaseUrl,
+        apiKey: aiApiKey,
       });
     } catch (aiErr) {
       console.error('AI call failed:', aiErr.message);
