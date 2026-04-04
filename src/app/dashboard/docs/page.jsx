@@ -96,8 +96,8 @@ export default function DocsPage() {
             <h4 style={{fontWeight:600,marginBottom:6,fontSize:14}}>Step 2: Configure the Plugin</h4>
             <p style={{color:'var(--text-secondary)',fontSize:13,marginBottom:10}}>Go to <strong>Messenger AI</strong> in your WordPress dashboard and enter:</p>
             <div className="code-block">
-              <button className="copy-btn" onClick={()=>copy(`${appUrl}`, 'wpurl')}>{copied==='wpurl'?'Copied!':'Copy'}</button>
-{`API Base URL:  ${appUrl}
+              <button className="copy-btn" onClick={()=>copy(`${appUrl}/api`, 'wpurl')}>{copied==='wpurl'?'Copied!':'Copy'}</button>
+{`API Base URL:  ${appUrl}/api
 Agent ID:      (from your agent's embed code)
 API Key:       ${apiKey}`}
             </div>
