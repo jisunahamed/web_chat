@@ -20,12 +20,22 @@ export async function getChatCompletion({ systemPrompt, model, history, userMess
     systemPrompt,
     TONE_MAP[tone] || TONE_MAP.friendly,
     'Always respond in the same language the user writes in.',
-  ].join('\n\n');
+  ].join('\n');
+
+  let unifiedPrompt = `System: ${systemContent}\n\n`;
+
+  for (const m of history) {
+    if (m.role === 'user') {
+      unifiedPrompt += `Human: ${m.content}\n`;
+    } else if (m.role === 'assistant') {
+      unifiedPrompt += `AI: ${m.content}\n`;
+    }
+  }
+
+  unifiedPrompt += `Human: ${userMessage}\nAI:`;
 
   const messages = [
-    { role: 'system', content: systemContent },
-    ...history.map((m) => ({ role: m.role, content: m.content })),
-    { role: 'user', content: userMessage },
+    { role: 'user', content: unifiedPrompt.trim() }
   ];
 
   const completion = await client.chat.completions.create({
