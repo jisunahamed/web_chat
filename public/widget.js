@@ -60,6 +60,7 @@
           if (!attr('data-welcome') && c.welcomeMessage) CONFIG.welcome = c.welcomeMessage;
           if (!attr('data-bot-avatar') && c.botAvatar) CONFIG.botAvatar = c.botAvatar;
           CONFIG.socialLinks = c.socialLinks || {};
+          console.log('[InmeTech] Config loaded:', CONFIG);
         }
       })
       .catch(() => {});
@@ -134,6 +135,7 @@
 
       if (socialLayer) {
         if (isOpen) {
+          console.log('[InmeTech] Opening chat, rendering social icons...');
           renderSocial(socialLayer);
           setTimeout(() => socialLayer.classList.add('maic-w-social-show'), 50);
         } else {
@@ -334,7 +336,7 @@
       : grad;
 
     return `
-      #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5}
+      #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;overflow:visible !important;}
       #maic-w-trigger{width:62px;height:62px;border-radius:${triggerR};border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:transform .35s;position:relative;z-index:2}
       #maic-w-trigger:hover{transform:scale(1.1) translateY(-3px)}
       #maic-w-trigger::before{content:'';position:absolute;inset:-5px;border-radius:${triggerR};background:${P};opacity:0;animation:mwp 2.5s infinite;z-index:-1}
