@@ -103,8 +103,9 @@ model WebhookLog {
 
 model Settings {
   id        String   @id @default("global")
-  aiModel   String   @default("gpt-4o-mini") @map("ai_model")
+  aiModel   String   @default("openai-gpt-oss-120b") @map("ai_model")
   aiBaseUrl String?  @map("ai_base_url")
+  aiApiKey  String?  @map("ai_api_key")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("settings")
