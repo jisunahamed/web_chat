@@ -124,11 +124,7 @@
     input.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
     leadSubBtn.addEventListener('click', submitLead);
 
-    // Initial Social Icons Render (since chat starts closed)
-    if (socialLayer) {
-      renderSocial(socialLayer);
-      setTimeout(() => socialLayer.classList.add('maic-w-social-show'), 500);
-    }
+    // Initialization complete. Social icons will render on toggle.
 
     function toggle() {
       isOpen = !isOpen;
@@ -138,11 +134,11 @@
 
       if (socialLayer) {
         if (isOpen) {
-          socialLayer.classList.remove('maic-w-social-show');
-          setTimeout(() => socialLayer.innerHTML = '', 400);
-        } else {
           renderSocial(socialLayer);
           setTimeout(() => socialLayer.classList.add('maic-w-social-show'), 50);
+        } else {
+          socialLayer.classList.remove('maic-w-social-show');
+          setTimeout(() => socialLayer.innerHTML = '', 400);
         }
       }
 
@@ -157,9 +153,9 @@
       cont.innerHTML = '';
       const sl = CONFIG.socialLinks;
       const icons = [];
-      if (sl.messenger) icons.push({ url: 'https://m.me/' + sl.messenger, color: '#0084FF', svg: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>' });
-      if (sl.whatsapp) icons.push({ url: 'https://wa.me/' + sl.whatsapp.replace(/\D/g,''), color: '#25D366', svg: '<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>' });
-      if (sl.telegram) icons.push({ url: 'https://t.me/' + sl.telegram, color: '#0088CC', svg: '<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.14 17.01c-.13.01-.26 0-.38-.05-.12-.05-.23-.13-.31-.22-.08-.1-.13-.21-.15-.34-.02-.13-.01-.26.04-.38l.45-1.25.13-.36-1.58-.75c-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.88.03-.24.37-.48 1.01-.74 3.94-1.72 6.56-2.85 7.87-3.39 3.75-1.55 4.53-1.82 5.04-1.83.11 0 .36.03.52.16.14.11.18.26.2.37.03.11.03.3.01.46z"/></svg>' });
+      if (sl.messenger) icons.push({ url: 'https://m.me/' + sl.messenger, color: '#0084FF', svg: '<svg width="20" height="20" fill="#ffffff" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>' });
+      if (sl.whatsapp) icons.push({ url: 'https://wa.me/' + sl.whatsapp.replace(/\D/g,''), color: '#25D366', svg: '<svg width="22" height="22" fill="#ffffff" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>' });
+      if (sl.telegram) icons.push({ url: 'https://t.me/' + sl.telegram, color: '#0088CC', svg: '<svg width="18" height="18" fill="#ffffff" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.14 17.01c-.13.01-.26 0-.38-.05-.12-.05-.23-.13-.31-.22-.08-.1-.13-.21-.15-.34-.02-.13-.01-.26.04-.38l.45-1.25.13-.36-1.58-.75c-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.88.03-.24.37-.48 1.01-.74 3.94-1.72 6.56-2.85 7.87-3.39 3.75-1.55 4.53-1.82 5.04-1.83.11 0 .36.03.52.16.14.11.18.26.2.37.03.11.03.3.01.46z"/></svg>' });
 
       icons.forEach((ic, i) => {
         const a = document.createElement('a');
