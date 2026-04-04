@@ -135,9 +135,8 @@
 
       if (socialLayer) {
         if (isOpen) {
-          console.log('[InmeTech] Opening chat, rendering social icons...');
           renderSocial(socialLayer);
-          setTimeout(() => socialLayer.classList.add('maic-w-social-show'), 50);
+          socialLayer.classList.add('maic-w-social-show');
         } else {
           socialLayer.classList.remove('maic-w-social-show');
           setTimeout(() => socialLayer.innerHTML = '', 400);
@@ -187,7 +186,6 @@
           if (d.reply) addMsg('bot', d.reply);
           else if (d.data?.reply) addMsg('bot', d.data.reply);
           else addMsg('bot', 'Sorry, something went wrong.');
-          if ((d.collect_user_data || d.data?.collect_user_data) && !leadShown) showLead();
         })
         .catch(() => { hideTyping(); isSending = false; addMsg('bot', 'Connection error.'); });
     }
@@ -294,12 +292,6 @@
           <button id="maic-w-min" aria-label="Minimize"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
         </div>
         <div id="maic-w-messages"></div>
-        <div id="maic-w-lead" class="maic-w-hidden">
-          <p class="maic-w-ltitle">📋 Share your details:</p>
-          <input id="maic-w-lname" placeholder="Your name"/>
-          <input id="maic-w-lcontact" placeholder="Email or WhatsApp number"/>
-          <button id="maic-w-lsub">Submit</button>
-        </div>
         <div id="maic-w-footer">
           <div id="maic-w-bar">
             <textarea id="maic-w-input" rows="1" placeholder="Type a message…"></textarea>
