@@ -76,11 +76,12 @@ export default function AgentsPage() {
   };
 
   return (
-    <div className="animate-in">
-      <div className="page-header">
-        <h1>Agents</h1>
-        <button className="btn btn-primary" onClick={openNew}>+ New Agent</button>
-      </div>
+    <>
+      <div className="animate-in">
+        <div className="page-header">
+          <h1>Agents</h1>
+          <button className="btn btn-primary" onClick={openNew}>+ New Agent</button>
+        </div>
 
       {loading ? <p style={{color:'var(--text-secondary)'}}>Loading...</p> : agents.length===0 ? (
         <div className="card" style={{textAlign:'center',padding:60}}>
@@ -117,10 +118,11 @@ export default function AgentsPage() {
           ))}
         </div>
       )}
-
-      {/* Edit/Create Modal */}
-      {editingAgent && (
-        <div className="modal-overlay" onClick={()=>setEditingAgent(null)}>
+    </div>
+      
+    {/* Edit/Create Modal */}
+    {editingAgent && (
+      <div className="modal-overlay" onClick={()=>setEditingAgent(null)}>
           <div className="modal modal-lg" onClick={e=>e.stopPropagation()} style={{display:'flex',padding:0,overflow:'hidden'}}>
             
             {/* LEFT: FORM */}
@@ -278,6 +280,6 @@ API Key:       ${apiKey}`}
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
