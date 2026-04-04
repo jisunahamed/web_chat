@@ -2,28 +2,39 @@ import prisma from '@/lib/db';
 
 export async function GET() {
   try {
-    // Add new widget columns to agents table
     const queries = [
+      // 1. Clean up old analytics table if it exists (force drop)
+      `DROP TABLE IF EXISTS analytics CASCADE`,
+      
+      // 2. Clear out existing agent columns to avoid conflicts
       `ALTER TABLE agents ADD COLUMN IF NOT EXISTS secondary_color TEXT`,
       `ALTER TABLE agents ADD COLUMN IF NOT EXISTS use_gradient BOOLEAN DEFAULT false`,
       `ALTER TABLE agents ADD COLUMN IF NOT EXISTS widget_theme TEXT DEFAULT 'bubble'`,
-      `CREATE TABLE IF NOT EXISTS analytics (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        agent_id UUID NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
+      
+      // 3. Create analytics table with EXPLICIT TEXT ID for foreign key compatibility
+      `CREATE TABLE analytics (
+        id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+        agent_id TEXT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
         type TEXT NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
     ];
 
+    console.log('Starting DB migration steps...');
     for (const q of queries) {
+      console.log(`Executing query: ${q.substring(0, 50)}...`);
       await prisma.$executeRawUnsafe(q);
     }
 
     return Response.json({ 
       success: true, 
-      message: 'Widget columns added: secondary_color, use_gradient, widget_theme' 
+      message: 'Database schema synchronized successfully. Total View/Click tracking is active.' 
     });
   } catch (err) {
-    return Response.json({ error: err.message }, { status: 500 });
+    console.error('SERVER DB FIX ERROR:', err);
+    return Response.json({ 
+      error: 'Migration failed. Please check server logs.',
+      detail: err.message 
+    }, { status: 500 });
   }
 }

@@ -18,25 +18,30 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const agentId = searchParams.get('agent_id');
 
-  const where = {
-    agent: {
-      userId: user.id
+  try {
+    // 1. Get all agents for this user to count their analytics
+    const agents = await prisma.agent.findMany({
+      where: { userId: user.id },
+      select: { id: true }
+    });
+
+    const agentIds = agents.map(a => a.id);
+
+    if (agentIds.length === 0) {
+      return Response.json({ views: 0, clicks: 0, total: 0 });
     }
-  };
-  if (agentId) where.agentId = agentId;
 
-  const stats = await prisma.analytics.groupBy({
-    by: ['type'],
-    where,
-    _count: true
-  });
+    // 2. Count by type using simple count queries (TEXT compatibility)
+    const [views, clicks] = await Promise.all([
+      prisma.analytics.count({ where: { agentId: { in: agentIds }, type: 'view' } }),
+      prisma.analytics.count({ where: { agentId: { in: agentIds }, type: 'click' } })
+    ]);
 
-  const result = {
-    views: stats.find(s => s.type === 'view')?._count || 0,
-    clicks: stats.find(s => s.type === 'click')?._count || 0,
-  };
-
-  return Response.json(result);
+    return Response.json({ views, clicks, total: views + clicks });
+  } catch (err) {
+    console.error('ANALYTICS FETCH ERROR:', err);
+    return Response.json({ error: 'Failed to load stats', detail: err.message }, { status: 500 });
+  }
 }
 
 export async function POST(request) {

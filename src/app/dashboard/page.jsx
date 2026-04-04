@@ -8,19 +8,36 @@ export default function DashboardOverview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getAgents(), getConversations(), getLeads(), getAnalytics()])
-      .then(([a, c, l, an]) => {
-        setStats({ 
-          agents: a.agents?.length || 0, 
-          conversations: c.total || 0, 
-          leads: l.total || 0,
-          views: an.views || 0,
-          clicks: an.clicks || 0
-        });
-        setRecentLeads((l.leads || []).slice(0, 5));
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const fetchStats = async () => {
+      try {
+        const [a, c, l, an] = await Promise.allSettled([
+          getAgents(),
+          getConversations(),
+          getLeads(),
+          getAnalytics()
+        ]);
+
+        const newStats = { ...stats };
+        
+        if (a.status === 'fulfilled') newStats.agents = a.value.agents?.length || 0;
+        if (c.status === 'fulfilled') newStats.conversations = c.value.total || 0;
+        if (l.status === 'fulfilled') {
+          newStats.leads = l.value.total || 0;
+          setRecentLeads((l.value.leads || []).slice(0, 5));
+        }
+        if (an.status === 'fulfilled') {
+          newStats.views = an.value.views || 0;
+          newStats.clicks = an.value.clicks || 0;
+        }
+
+        setStats(newStats);
+      } catch (err) {
+        console.error('Dashboard error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
   }, []);
 
   if (loading) return <p style={{color:'var(--text-secondary)'}}>Loading dashboard...</p>;
