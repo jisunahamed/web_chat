@@ -46,6 +46,9 @@ export const deleteConversation = (id) => apiFetch(`/api/conversations/${id}`, {
 export const getLeads = (p = '') => apiFetch(`/api/leads?${p}`);
 export const deleteLead = (id) => apiFetch(`/api/leads/${id}`, { method: 'DELETE' });
 
+// Analytics
+export const getAnalytics = (agentId = '') => apiFetch(`/api/analytics${agentId ? `?agent_id=${agentId}` : ''}`);
+
 // User
 export const getMe = () => apiFetch('/api/auth/me');
 

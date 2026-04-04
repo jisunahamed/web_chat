@@ -48,7 +48,18 @@ model Agent {
   conversations Conversation[]
   leads         Lead[]
   webhookLogs   WebhookLog[]
+  analytics     Analytics[]
   @@map("agents")
+}
+
+model Analytics {
+  id        String   @id @default(uuid())
+  agentId   String   @map("agent_id")
+  type      String   // "view" or "click"
+  createdAt DateTime @default(now()) @map("created_at")
+
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  @@map("analytics")
 }
 
 model Conversation {

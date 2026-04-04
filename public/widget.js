@@ -227,6 +227,20 @@
         .replace(/`(.+?)`/g, '<code>$1</code>')
         .replace(/\n/g, '<br>');
     }
+
+    // ─── Tracking ─────────────────────────────────────
+    function track(type) {
+      const key = 'maic_t_' + type + '_' + CONFIG.agentId;
+      if (sessionStorage.getItem(key)) return;
+      fetch(CONFIG.apiUrl + '/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent_id: CONFIG.agentId, type: type }),
+      }).then(() => sessionStorage.setItem(key, '1')).catch(() => {});
+    }
+
+    track('view');
+    triggerBtn.addEventListener('click', () => { if (!isOpen) track('click'); });
   }
 
   // ─── HTML ─────────────────────────────────────────
