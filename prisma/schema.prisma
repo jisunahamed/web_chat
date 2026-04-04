@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  company   String?
+  apiKey    String   @unique @default(uuid()) @map("api_key")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  agents Agent[]
+  @@map("users")
+}
+
+model Agent {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  name           String
+  systemPrompt   String   @map("system_prompt") @db.Text
+  websiteUrl     String?  @map("website_url")
+  tone           String   @default("friendly")
+  model          String   @default("gpt-4o-mini")
+  webhookUrl     String?  @map("webhook_url")
+  collectLeads   Boolean  @default(false) @map("collect_leads")
+  allowedDomains String?  @map("allowed_domains")
+  primaryColor   String   @default("#6C5CE7") @map("primary_color")
+  welcomeMessage String   @default("Hi there! 👋 How can I help you today?") @map("welcome_message")
+  botAvatar      String?  @map("bot_avatar")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  leads         Lead[]
+  webhookLogs   WebhookLog[]
+  @@map("agents")
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  agentId   String   @map("agent_id")
+  sessionId String   @map("session_id")
+  userInfo  Json?    @map("user_info")
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  agent    Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages Message[]
+  @@unique([agentId, sessionId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  conversationId String   @map("conversation_id")
+  role           String
+  content        String   @db.Text
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  @@map("messages")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  agentId   String   @map("agent_id")
+  sessionId String?  @map("session_id")
+  name      String?
+  email     String?
+  phone     String?
+  source    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  @@map("leads")
+}
+
+model WebhookLog {
+  id         String   @id @default(uuid())
+  agentId    String   @map("agent_id")
+  sessionId  String?  @map("session_id")
+  payload    Json
+  statusCode Int?     @map("status_code")
+  response   String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  @@map("webhook_logs")
+}
