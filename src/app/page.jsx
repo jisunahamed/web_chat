@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bot, Zap, Globe, MessageSquare, Shield, CheckCircle, 
-  ArrowRight, Download, CreditCard, Facebook, MessageCircle,
+  ArrowRight, Download, CreditCard, MessageCircle,
   Menu, X
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -333,7 +333,7 @@ const LandingPage = () => {
             </p>
             <div className="flex gap-4 justify-center md:justify-start">
               <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-violet-600 transition-all cursor-pointer">
-                <Facebook size={20} />
+                <MessageSquare size={20} />
               </div>
               <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-violet-600 transition-all cursor-pointer">
                 <MessageSquare size={20} />
