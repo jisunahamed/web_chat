@@ -1,10 +1,5 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  ...(process.env.OPENAI_BASE_URL && { baseURL: process.env.OPENAI_BASE_URL }),
-});
-
 const TONE_MAP = {
   friendly: 'You are friendly, warm, and helpful.',
   sales: 'You are a persuasive and professional sales assistant.',
@@ -12,9 +7,15 @@ const TONE_MAP = {
 };
 
 /**
- * Get a chat completion from OpenAI.
+ * Get a chat completion.
+ * Accepts optional baseUrl and apiKey to override env defaults.
  */
-export async function getChatCompletion({ systemPrompt, model, history, userMessage, tone }) {
+export async function getChatCompletion({ systemPrompt, model, history, userMessage, tone, baseUrl, apiKey }) {
+  const client = new OpenAI({
+    apiKey: apiKey || process.env.OPENAI_API_KEY,
+    baseURL: baseUrl || process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+  });
+
   const systemContent = [
     systemPrompt,
     TONE_MAP[tone] || TONE_MAP.friendly,
@@ -27,8 +28,8 @@ export async function getChatCompletion({ systemPrompt, model, history, userMess
     { role: 'user', content: userMessage },
   ];
 
-  const completion = await openai.chat.completions.create({
-    model: model || 'gpt-4o-mini',
+  const completion = await client.chat.completions.create({
+    model: model || 'openai-gpt-oss-120b',
     messages,
     temperature: 0.7,
     max_tokens: 1024,
