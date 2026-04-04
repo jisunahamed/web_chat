@@ -3,12 +3,14 @@ import { generateToken, hashPassword } from '@/lib/auth';
 
 export async function POST(request) {
   try {
-    const { email, password, name, company } = await request.json();
+    const body = await request.json();
+    const { email, password, name, company } = body;
 
     if (!email || !password || !name) {
       return Response.json({ error: 'Email, password, and name are required.' }, { status: 400 });
     }
 
+    // Check existing
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return Response.json({ error: 'Email already registered.' }, { status: 409 });
@@ -17,7 +19,7 @@ export async function POST(request) {
     const hashedPassword = await hashPassword(password);
 
     const user = await prisma.user.create({
-      data: { email, password: hashedPassword, name, company },
+      data: { email, password: hashedPassword, name, company: company || null },
     });
 
     const token = generateToken(user);
@@ -28,6 +30,10 @@ export async function POST(request) {
     }, { status: 201 });
   } catch (err) {
     console.error('Signup error:', err);
-    return Response.json({ error: 'Internal server error.' }, { status: 500 });
+    // Return actual error in dev for debugging
+    return Response.json({
+      error: 'Signup failed.',
+      detail: err.message || String(err),
+    }, { status: 500 });
   }
 }
