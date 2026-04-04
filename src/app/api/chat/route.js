@@ -102,10 +102,49 @@ export async function POST(request) {
       ],
     });
 
-    // 8. Lead collection
+    // 8. Auto-extract phone/email from user message and save as lead
+    const phoneRegex = /(?:\+?880|0)1[3-9]\d{8}/g;
+    const emailRegex = /[\w.-]+@[\w.-]+\.\w{2,}/g;
+    const foundPhones = message.match(phoneRegex) || [];
+    const foundEmails = message.match(emailRegex) || [];
+
+    if (foundPhones.length > 0 || foundEmails.length > 0) {
+      try {
+        const leadData = {
+          agentId: agent_id,
+          sessionId: session_id,
+          phone: foundPhones[0] || null,
+          email: foundEmails[0] || null,
+          name: user_info?.name || null,
+          source: 'auto-extracted',
+        };
+
+        // Check if lead already exists for this session
+        const existingLead = await prisma.lead.findFirst({
+          where: { agentId: agent_id, sessionId: session_id },
+        });
+
+        if (existingLead) {
+          // Update with new info
+          const updateData = {};
+          if (foundPhones[0] && !existingLead.phone) updateData.phone = foundPhones[0];
+          if (foundEmails[0] && !existingLead.email) updateData.email = foundEmails[0];
+          if (user_info?.name && !existingLead.name) updateData.name = user_info.name;
+          if (Object.keys(updateData).length > 0) {
+            await prisma.lead.update({ where: { id: existingLead.id }, data: updateData });
+          }
+        } else {
+          await prisma.lead.create({ data: leadData });
+        }
+      } catch (leadErr) {
+        console.error('Auto lead extraction failed:', leadErr.message);
+      }
+    }
+
+    // 9. Lead collection flag (for widget form)
     const collectUserData = agent.collectLeads && !(user_info?.name && (user_info?.email || user_info?.phone));
 
-    // 9. Webhook
+    // 10. Webhook
     const intentKeywords = ['support', 'help', 'buy', 'purchase', 'order', 'pricing', 'demo'];
     const hasIntent = intentKeywords.some((kw) => message.toLowerCase().includes(kw));
     if (hasIntent && agent.webhookUrl) {

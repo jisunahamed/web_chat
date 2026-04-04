@@ -2,17 +2,21 @@ import prisma from '@/lib/db';
 
 export async function GET() {
   try {
-    // 1. Add missing column
-    await prisma.$executeRawUnsafe(`ALTER TABLE settings ADD COLUMN IF NOT EXISTS ai_api_key TEXT;`);
-    
-    // 2. Force reset to defaults so chat works immediately
-    await prisma.settings.upsert({
-      where: { id: 'global' },
-      update: { aiModel: 'openai-gpt-oss-120b', aiBaseUrl: 'https://inference.do-ai.run/v1', aiApiKey: null },
-      create: { id: 'global', aiModel: 'openai-gpt-oss-120b', aiBaseUrl: 'https://inference.do-ai.run/v1', aiApiKey: null },
-    });
+    // Add new widget columns to agents table
+    const queries = [
+      `ALTER TABLE agents ADD COLUMN IF NOT EXISTS secondary_color TEXT`,
+      `ALTER TABLE agents ADD COLUMN IF NOT EXISTS use_gradient BOOLEAN DEFAULT false`,
+      `ALTER TABLE agents ADD COLUMN IF NOT EXISTS widget_theme TEXT DEFAULT 'bubble'`,
+    ];
 
-    return Response.json({ success: true, message: 'Database fixed and AI settings reset.' });
+    for (const q of queries) {
+      await prisma.$executeRawUnsafe(q);
+    }
+
+    return Response.json({ 
+      success: true, 
+      message: 'Widget columns added: secondary_color, use_gradient, widget_theme' 
+    });
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
   }

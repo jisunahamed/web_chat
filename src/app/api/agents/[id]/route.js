@@ -30,6 +30,7 @@ export async function PUT(request, { params }) {
   const allowed = [
     'name', 'systemPrompt', 'websiteUrl', 'tone', 'model',
     'webhookUrl', 'collectLeads', 'allowedDomains', 'primaryColor',
+    'secondaryColor', 'useGradient', 'widgetTheme',
     'welcomeMessage', 'botAvatar', 'isActive',
   ];
 

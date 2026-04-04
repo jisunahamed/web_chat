@@ -2,78 +2,145 @@
 import { useEffect, useState } from 'react';
 import { getAgents, createAgent, updateAgent, deleteAgent, getMe } from '@/lib/api';
 
+const THEMES = [
+  { id: 'bubble', label: 'Bubble', desc: 'Rounded, soft, modern bubble style' },
+  { id: 'glass', label: 'Glass', desc: 'Glassmorphism with frosted panels' },
+  { id: 'minimal', label: 'Minimal', desc: 'Clean, sharp, professional edges' },
+];
+
+function colorBg(form) {
+  if (form.useGradient && form.secondaryColor) {
+    return `linear-gradient(135deg, ${form.primaryColor}, ${form.secondaryColor})`;
+  }
+  return form.primaryColor;
+}
+
+// ────────────────────────────── LIVE PREVIEW ──────────────────────────────
+function WidgetPreview({ form }) {
+  const bg = colorBg(form);
+  const t = form.widgetTheme || 'bubble';
+  const radius = t === 'minimal' ? 8 : t === 'glass' ? 20 : 28;
+  const chatRadius = t === 'minimal' ? 4 : t === 'glass' ? 12 : 20;
+  const msgRadius = t === 'minimal' ? 8 : t === 'glass' ? 14 : 20;
+  const headerBg = t === 'glass'
+    ? `linear-gradient(135deg, ${form.primaryColor}cc, ${form.useGradient && form.secondaryColor ? form.secondaryColor + 'cc' : form.primaryColor + '99'})`
+    : bg;
+  const chatBg = t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc';
+  const cardShadow = t === 'glass' ? '0 20px 60px rgba(0,0,0,0.15)' : '0 20px 40px rgba(0,0,0,0.12)';
+  const cardBorder = t === 'glass' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.06)';
+  const backdropFilter = t === 'glass' ? 'blur(16px)' : 'none';
+
+  return (
+    <div style={{width:'100%',maxWidth:350,display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
+      {/* Chat Window */}
+      <div style={{width:'100%',background:'#fff',borderRadius:chatRadius,boxShadow:cardShadow,display:'flex',flexDirection:'column',overflow:'hidden',border:cardBorder,backdropFilter}}>
+        {/* Header */}
+        <div style={{background:headerBg,color:'#fff',padding:'18px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:t==='glass'?'blur(12px)':'none'}}>
+          <div style={{display:'flex',alignItems:'center',gap:12}}>
+            <div style={{width:42,height:42,borderRadius:t==='minimal'?8:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border:'2px solid rgba(255,255,255,0.35)'}}>
+              {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
+            </div>
+            <div>
+              <div style={{fontWeight:700,fontSize:15}}>{form.name || 'AI Assistant'}</div>
+              <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:7,height:7,borderRadius:'50%',background:'#4ade80',boxShadow:'0 0 6px #4ade80'}}></span> Online</div>
+            </div>
+          </div>
+          <div style={{width:30,height:30,borderRadius:t==='minimal'?6:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div style={{padding:'20px 16px',background:chatBg,display:'flex',flexDirection:'column',gap:14,minHeight:200}}>
+          {/* Bot */}
+          <div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
+            <div style={{width:26,height:26,borderRadius:t==='minimal'?6:'50%',background:`${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
+              {form.name ? form.name.charAt(0) : 'A'}
+            </div>
+            <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:t==='glass'?'rgba(255,255,255,0.7)':'#fff',color:'#1e293b',border:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'?2:4,boxShadow:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:t==='glass'?'blur(8px)':'none'}}>
+              {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
+            </div>
+          </div>
+          {/* User */}
+          <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:bg,color:'#fff',borderBottomRightRadius:t==='minimal'?2:4,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
+            I have a question!
+          </div>
+        </div>
+
+        {/* Input */}
+        <div style={{display:'flex',alignItems:'center',gap:8,padding:'14px 16px',borderTop:'1px solid #e2e8f0',background:'#fff'}}>
+          <div style={{flex:1,border:'1px solid #cbd5e1',borderRadius:t==='minimal'?6:14,padding:'9px 14px',fontSize:13.5,color:'#94a3b8',background:'#f8fafc'}}>Type a message...</div>
+          <div style={{width:38,height:38,borderRadius:t==='minimal'?6:12,background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+        </div>
+      </div>
+
+      {/* Trigger */}
+      <div style={{alignSelf:'flex-end',width:56,height:56,borderRadius:t==='minimal'?14:'50%',background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 6px 20px rgba(0,0,0,0.2)'}}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+    </div>
+  );
+}
+
+// ────────────────────────────── MAIN PAGE ──────────────────────────────
 export default function AgentsPage() {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Modal states: 'new', null, or agent object
   const [editingAgent, setEditingAgent] = useState(null);
-  
   const [showEmbed, setShowEmbed] = useState(null);
   const [apiKey, setApiKey] = useState('');
-  
-  const defaultForm = { 
-    name: '', systemPrompt: '', websiteUrl: '', tone: 'friendly', 
-    webhookUrl: '', collectLeads: false, welcomeMessage: 'Hi there! 👋 How can I help you today?',
-    primaryColor: '#6C5CE7', botAvatar: '' 
+
+  const defaultForm = {
+    name: '', systemPrompt: '', websiteUrl: '', tone: 'friendly',
+    webhookUrl: '', collectLeads: false,
+    welcomeMessage: 'Hi there! 👋 How can I help you today?',
+    primaryColor: '#7C3AED', secondaryColor: '#EC4899',
+    useGradient: false, widgetTheme: 'bubble', botAvatar: ''
   };
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const update = (key) => (e) => { const val = e.target.type==='checkbox' ? e.target.checked : e.target.value; setForm({...form,[key]:val}); };
-  const loadAgents = () => { getAgents().then(d => setAgents(d.agents||[])).catch(()=>{}).finally(()=>setLoading(false)); };
+  const upd = (key) => (e) => { const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value; setForm({ ...form, [key]: val }); };
+  const loadAgents = () => { getAgents().then(d => setAgents(d.agents || [])).catch(() => {}).finally(() => setLoading(false)); };
 
-  useEffect(() => { loadAgents(); getMe().then(d => setApiKey(d.user.apiKey)).catch(()=>{}); }, []);
+  useEffect(() => { loadAgents(); getMe().then(d => setApiKey(d.user.apiKey)).catch(() => {}); }, []);
 
   const handleEdit = (agent) => {
     setForm({
-      name: agent.name || '',
-      systemPrompt: agent.systemPrompt || '',
-      websiteUrl: agent.websiteUrl || '',
-      tone: agent.tone || 'friendly',
-      webhookUrl: agent.webhookUrl || '',
-      collectLeads: Boolean(agent.collectLeads),
+      name: agent.name || '', systemPrompt: agent.systemPrompt || '',
+      websiteUrl: agent.websiteUrl || '', tone: agent.tone || 'friendly',
+      webhookUrl: agent.webhookUrl || '', collectLeads: Boolean(agent.collectLeads),
       welcomeMessage: agent.welcomeMessage || 'Hi there! 👋 How can I help you today?',
-      primaryColor: agent.primaryColor || '#6C5CE7',
+      primaryColor: agent.primaryColor || '#7C3AED',
+      secondaryColor: agent.secondaryColor || '#EC4899',
+      useGradient: Boolean(agent.useGradient), widgetTheme: agent.widgetTheme || 'bubble',
       botAvatar: agent.botAvatar || ''
     });
     setEditingAgent(agent);
   };
 
-  const openNew = () => {
-    setForm(defaultForm);
-    setEditingAgent('new');
-  };
+  const openNew = () => { setForm(defaultForm); setEditingAgent('new'); };
 
   const handleSave = async (e) => {
     e.preventDefault(); setError(''); setSaving(true);
     try {
-      if (editingAgent === 'new') {
-        await createAgent(form);
-      } else {
-        await updateAgent(editingAgent.id, form);
-      }
-      setEditingAgent(null);
-      loadAgents();
-    } catch(err) {
-      console.error('Agent save failed:', err);
-      setError(err.message || 'Unknown error occurred');
-    } finally {
-      setSaving(false);
-    }
+      if (editingAgent === 'new') await createAgent(form);
+      else await updateAgent(editingAgent.id, form);
+      setEditingAgent(null); loadAgents();
+    } catch (err) { setError(err.message || 'Error'); } finally { setSaving(false); }
   };
 
-  const handleDelete = async (id) => { if(!confirm('Delete this agent? All conversations and leads will be permanently deleted.')) return; try { await deleteAgent(id); loadAgents(); } catch(err) { alert(err.message); } };
+  const handleDelete = async (id) => {
+    if (!confirm('Delete this agent?')) return;
+    try { await deleteAgent(id); loadAgents(); } catch (err) { alert(err.message); }
+  };
 
   const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
-
-  const copyText = (text, label) => {
-    navigator.clipboard.writeText(text);
-    setCopied(label);
-    setTimeout(() => setCopied(''), 2000);
-  };
+  const copyText = (text, label) => { navigator.clipboard.writeText(text); setCopied(label); setTimeout(() => setCopied(''), 2000); };
 
   return (
     <>
@@ -83,180 +150,163 @@ export default function AgentsPage() {
           <button className="btn btn-primary" onClick={openNew}>+ New Agent</button>
         </div>
 
-      {loading ? <p style={{color:'var(--text-secondary)'}}>Loading...</p> : agents.length===0 ? (
-        <div className="card" style={{textAlign:'center',padding:60}}>
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="1.5" style={{margin:'0 auto 16px',opacity:.6}}><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          <p style={{color:'var(--text-secondary)',marginBottom:16,fontSize:15}}>No agents created yet</p>
-          <p style={{color:'var(--text-secondary)',marginBottom:20,fontSize:13}}>Create your first AI agent to start handling customer conversations.</p>
-          <button className="btn btn-primary" onClick={openNew}>Create Your First Agent</button>
-        </div>
-      ) : (
-        <div className="card-grid">
-          {agents.map(agent => (
-            <div className="card" key={agent.id} style={{position:'relative',cursor:'pointer',overflow:'hidden'}} onClick={()=>handleEdit(agent)}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'start',marginBottom:14}}>
-                <div>
-                  <h3 style={{fontSize:18,fontWeight:700,marginBottom:6,letterSpacing:'-0.5px'}}>{agent.name}</h3>
-                  <span className={`badge ${agent.isActive?'badge-active':'badge-inactive'}`}>{agent.isActive?'Active':'Inactive'}</span>
+        {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading...</p> : agents.length === 0 ? (
+          <div className="card" style={{ textAlign: 'center', padding: 60 }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="1.5" style={{ margin: '0 auto 16px', opacity: .6 }}><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>No agents yet</p>
+            <button className="btn btn-primary" onClick={openNew}>Create Your First Agent</button>
+          </div>
+        ) : (
+          <div className="card-grid">
+            {agents.map(agent => (
+              <div className="card" key={agent.id} style={{ cursor: 'pointer', overflow: 'hidden' }} onClick={() => handleEdit(agent)}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 12 }}>
+                  <div>
+                    <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>{agent.name}</h3>
+                    <span className={`badge ${agent.isActive ? 'badge-active' : 'badge-inactive'}`}>{agent.isActive ? 'Active' : 'Inactive'}</span>
+                  </div>
+                  <div style={{ width: 20, height: 20, borderRadius: '50%', background: agent.useGradient && agent.secondaryColor ? `linear-gradient(135deg, ${agent.primaryColor}, ${agent.secondaryColor})` : agent.primaryColor || '#7C3AED', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}></div>
                 </div>
-                <div style={{width:16,height:16,borderRadius:'50%',background:agent.primaryColor||'#6C5CE7',boxShadow:'0 2px 8px rgba(0,0,0,0.2)'}} title="Theme Color"></div>
+                <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
+                  <span><strong>{agent._count?.conversations || 0}</strong> chats</span>
+                  <span><strong>{agent._count?.leads || 0}</strong> leads</span>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16 }}>
+                  <strong>Theme:</strong> <span style={{ textTransform: 'capitalize' }}>{agent.widgetTheme || 'bubble'}</span> · <strong>Tone:</strong> <span style={{ textTransform: 'capitalize' }}>{agent.tone}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }} onClick={e => e.stopPropagation()}>
+                  <button className="btn btn-secondary btn-sm" style={{ flex: 1 }} onClick={() => setShowEmbed(agent)}>Embed</button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(agent)}>Edit</button>
+                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(agent.id)}>Delete</button>
+                </div>
               </div>
-              <div style={{display:'flex',gap:20,fontSize:13,color:'var(--text-secondary)',marginBottom:14}}>
-                <span><strong>{agent._count?.conversations||0}</strong> chats</span>
-                <span><strong>{agent._count?.leads||0}</strong> leads</span>
-              </div>
-              <div style={{fontSize:13,color:'var(--text-secondary)',marginBottom:20,lineHeight:1.5}}>
-                <strong>Tone:</strong> <span style={{textTransform:'capitalize'}}>{agent.tone}</span><br />
-                <strong>Model:</strong> {agent.model}
-              </div>
-              <div style={{display:'flex',gap:10}} onClick={e=>e.stopPropagation()}>
-                <button className="btn btn-secondary btn-sm" style={{flex:1}} onClick={()=>setShowEmbed(agent)}>Embed</button>
-                <button className="btn btn-secondary btn-sm" onClick={()=>handleEdit(agent)}>Edit</button>
-                <button className="btn btn-danger btn-sm" onClick={()=>handleDelete(agent.id)}>Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-      
-    {/* Edit/Create Modal */}
-    {editingAgent && (
-      <div className="modal-overlay" onClick={()=>setEditingAgent(null)}>
-          <div className="modal modal-lg" onClick={e=>e.stopPropagation()} style={{display:'flex',padding:0,overflow:'hidden'}}>
-            
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ─── EDIT/CREATE MODAL ─── */}
+      {editingAgent && (
+        <div className="modal-overlay" onClick={() => setEditingAgent(null)}>
+          <div className="modal modal-lg" onClick={e => e.stopPropagation()} style={{ display: 'flex', padding: 0, overflow: 'hidden', maxWidth: 1060, maxHeight: '90vh' }}>
+
             {/* LEFT: FORM */}
-            <div style={{flex:1,padding:32,maxHeight:'85vh',overflowY:'auto',borderRight:'1px solid var(--border)'}}>
-              <h2>{editingAgent === 'new' ? 'Create New Agent' : 'Edit Agent'}</h2>
+            <div style={{ flex: 1, padding: '28px 32px', overflowY: 'auto', borderRight: '1px solid var(--border)' }}>
+              <h2 style={{ marginBottom: 20 }}>{editingAgent === 'new' ? '✨ Create New Agent' : '✏️ Edit Agent'}</h2>
               {error && <div className="alert alert-error">{error}</div>}
-              
+
               <form onSubmit={handleSave}>
                 <div className="form-group">
                   <label>Agent Name *</label>
-                  <input className="form-input" placeholder="e.g. Sales Assistant" value={form.name} onChange={update('name')} required />
+                  <input className="form-input" placeholder="e.g. Sales Assistant" value={form.name} onChange={upd('name')} required />
                 </div>
-                
+
                 <div className="form-group">
-                  <label>System Prompt * (Instructions for AI)</label>
-                  <textarea className="form-input" style={{minHeight:140}} placeholder="Define exactly how your AI agent should behave. Example: You are a helpful sales assistant..." value={form.systemPrompt} onChange={update('systemPrompt')} required />
+                  <label>System Prompt * <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>(Instructions for AI)</span></label>
+                  <textarea className="form-input" style={{ minHeight: 120 }} placeholder="Define how the AI should behave..." value={form.systemPrompt} onChange={upd('systemPrompt')} required />
                 </div>
 
                 <div className="form-group">
                   <label>Welcome Message</label>
-                  <input className="form-input" value={form.welcomeMessage} onChange={update('welcomeMessage')} />
+                  <input className="form-input" value={form.welcomeMessage} onChange={upd('welcomeMessage')} />
                 </div>
 
-                <div style={{display:'flex',gap:16}}>
-                  <div className="form-group" style={{flex:1}}>
-                    <label>Brand Primary Color</label>
-                    <div style={{display:'flex',gap:10,alignItems:'center'}}>
-                      <input type="color" value={form.primaryColor} onChange={update('primaryColor')} style={{width:40,height:40,padding:0,border:'none',borderRadius:8,cursor:'pointer',background:'transparent'}} />
-                      <input className="form-input" value={form.primaryColor} onChange={update('primaryColor')} placeholder="#6C5CE7" />
-                    </div>
-                  </div>
-                  <div className="form-group" style={{flex:1}}>
-                    <label>Bot Avatar URL</label>
-                    <input className="form-input" placeholder="https://..." value={form.botAvatar} onChange={update('botAvatar')} />
+                {/* ─── WIDGET THEME ─── */}
+                <div className="form-group">
+                  <label>Widget Theme</label>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    {THEMES.map(th => (
+                      <button type="button" key={th.id} onClick={() => setForm({ ...form, widgetTheme: th.id })}
+                        style={{
+                          flex: 1, padding: '14px 12px', borderRadius: 12, cursor: 'pointer', textAlign: 'center',
+                          background: form.widgetTheme === th.id ? 'rgba(124,58,237,0.12)' : 'var(--bg-input)',
+                          border: form.widgetTheme === th.id ? '2px solid var(--primary)' : '1px solid var(--border)',
+                          color: form.widgetTheme === th.id ? 'var(--primary-light)' : 'var(--text-secondary)',
+                          transition: 'all .2s'
+                        }}>
+                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{th.label}</div>
+                        <div style={{ fontSize: 11, opacity: .8 }}>{th.desc}</div>
+                      </button>
+                    ))}
                   </div>
                 </div>
+
+                {/* ─── COLOR CONTROLS ─── */}
+                <div className="form-group">
+                  <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Brand Color</span>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 13, fontWeight: 500, color: form.useGradient ? 'var(--primary-light)' : 'var(--text-secondary)' }}>
+                      <input type="checkbox" checked={form.useGradient} onChange={upd('useGradient')} style={{ width: 16, height: 16, accentColor: 'var(--primary)' }} />
+                      Use Gradient
+                    </label>
+                  </label>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <input type="color" value={form.primaryColor} onChange={upd('primaryColor')} style={{ width: 44, height: 44, padding: 0, border: 'none', borderRadius: 10, cursor: 'pointer', background: 'transparent' }} />
+                    <input className="form-input" style={{ flex: 1 }} value={form.primaryColor} onChange={upd('primaryColor')} placeholder="#7C3AED" />
+                    {form.useGradient && (
+                      <>
+                        <input type="color" value={form.secondaryColor || '#EC4899'} onChange={upd('secondaryColor')} style={{ width: 44, height: 44, padding: 0, border: 'none', borderRadius: 10, cursor: 'pointer', background: 'transparent' }} />
+                        <input className="form-input" style={{ flex: 1 }} value={form.secondaryColor || ''} onChange={upd('secondaryColor')} placeholder="#EC4899" />
+                      </>
+                    )}
+                  </div>
+                  {/* Color Preview Bar */}
+                  <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: colorBg(form) }}></div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label>Bot Avatar URL</label>
+                    <input className="form-input" placeholder="https://..." value={form.botAvatar} onChange={upd('botAvatar')} />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label>Tone</label>
+                    <select className="form-input" value={form.tone} onChange={upd('tone')}>
+                      <option value="friendly">Friendly</option>
+                      <option value="sales">Sales-focused</option>
+                      <option value="support">Customer Support</option>
+                      <option value="professional">Professional</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group"><label>Website URL</label><input className="form-input" placeholder="https://..." value={form.websiteUrl} onChange={upd('websiteUrl')} /></div>
+                <div className="form-group"><label>Webhook URL</label><input className="form-input" placeholder="https://hooks...." value={form.webhookUrl} onChange={upd('webhookUrl')} /></div>
 
                 <div className="form-group">
-                  <label>Tone</label>
-                  <select className="form-input" value={form.tone} onChange={update('tone')}>
-                    <option value="friendly">Friendly</option>
-                    <option value="sales">Sales-focused</option>
-                    <option value="support">Customer Support</option>
-                    <option value="professional">Professional</option>
-                  </select>
-                </div>
-
-                <div className="form-group"><label>Website URL (optional)</label><input className="form-input" placeholder="https://yourwebsite.com" value={form.websiteUrl} onChange={update('websiteUrl')} /></div>
-                <div className="form-group"><label>Webhook URL (optional)</label><input className="form-input" placeholder="https://hooks.yourapp.com/..." value={form.webhookUrl} onChange={update('webhookUrl')} /></div>
-                
-                <div className="form-group" style={{marginTop:8}}>
-                  <label style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer',background:'var(--bg-input)',padding:'12px 16px',borderRadius:12,border:'1px solid var(--border)'}}>
-                    <input type="checkbox" checked={form.collectLeads} onChange={update('collectLeads')} style={{width:18,height:18,accentColor:'var(--primary)'}} /> 
-                    <span style={{fontSize:14,fontWeight:500,color:'var(--text)'}}>Automatically collect leads (Name & Contact)</span>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: 'var(--bg-input)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+                    <input type="checkbox" checked={form.collectLeads} onChange={upd('collectLeads')} style={{ width: 18, height: 18, accentColor: 'var(--primary)' }} />
+                    <span style={{ fontSize: 14, fontWeight: 500 }}>Collect leads automatically</span>
                   </label>
                 </div>
 
-                <div className="modal-actions" style={{position:'sticky',bottom:-32,background:'var(--bg-card)',paddingBottom:32,zIndex:10}}>
-                  <button type="button" className="btn btn-secondary" onClick={()=>setEditingAgent(null)}>Cancel</button>
+                <div className="modal-actions">
+                  <button type="button" className="btn btn-secondary" onClick={() => setEditingAgent(null)}>Cancel</button>
                   <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Saving...' : 'Save Agent'}</button>
                 </div>
               </form>
             </div>
 
             {/* RIGHT: LIVE PREVIEW */}
-            <div style={{width:400,background:'#e2e8f0',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',position:'relative',overflow:'hidden',padding:24}}>
-              <div style={{position:'absolute',top:24,left:0,right:0,textAlign:'center',color:'#64748b',fontWeight:600,fontSize:13,letterSpacing:1,textTransform:'uppercase'}}>Live Widget Preview</div>
-              
-              {/* Simulated Widget Window */}
-              <div style={{width:340,background:'#ffffff',borderRadius:20,boxShadow:'0 20px 40px rgba(0,0,0,0.1)',display:'flex',flexDirection:'column',overflow:'hidden',marginBottom:16,border:'1px solid rgba(0,0,0,0.05)'}}>
-                
-                {/* Header */}
-                <div style={{background:`linear-gradient(135deg, ${form.primaryColor}, #9b59b6)`,color:'#fff',padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                  <div style={{display:'flex',alignItems:'center',gap:12}}>
-                    <div style={{width:42,height:42,borderRadius:'50%',background:'rgba(255,255,255,.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border:'2px solid rgba(255,255,255,0.4)',boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
-                      {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
-                    </div>
-                    <div>
-                      <div style={{fontWeight:700,fontSize:15,letterSpacing:'-0.3px'}}>{form.name || 'AI Assistant'}</div>
-                      <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:6,fontWeight:500}}><span style={{width:8,height:8,borderRadius:'50%',background:'#55efc4',boxShadow:'0 0 6px #55efc4'}}></span> Online</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Messages Area */}
-                <div style={{padding:'24px 20px',background:'#f8fafc',display:'flex',flexDirection:'column',gap:16,minHeight:240}}>
-                  {/* Bot Welcome Message */}
-                  <div style={{display:'flex',gap:10,alignItems:'flex-end'}}>
-                    <div style={{width:28,height:28,borderRadius:'50%',background:`${form.primaryColor}15`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}30`,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover'}}>
-                       {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
-                    </div>
-                    <div style={{maxWidth:'85%',padding:'12px 16px',borderRadius:16,fontSize:14,background:'#fff',color:'#0f172a',border:'1px solid #e2e8f0',borderBottomLeftRadius:4,boxShadow:'0 2px 8px rgba(0,0,0,0.04)'}}>
-                      {form.welcomeMessage || 'Hi there! 👋 How can I help you today?'}
-                    </div>
-                  </div>
-                  
-                  {/* User Mock Message */}
-                  <div style={{display:'flex',gap:10,alignItems:'flex-end',alignSelf:'flex-end'}}>
-                    <div style={{maxWidth:'85%',padding:'12px 16px',borderRadius:16,fontSize:14,background:`linear-gradient(135deg, ${form.primaryColor}, #9b59b6)`,color:'#fff',borderBottomRightRadius:4,boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
-                      I have a question about this.
-                    </div>
-                  </div>
-                </div>
-
-                {/* Input Area */}
-                <div style={{display:'flex',alignItems:'center',gap:10,padding:'16px 20px',borderTop:'1px solid #e2e8f0',background:'#fff'}}>
-                  <div style={{flex:1,border:'1px solid #cbd5e1',borderRadius:16,padding:'10px 16px',fontSize:14,color:'#94a3b8',background:'#f8fafc'}}>Type a message...</div>
-                  <div style={{width:40,height:40,borderRadius:12,background:`linear-gradient(135deg, ${form.primaryColor}, #9b59b6)`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:`0 4px 12px ${form.primaryColor}40`}}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Trigger Button Mock */}
-              <div style={{alignSelf:'flex-end',width:60,height:60,borderRadius:'50%',background:`linear-gradient(135deg, ${form.primaryColor}, #9b59b6)`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:`0 8px 24px rgba(0,0,0,0.2)`}}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </div>
-
+            <div style={{ width: 400, background: '#f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '48px 24px 24px', overflowY: 'auto' }}>
+              <div style={{ position: 'absolute', top: 16, left: 0, right: 0, textAlign: 'center', color: '#64748b', fontWeight: 600, fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase' }}>Live Preview</div>
+              <WidgetPreview form={form} />
             </div>
           </div>
         </div>
       )}
 
-      {/* Embed Code Modal */}
+      {/* ─── EMBED MODAL ─── */}
       {showEmbed && (
-        <div className="modal-overlay" onClick={()=>setShowEmbed(null)}>
-          <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:620}}>
-            <h2>Connect &quot;{showEmbed.name}&quot; to Your Website</h2>
+        <div className="modal-overlay" onClick={() => setShowEmbed(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 620 }}>
+            <h2>Connect &quot;{showEmbed.name}&quot;</h2>
 
-            <div style={{marginBottom:24}}>
-              <h3 style={{fontSize:15,fontWeight:600,marginBottom:8,color:'var(--text)'}}>Option 1: JavaScript Widget</h3>
-              <p style={{color:'var(--text-secondary)',fontSize:13,marginBottom:10}}>Paste this code before the closing <code style={{background:'var(--bg-input)',padding:'2px 6px',borderRadius:4}}>&lt;/body&gt;</code> tag.</p>
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>JavaScript Widget</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 10 }}>Paste before <code style={{ background: 'var(--bg-input)', padding: '2px 6px', borderRadius: 4 }}>&lt;/body&gt;</code></p>
               <div className="code-block">
-                <button className="copy-btn" onClick={()=>copyText(`<script src="${appUrl}/widget.js" data-agent-id="${showEmbed.id}" data-api-key="${apiKey}"></script>`, 'widget')}>{copied==='widget'?'Copied!':'Copy'}</button>
+                <button className="copy-btn" onClick={() => copyText(`<script src="${appUrl}/widget.js" data-agent-id="${showEmbed.id}" data-api-key="${apiKey}"></script>`, 'widget')}>{copied === 'widget' ? 'Copied!' : 'Copy'}</button>
 {`<script
   src="${appUrl}/widget.js"
   data-agent-id="${showEmbed.id}"
@@ -265,18 +315,17 @@ export default function AgentsPage() {
               </div>
             </div>
 
-            <div style={{marginBottom:24}}>
-              <h3 style={{fontSize:15,fontWeight:600,marginBottom:8,color:'var(--text)'}}>Option 2: WordPress Plugin</h3>
-              <p style={{color:'var(--text-secondary)',fontSize:13,marginBottom:10}}>Install the Messenger AI plugin and configure it:</p>
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>WordPress Plugin</h3>
               <div className="code-block">
-                <button className="copy-btn" onClick={()=>copyText(`${appUrl}/api\n${showEmbed.id}\n${apiKey}`, 'wp')}>{copied==='wp'?'Copied!':'Copy'}</button>
+                <button className="copy-btn" onClick={() => copyText(`${appUrl}/api\n${showEmbed.id}\n${apiKey}`, 'wp')}>{copied === 'wp' ? 'Copied!' : 'Copy'}</button>
 {`API Base URL:  ${appUrl}/api
 Agent ID:      ${showEmbed.id}
 API Key:       ${apiKey}`}
               </div>
             </div>
 
-            <div className="modal-actions"><button className="btn btn-primary btn-block" onClick={()=>setShowEmbed(null)}>Close</button></div>
+            <div className="modal-actions"><button className="btn btn-primary btn-block" onClick={() => setShowEmbed(null)}>Close</button></div>
           </div>
         </div>
       )}
