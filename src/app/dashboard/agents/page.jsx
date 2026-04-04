@@ -92,12 +92,15 @@ export default function AgentsPage() {
   const [showEmbed, setShowEmbed] = useState(null);
   const [apiKey, setApiKey] = useState('');
 
+  const [showTypeSelection, setShowTypeSelection] = useState(false);
+
   const defaultForm = {
-    name: '', systemPrompt: '', websiteUrl: '', tone: 'friendly',
+    name: '', companyName: '', systemPrompt: '', websiteUrl: '', tone: 'friendly',
     webhookUrl: '', collectLeads: false,
     welcomeMessage: 'Hi there! 👋 How can I help you today?',
     primaryColor: '#7C3AED', secondaryColor: '#EC4899',
-    useGradient: false, widgetTheme: 'bubble', botAvatar: ''
+    useGradient: false, widgetTheme: 'bubble', botAvatar: '',
+    integrationType: 'both'
   };
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
@@ -111,7 +114,9 @@ export default function AgentsPage() {
 
   const handleEdit = (agent) => {
     setForm({
-      name: agent.name || '', systemPrompt: agent.systemPrompt || '',
+      name: agent.name || '', companyName: agent.companyName || '',
+      systemPrompt: agent.systemPrompt || '',
+      integrationType: agent.integrationType || 'both',
       websiteUrl: agent.websiteUrl || '', tone: agent.tone || 'friendly',
       webhookUrl: agent.webhookUrl || '', collectLeads: Boolean(agent.collectLeads),
       welcomeMessage: agent.welcomeMessage || 'Hi there! 👋 How can I help you today?',
@@ -123,7 +128,13 @@ export default function AgentsPage() {
     setEditingAgent(agent);
   };
 
-  const openNew = () => { setForm(defaultForm); setEditingAgent('new'); };
+  const openNew = () => { setForm(defaultForm); setShowTypeSelection(true); };
+
+  const handleSelectType = (type) => {
+    setForm({ ...defaultForm, integrationType: type });
+    setShowTypeSelection(false);
+    setEditingAgent('new');
+  };
 
   const handleSave = async (e) => {
     e.preventDefault(); setError(''); setSaving(true);
@@ -185,6 +196,33 @@ export default function AgentsPage() {
         )}
       </div>
 
+      {/* ─── TYPE SELECTION MODAL ─── */}
+      {showTypeSelection && (
+        <div className="modal-overlay" onClick={() => setShowTypeSelection(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <h2 style={{ marginBottom: 8 }}>Choose Integration Type</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20 }}>Where will you use this agent?</p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <button className="btn btn-secondary" style={{ padding: '16px', textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onClick={() => handleSelectType('plugin')}>
+                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>WordPress Plugin</div>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>I will install and use the InmeTech plugin on my site.</div>
+              </button>
+              
+              <button className="btn btn-secondary" style={{ padding: '16px', textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onClick={() => handleSelectType('custom')}>
+                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>Custom Code</div>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>I will embed the JS code manually.</div>
+              </button>
+
+              <button className="btn btn-secondary" style={{ padding: '16px', textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onClick={() => handleSelectType('both')}>
+                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>Both / Not Sure</div>
+                <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>I might use both methods.</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ─── EDIT/CREATE MODAL ─── */}
       {editingAgent && (
         <div className="modal-overlay" onClick={() => setEditingAgent(null)}>
@@ -196,9 +234,15 @@ export default function AgentsPage() {
               {error && <div className="alert alert-error">{error}</div>}
 
               <form onSubmit={handleSave}>
-                <div className="form-group">
-                  <label>Agent Name *</label>
-                  <input className="form-input" placeholder="e.g. Sales Assistant" value={form.name} onChange={upd('name')} required />
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label>Agent Name *</label>
+                    <input className="form-input" placeholder="e.g. Sales Assistant" value={form.name} onChange={upd('name')} required />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label>Company Name *</label>
+                    <input className="form-input" placeholder="e.g. InmeTech" value={form.companyName} onChange={upd('companyName')} required />
+                  </div>
                 </div>
 
                 <div className="form-group">
@@ -206,6 +250,20 @@ export default function AgentsPage() {
                   <textarea className="form-input" style={{ minHeight: 120 }} placeholder="Define how the AI should behave..." value={form.systemPrompt} onChange={upd('systemPrompt')} required />
                 </div>
 
+                {form.integrationType === 'both' && (
+                  <div className="alert alert-warning" style={{ marginBottom: 16 }}>
+                    Note: If you use this in the WordPress plugin, the visual design and message setup should be done from the plugin setup inside your WP Admin.
+                  </div>
+                )}
+
+                {form.integrationType === 'plugin' && (
+                  <div className="alert alert-warning" style={{ marginBottom: 16 }}>
+                    Since you selected WordPress Plugin, visual design and message setup are managed directly inside your WP plugin settings.
+                  </div>
+                )}
+
+                {form.integrationType !== 'plugin' && (
+                  <>
                 <div className="form-group">
                   <label>Welcome Message</label>
                   <input className="form-input" value={form.welcomeMessage} onChange={upd('welcomeMessage')} />
@@ -269,6 +327,8 @@ export default function AgentsPage() {
                     </select>
                   </div>
                 </div>
+                  </>
+                )}
 
                 <div className="form-group"><label>Website URL</label><input className="form-input" placeholder="https://..." value={form.websiteUrl} onChange={upd('websiteUrl')} /></div>
                 <div className="form-group"><label>Webhook URL</label><input className="form-input" placeholder="https://hooks...." value={form.webhookUrl} onChange={upd('webhookUrl')} /></div>
@@ -288,10 +348,18 @@ export default function AgentsPage() {
             </div>
 
             {/* RIGHT: LIVE PREVIEW */}
-            <div style={{ width: 400, background: '#f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '48px 24px 24px', overflowY: 'auto' }}>
-              <div style={{ position: 'absolute', top: 16, left: 0, right: 0, textAlign: 'center', color: '#64748b', fontWeight: 600, fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase' }}>Live Preview</div>
-              <WidgetPreview form={form} />
-            </div>
+            {form.integrationType !== 'plugin' ? (
+              <div style={{ width: 400, background: '#f1f5f9', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '48px 24px 24px', overflowY: 'auto' }}>
+                <div style={{ position: 'absolute', top: 16, left: 0, right: 0, textAlign: 'center', color: '#64748b', fontWeight: 600, fontSize: 12, letterSpacing: '1.5px', textTransform: 'uppercase' }}>Live Preview</div>
+                <WidgetPreview form={form} />
+              </div>
+            ) : (
+              <div style={{ width: 400, background: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px', textAlign: 'center' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="1.5" style={{ opacity: .6, marginBottom: 16 }}><path d="M4 14l2 2 4-4M16 8l4 4-4 4M21 21H3V3h18v18z" /></svg>
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Preview Disabled</h3>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>Live preview is disabled for the WordPress Plugin integration type. Please configure and preview the widget directly within your WordPress site.</p>
+              </div>
+            )}
           </div>
         </div>
       )}

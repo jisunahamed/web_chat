@@ -27,6 +27,8 @@ model Agent {
   id             String   @id @default(uuid())
   userId         String   @map("user_id")
   name           String
+  companyName    String?  @map("company_name")
+  integrationType String  @default("both") @map("integration_type")
   systemPrompt   String   @map("system_prompt") @db.Text
   websiteUrl     String?  @map("website_url")
   tone           String   @default("friendly")

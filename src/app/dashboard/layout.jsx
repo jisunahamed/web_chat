@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }) {
             <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style={{stopColor:'var(--primary)'}}/><stop offset="100%" style={{stopColor:'var(--primary-light)'}}/></linearGradient></defs>
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
-          Messenger AI
+          InmeTech
         </div>
         <nav className="sidebar-nav">
           {navItems.map((item) => (

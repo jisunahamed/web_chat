@@ -28,7 +28,7 @@ export async function PUT(request, { params }) {
 
   const body = await request.json();
   const allowed = [
-    'name', 'systemPrompt', 'websiteUrl', 'tone', 'model',
+    'name', 'companyName', 'integrationType', 'systemPrompt', 'websiteUrl', 'tone', 'model',
     'webhookUrl', 'collectLeads', 'allowedDomains', 'primaryColor',
     'secondaryColor', 'useGradient', 'widgetTheme',
     'welcomeMessage', 'botAvatar', 'isActive',

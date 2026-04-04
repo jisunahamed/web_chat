@@ -77,8 +77,9 @@ export async function POST(request) {
     // 6. Call AI with settings from Admin panel
     let reply;
     try {
+      const fullSystemPrompt = `Agent Name: ${agent.name}\nCompany Name: ${agent.companyName || 'Not specified'}\n\nSystem Instructions:\n${agent.systemPrompt}`;
       reply = await getChatCompletion({
-        systemPrompt: agent.systemPrompt,
+        systemPrompt: fullSystemPrompt,
         model: aiModel,
         history,
         userMessage: message,

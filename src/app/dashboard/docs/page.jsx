@@ -19,7 +19,7 @@ export default function DocsPage() {
       {/* Quick Start */}
       <div className="card" style={{marginBottom:20}}>
         <h2 style={{fontSize:18,fontWeight:600,marginBottom:8}}>Quick Start Guide</h2>
-        <p style={{color:'var(--text-secondary)',fontSize:14,marginBottom:20}}>Connect Messenger AI to your website in under 2 minutes.</p>
+        <p style={{color:'var(--text-secondary)',fontSize:14,marginBottom:20}}>Connect InmeTech to your website in under 2 minutes.</p>
 
         <div style={{display:'flex',flexDirection:'column',gap:20}}>
           <div style={{display:'flex',gap:16,alignItems:'flex-start'}}>
@@ -90,11 +90,11 @@ export default function DocsPage() {
         <div style={{display:'flex',flexDirection:'column',gap:16}}>
           <div>
             <h4 style={{fontWeight:600,marginBottom:6,fontSize:14}}>Step 1: Install the Plugin</h4>
-            <p style={{color:'var(--text-secondary)',fontSize:13}}>Download and install the <strong>Messenger AI Chatbot</strong> WordPress plugin. Go to Plugins &rarr; Add New &rarr; Upload Plugin.</p>
+            <p style={{color:'var(--text-secondary)',fontSize:13}}>Download and install the <strong>InmeTech Chatbot</strong> WordPress plugin. Go to Plugins &rarr; Add New &rarr; Upload Plugin.</p>
           </div>
           <div>
             <h4 style={{fontWeight:600,marginBottom:6,fontSize:14}}>Step 2: Configure the Plugin</h4>
-            <p style={{color:'var(--text-secondary)',fontSize:13,marginBottom:10}}>Go to <strong>Messenger AI</strong> in your WordPress dashboard and enter:</p>
+            <p style={{color:'var(--text-secondary)',fontSize:13,marginBottom:10}}>Go to <strong>InmeTech</strong> in your WordPress dashboard and enter:</p>
             <div className="code-block">
               <button className="copy-btn" onClick={()=>copy(`${appUrl}/api`, 'wpurl')}>{copied==='wpurl'?'Copied!':'Copy'}</button>
 {`API Base URL:  ${appUrl}/api

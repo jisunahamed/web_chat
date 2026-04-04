@@ -28,8 +28,8 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    if (!body.name || !body.systemPrompt) {
-      return Response.json({ error: 'Name and system prompt are required.' }, { status: 400 });
+    if (!body.name || !body.companyName || !body.systemPrompt) {
+      return Response.json({ error: 'Name, Company Name, and system prompt are required.' }, { status: 400 });
     }
 
     // Get global model — safe fallback if settings table doesn't exist yet
@@ -45,6 +45,8 @@ export async function POST(request) {
       data: {
         userId: user.id,
         name: body.name,
+        companyName: body.companyName,
+        integrationType: body.integrationType || 'both',
         systemPrompt: body.systemPrompt,
         websiteUrl: body.websiteUrl || null,
         tone: body.tone || 'friendly',

@@ -146,7 +146,7 @@ export default function AdminPage() {
         <div className="table-wrapper">
           <table className="data-table">
             <thead>
-              <tr><th>Name</th><th>Email</th><th>Company</th><th>Role</th><th>Agents</th><th>Joined</th></tr>
+              <tr><th>Name</th><th>Email</th><th>Company</th><th>Role</th><th>Agents</th><th>API Calls (24h/7d/30d/All)</th><th>Joined</th></tr>
             </thead>
             <tbody>
               {users.map(u => (
@@ -156,6 +156,9 @@ export default function AdminPage() {
                   <td>{u.company || '--'}</td>
                   <td><span className={`badge ${u.role==='admin'?'badge-active':'badge-inactive'}`} style={u.role!=='admin'?{background:'rgba(162,155,254,.15)',color:'var(--primary-light)'}:{}}>{u.role}</span></td>
                   <td>{u._count?.agents || 0}</td>
+                  <td style={{color:'var(--text-secondary)', fontSize: 13}}>
+                    <span style={{fontWeight:500,color:'var(--text-primary)'}}>{u.apiStats?.last24h || 0}</span> / {u.apiStats?.last7d || 0} / {u.apiStats?.last30d || 0} / {u.apiStats?.lifetime || 0}
+                  </td>
                   <td>{new Date(u.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}

@@ -27,7 +27,7 @@ export default function SignupPage() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card animate-in">
-        <h1>Messenger AI</h1>
+        <h1>InmeTech</h1>
         <p className="subtitle">Create your free account</p>
         {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>
