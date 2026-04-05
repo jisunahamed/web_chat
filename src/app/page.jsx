@@ -14,11 +14,11 @@ import { useSession } from 'next-auth/react';
 
 const Logo = ({ className = "" }) => (
   <div className={`flex items-center gap-3 group ${className}`}>
-    <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-2xl shadow-cyan-500/40 transform -rotate-6 group-hover:rotate-0 transition-all duration-500">
-      <Bot className="text-white" size={24} />
+    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-cyan-500/50 transition-all duration-500">
+      <img src="/logo.png" alt="InmeTech Bot" className="w-8 h-8 object-contain" />
     </div>
     <span className="text-2xl font-black bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent tracking-tighter uppercase italic">
-      INMETECH 
+      INMETECH <span className="text-cyan-500">BOT</span>
     </span>
   </div>
 );
@@ -279,7 +279,7 @@ const LandingPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="text-[12vw] md:text-[9vw] lg:text-[7.5vw] font-black tracking-[-0.04em] leading-[0.85] mb-10 text-white uppercase italic"
+              className="text-[10vw] md:text-[7vw] lg:text-[6vw] font-black tracking-[-0.04em] leading-[0.9] mb-10 text-white uppercase italic"
             >
               Enterprise AI <br/> 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400 drop-shadow-2xl">Evolution.</span>
