@@ -276,8 +276,7 @@ const LandingPage = () => {
             </motion.div>
 
             <motion.h1 
-              style={{ y: heroY, opacity }}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
               className="text-[12vw] md:text-[9vw] lg:text-[7.5vw] font-black tracking-[-0.04em] leading-[0.85] mb-10 text-white uppercase italic"
@@ -287,9 +286,8 @@ const LandingPage = () => {
             </motion.h1>
 
             <motion.p 
-              style={{ opacity }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
               className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-16 font-medium leading-relaxed"
             >
@@ -298,7 +296,6 @@ const LandingPage = () => {
             </motion.p>
 
             <motion.div 
-              style={{ opacity }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.7 }}
