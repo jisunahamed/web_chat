@@ -8,7 +8,7 @@ import {
   Menu, X, Sparkles, Cpu, Layers, Layout, 
   ChevronRight, Star, Play, Network, TrendingUp, Users
 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { getToken } from '@/lib/api';
 
 // --- Components ---
 
@@ -26,7 +26,10 @@ const Logo = ({ className = "" }) => (
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { data: session } = useSession();
+  const [hasToken, setHasToken] = useState(false);
+  useEffect(() => {
+    setHasToken(!!getToken());
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -51,7 +54,7 @@ const Navbar = () => {
           <a href="#demo" className="hover:text-white transition-colors">Demo</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           <div className="w-px h-4 bg-white/10" />
-          {session ? (
+          {hasToken ? (
             <Link href="/dashboard" className="px-6 py-3 bg-white text-black rounded-full hover:bg-zinc-200 transition-all font-black shadow-xl shadow-white/10">
               Console
             </Link>

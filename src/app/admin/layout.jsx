@@ -7,24 +7,39 @@ import {
   LogOut, Shield, Zap, Bell, Search, Menu, X, ChevronRight,
   Bot, Ticket
 } from 'lucide-react';
-import { useSession, signOut } from 'next-auth/react';
+import { getMe, logout, getToken } from '@/lib/api';
 
 const AdminLayout = ({ children }) => {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Explicit bypass for the primary admin to prevent redirects
-    if (status === 'authenticated' && session?.user?.email === 'jisunahamed525@gmail.com') {
+    if (!getToken()) {
+      router.replace('/dashboard');
       return;
     }
 
-    if (status === 'unauthenticated' || (session && session.user.role !== 'admin')) {
-      router.replace('/dashboard');
-    }
-  }, [session, status, router]);
+    getMe()
+      .then((d) => {
+        const u = d.user;
+        setUser(u);
+        if (u.email === 'jisunahamed525@gmail.com') {
+          setLoading(false);
+          return;
+        }
+        if (u.role !== 'admin') {
+          router.replace('/dashboard');
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        router.replace('/dashboard');
+      });
+  }, [router]);
 
   const navItems = [
     { name: 'Overview', href: '/admin', icon: LineChart },
@@ -35,8 +50,12 @@ const AdminLayout = ({ children }) => {
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  if (status === 'loading' || !session || session.user.role !== 'admin') {
+  if (loading) {
      return <div className="min-h-screen bg-black flex items-center justify-center text-white/50">Verifying Admin Access...</div>;
+  }
+
+  if (!user || (user.role !== 'admin' && user.email !== 'jisunahamed525@gmail.com')) {
+     return null; // The useEffect will handle the redirect
   }
 
   return (
@@ -71,7 +90,7 @@ const AdminLayout = ({ children }) => {
         </nav>
 
         <div className="p-4 border-t border-white/5">
-           <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-400/10 transition-all">
+           <button onClick={() => logout()} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-400/10 transition-all">
               <LogOut size={18} />
               Logout
            </button>
@@ -98,11 +117,11 @@ const AdminLayout = ({ children }) => {
              </div>
              <div className="flex items-center gap-3 pl-6 border-l border-white/5">
                 <div className="text-right">
-                   <p className="text-sm font-bold">{session.user.name}</p>
+                   <p className="text-sm font-bold">{user.name}</p>
                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none">Super Administrator</p>
                 </div>
                 <div className="w-10 h-10 bg-violet-600 rounded-lg flex items-center justify-center font-black shadow-lg shadow-violet-600/10">
-                   {session.user.name.charAt(0)}
+                   {user.name.charAt(0)}
                 </div>
              </div>
           </div>
