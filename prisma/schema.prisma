@@ -29,6 +29,7 @@ model User {
 
   agents   Agent[]
   payments Payment[]
+  couponUsages CouponUsage[]
   @@map("users")
 }
 
@@ -142,28 +143,34 @@ model WebhookLog {
   @@map("webhook_logs")
 }
 
-model Settings {
-  id        String   @id @default("global")
-  
-  // AI Config
-  aiModel   String   @default("openai-gpt-oss-120b") @map("ai_model")
-  aiBaseUrl String?  @map("ai_base_url")
-  aiApiKey  String?  @map("ai_api_key")
-  
-  // Payment Config
-  bkashNumber String? @map("bkash_number")
-  nagadNumber String? @map("nagad_number")
-
-  // Auth Config
-  googleClientId     String? @map("google_client_id")
-  googleClientSecret String? @map("google_client_secret")
-
-  // Plugin Config
-  pluginZipPath String? @map("plugin_zip_path")
-  pluginVersion String? @map("plugin_version") @default("1.0.4")
-
-  updatedAt DateTime @updatedAt @map("updated_at")
-
   @@map("settings")
+}
+
+model Coupon {
+  id             String        @id @default(uuid())
+  code           String        @unique
+  discount       Float         // 10.0 for 10% or 500 for 500৳
+  type           String        @default("PERCENT") // "PERCENT" | "FLAT"
+  durationMonths Int           @default(1) @map("duration_months")
+  isActive       Boolean       @default(true) @map("is_active")
+  maxUses        Int?          @map("max_uses")
+  usedCount      Int           @default(0) @map("used_count")
+  expiresAt      DateTime?     @map("expires_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  usages         CouponUsage[]
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id        String   @id @default(uuid())
+  couponId  String   @map("coupon_id")
+  userId    String   @map("user_id")
+  usedAt    DateTime @default(now()) @map("used_at")
+
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("coupon_usages")
 }
 

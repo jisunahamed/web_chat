@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { 
   LineChart, Users, CreditCard, Settings, Package, 
   LogOut, Shield, Zap, Bell, Search, Menu, X, ChevronRight,
-  Bot
+  Bot, Ticket
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -25,6 +25,7 @@ const AdminLayout = ({ children }) => {
     { name: 'Overview', href: '/admin', icon: LineChart },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Payments', href: '/admin/payments', icon: CreditCard },
+    { name: 'Coupons', href: '/admin/coupons', icon: Ticket },
     { name: 'Plugin Settings', href: '/admin/plugin', icon: Package },
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];

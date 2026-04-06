@@ -44,30 +44,33 @@ const InputGroup = ({ label, value, onChange, placeholder, type = "text", icon: 
   </div>
 );
 
-const GlobalSettings = () => {
-  const [bkash, setBkash] = useState('');
-  const [nagad, setNagad] = useState('');
-  const [googleId, setGoogleId] = useState('');
-  const [googleSecret, setGoogleSecret] = useState('');
+import { updateSystemSettings } from '@/app/actions/adminActions';
+
+const GlobalSettings = ({ initialSettings }) => {
+  const [bkash, setBkash] = useState(initialSettings?.bkashNumber || '');
+  const [nagad, setNagad] = useState(initialSettings?.nagadNumber || '');
+  const [googleId, setGoogleId] = useState(initialSettings?.googleClientId || '');
+  const [googleSecret, setGoogleSecret] = useState(initialSettings?.googleClientSecret || '');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => {
-    // Placeholder for real build fetching from /api/admin/settings
-    setBkash('017XXXXXXXX');
-    setNagad('018XXXXXXXX');
-    setGoogleId('XXXXXXXX-XXXXXX.apps.googleusercontent.com');
-    setGoogleSecret('GOCSPX-XXXXXXXXXXXXXX');
-  }, []);
-
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true);
-    // Real build will hit /api/admin/settings
-    setTimeout(() => {
+    const result = await updateSystemSettings({
+      bkashNumber: bkash,
+      nagadNumber: nagad,
+      googleClientId: googleId,
+      googleClientSecret: googleSecret,
+    });
+    
+    if (result.success) {
       setSaving(false);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    }, 1000);
+    } else {
+      setSaving(false);
+      alert(result.error);
+    }
   };
 
   return (

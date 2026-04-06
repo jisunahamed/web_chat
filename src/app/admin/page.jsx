@@ -30,6 +30,8 @@ const StatCard = ({ title, value, subtext, icon: Icon, trend, color }) => (
   </motion.div>
 );
 
+import { getAdminStats } from '@/app/actions/adminActions';
+
 const AdminOverview = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -38,16 +40,17 @@ const AdminOverview = () => {
     revenue: 0,
     pendingPayments: 0
   });
+  const [loading, setLoading] = useState(true);
 
-  // Placeholder data for real build
+  const fetchStats = async () => {
+    setLoading(true);
+    const data = await getAdminStats();
+    if (data) setStats(data);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    setStats({
-      totalUsers: 154,
-      paidUsers: 48,
-      activeAgents: 210,
-      revenue: '24,000৳',
-      pendingPayments: 5
-    });
+    fetchStats();
   }, []);
 
   return (

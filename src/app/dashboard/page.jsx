@@ -26,11 +26,12 @@ export default function DashboardOverview() {
         
         if (a.status === 'fulfilled') {
           newStats.agents = a.value.agents?.length || 0;
-          // In a real app, the API would return user subscription info too
+          
+          const isAdmin = session?.user?.role === 'admin';
           setUserInfo({
-            isPremium: false,
-            trialEndsAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // Dummy data for UI
-            agentLimit: 1
+            isPremium: isAdmin || false,
+            trialEndsAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+            agentLimit: isAdmin ? 999 : 1
           });
         }
         if (c.status === 'fulfilled') newStats.conversations = c.value.total || 0;
