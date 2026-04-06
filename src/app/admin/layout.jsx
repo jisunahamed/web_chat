@@ -16,6 +16,11 @@ const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
+    // Explicit bypass for the primary admin to prevent redirects
+    if (status === 'authenticated' && session?.user?.email === 'jisunahamed525@gmail.com') {
+      return;
+    }
+
     if (status === 'unauthenticated' || (session && session.user.role !== 'admin')) {
       router.replace('/dashboard');
     }
