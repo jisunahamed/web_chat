@@ -50,8 +50,12 @@ const AdminLayout = ({ children }) => {
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  if (loading || !user || (user.role !== 'admin' && user.email !== 'jisunahamed525@gmail.com')) {
+  if (loading) {
      return <div className="min-h-screen bg-black flex items-center justify-center text-white/50">Verifying Admin Access...</div>;
+  }
+
+  if (!user || (user.role !== 'admin' && user.email !== 'jisunahamed525@gmail.com')) {
+     return null; // The useEffect will handle the redirect
   }
 
   return (
