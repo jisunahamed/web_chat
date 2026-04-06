@@ -344,7 +344,8 @@
       .maic-w-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80}
       #maic-w-min{background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-      #maic-w-messages{flex:1;overflow-y:auto;padding:22px 18px;display:flex;flex-direction:column;gap:14px;min-height:260px;background:${areaBg}}
+      #maic-w-messages{flex:1;overflow-y:auto;padding:22px 18px;display:flex;flex-direction:column;gap:14px;min-height:260px;background:${areaBg};scrollbar-width:none !important;-ms-overflow-style:none !important;}
+      #maic-w-messages::-webkit-scrollbar{display:none !important;}
       .maic-w-msg{max-width:84%;padding:11px 15px;border-radius:${msgR};font-size:14px;line-height:1.5;animation:mwf .3s both}
       @keyframes mwf{from{opacity:0;transform:translateY(10px)}}
       .maic-w-bot{background:${msgBg};color:#1e293b;border:1px solid #e2e8f0;border-bottom-left-radius:4px}
@@ -360,7 +361,8 @@
       .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:#94a3b8}
       .maic-w-branding a{color:${P};text-decoration:none;font-weight:600}
       #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:12px 18px;background:transparent}
-      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:18px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:#f8fafc}
+      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:18px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:#f8fafc;color:#1e293b !important;-webkit-text-fill-color:#1e293b !important;scrollbar-width:none !important;-ms-overflow-style:none !important;}
+      #maic-w-input::-webkit-scrollbar{display:none !important;}
       #maic-w-input:focus{border-color:${P};background:#fff}
       #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
       
