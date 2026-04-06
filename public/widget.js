@@ -117,6 +117,13 @@
     const iconClose = $('#maic-w-ic-close');
     const socialLayer = $('#maic-w-social');
 
+    // Force Input Styles via JS to defeat caching/conflicts
+    if (input) {
+      input.style.setProperty('color', '#1e293b', 'important');
+      input.style.setProperty('-webkit-text-fill-color', '#1e293b', 'important');
+      input.style.setProperty('background-color', '#ffffff', 'important');
+    }
+
     // Events
     triggerBtn.addEventListener('click', toggle);
     minBtn.addEventListener('click', toggle);
@@ -361,9 +368,9 @@
       .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:#94a3b8}
       .maic-w-branding a{color:${P};text-decoration:none;font-weight:600}
       #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:12px 18px;background:transparent}
-      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:18px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:#f8fafc;color:#1e293b !important;-webkit-text-fill-color:#1e293b !important;scrollbar-width:none !important;-ms-overflow-style:none !important;}
+      #maic-w-input{flex:1;border:1px solid #cbd5e1;border-radius:11px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:#ffffff !important;color:#1e293b !important;-webkit-text-fill-color:#1e293b !important;scrollbar-width:none !important;-ms-overflow-style:none !important;caret-color:#1e293b !important;}
       #maic-w-input::-webkit-scrollbar{display:none !important;}
-      #maic-w-input:focus{border-color:${P};background:#fff}
+      #maic-w-input:focus{border-color:${P};background:#ffffff !important;box-shadow: 0 0 0 2px ${P}20 !important;}
       #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
       
       #maic-w-social { position:absolute; bottom:8px; display:flex; gap:10px; pointer-events:none; z-index:10; transition:all .4s; }
