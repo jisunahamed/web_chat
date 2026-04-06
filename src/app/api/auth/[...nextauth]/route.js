@@ -60,6 +60,13 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+      } else if (token.email) {
+        // Real-time role check for existing sessions
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email },
+          select: { role: true }
+        });
+        if (dbUser) token.role = dbUser.role;
       }
       return token;
     }
