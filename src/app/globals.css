@@ -17,17 +17,20 @@
   --transition:all .25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-html, body {
+*, html, body {
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
-  overflow-x: hidden;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
 }
 
-html::-webkit-scrollbar, body::-webkit-scrollbar {
-  display: none; /* Chrome/Safari/Webkit */
-  width: 0;
-  height: 0;
+*::-webkit-scrollbar, html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none !important; /* Chrome/Safari/Webkit */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 html{font-size:14px; height:100%; min-height:100vh;}
