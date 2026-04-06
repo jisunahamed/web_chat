@@ -143,6 +143,28 @@ model WebhookLog {
   @@map("webhook_logs")
 }
 
+model Settings {
+  id        String   @id @default("global")
+  
+  // AI Config
+  aiModel   String   @default("openai-gpt-oss-120b") @map("ai_model")
+  aiBaseUrl String?  @map("ai_base_url")
+  aiApiKey  String?  @map("ai_api_key")
+  
+  // Payment Config
+  bkashNumber String? @map("bkash_number")
+  nagadNumber String? @map("nagad_number")
+
+  // Auth Config
+  googleClientId     String? @map("google_client_id")
+  googleClientSecret String? @map("google_client_secret")
+
+  // Plugin Config
+  pluginZipPath String? @map("plugin_zip_path")
+  pluginVersion String? @map("plugin_version") @default("1.0.4")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@map("settings")
 }
 
