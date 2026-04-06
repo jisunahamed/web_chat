@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth-config";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 
@@ -26,8 +26,8 @@ export async function GET() {
         isPremium: dbUser?.isPremium || false
       },
       verdict: (session?.user?.role === 'admin' || dbUser?.role === 'admin') 
-        ? "You SHOULD have access. If redirecting, the issue is client-side layout." 
-        : "You are NOT an admin in either session or database. Re-run setup route."
+        ? "Access SHOULD be granted. Check layout redirect logic." 
+        : "No admin role detected. Please check setup route or email."
     });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
