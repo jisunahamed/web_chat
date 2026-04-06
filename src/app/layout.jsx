@@ -1,5 +1,6 @@
 import './globals.css';
 import { Providers } from '@/components/Providers';
+import Script from 'next/script';
 
 export const metadata = {
   title: 'InmeTech – Premium AI Chatbot SaaS',
@@ -13,6 +14,12 @@ export default function RootLayout({ children }) {
         <Providers>
           {children}
         </Providers>
+        <Script 
+          src="https://chatbot.inmetech.com/widget.js"
+          strategy="afterInteractive"
+          data-agent-id="142a34c2-eafb-4c91-a657-d30b3da386eb"
+          data-api-key="63bcf35c-9c27-4bb8-8f82-8680ae2ae85e"
+        />
       </body>
     </html>
   );
