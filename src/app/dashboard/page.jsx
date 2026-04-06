@@ -1,37 +1,42 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getAgents, getLeads, getConversations, getAnalytics } from '@/lib/api';
+import { getAgents, getLeads, getConversations, getAnalytics, getMe } from '@/lib/api';
 import { Download, Zap, Shield, AlertCircle, CheckCircle, Package, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+
 
 export default function DashboardOverview() {
-  const { data: session } = useSession();
+
   const [stats, setStats] = useState({ agents: 0, conversations: 0, leads: 0, views: 0, clicks: 0 });
   const [recentLeads, setRecentLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [a, c, l, an] = await Promise.allSettled([
+        const [a, c, l, an, me] = await Promise.allSettled([
           getAgents(),
           getConversations(),
           getLeads(),
-          getAnalytics()
+          getAnalytics(),
+          getMe()
         ]);
 
         const newStats = { ...stats };
         
         if (a.status === 'fulfilled') {
           newStats.agents = a.value.agents?.length || 0;
-          
-          const isAdmin = session?.user?.role === 'admin';
+        }
+        if (me.status === 'fulfilled') {
+          const u = me.value.user;
+          setUser(u);
+          const isAdmin = u?.role === 'admin' || u?.email === 'jisunahamed525@gmail.com';
           setUserInfo({
-            isPremium: isAdmin || false,
-            trialEndsAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-            agentLimit: isAdmin ? 999 : 1
+            isPremium: isAdmin || u?.isPremium || false,
+            trialEndsAt: new Date(u?.trialEndsAt || Date.now() + 10 * 24 * 60 * 60 * 1000),
+            agentLimit: isAdmin ? 999 : (u?.agentLimit || 1)
           });
         }
         if (c.status === 'fulfilled') newStats.conversations = c.value.total || 0;
@@ -61,7 +66,7 @@ export default function DashboardOverview() {
       <div className="page-header flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black tracking-tight mb-1 uppercase">Control Center</h1>
-          <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Welcome back, {session?.user?.name}</p>
+          <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Welcome back, {user?.name}</p>
         </div>
         <div className="flex gap-3">
            {userInfo?.isPremium ? (
