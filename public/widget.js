@@ -121,9 +121,7 @@
 
     // Force Input Styles via JS to defeat caching/conflicts
     if (input) {
-      input.style.setProperty('color', '#1e293b', 'important');
-      input.style.setProperty('-webkit-text-fill-color', '#1e293b', 'important');
-      input.style.setProperty('background-color', '#ffffff', 'important');
+      input.style.setProperty('outline', 'none', 'important');
     }
 
     // Events with safety checks
@@ -382,13 +380,13 @@
       .maic-w-dots{display:flex;gap:5px;padding:12px 15px}.maic-w-dots span{width:7px;height:7px;border-radius:50%;background:${P};opacity:.4;animation:mwd 1.4s infinite}.maic-w-dots span:nth-child(2){animation-delay:.15s}.maic-w-dots span:nth-child(3){animation-delay:.3s}
       @keyframes mwd{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 
-      #maic-w-footer{background:${footerBg};border-top:1px solid rgba(0,0,0,0.06)}
-      .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:${mutedText}}
-      .maic-w-branding a{color:${P};text-decoration:none;font-weight:600}
+      #maic-w-footer{background:${footerBg} !important;border-top:1px solid rgba(0,0,0,0.06) !important}
+      .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:${mutedText} !important}
+      .maic-w-branding a{color:${P} !important;text-decoration:none !important;font-weight:600 !important}
       #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:12px 18px;background:transparent}
-      #maic-w-input{flex:1;border:1px solid rgba(0,0,0,0.1);border-radius:11px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:rgba(255,255,255,0.05) !important;color:${isBgDark ? '#fff' : '#1e293b'} !important;-webkit-text-fill-color:${isBgDark ? '#fff' : '#1e293b'} !important;scrollbar-width:none !important;-ms-overflow-style:none !important;caret-color:${isBgDark ? '#fff' : '#1e293b'} !important;}
+      #maic-w-input{flex:1;border:1px solid rgba(0,0,0,0.1);border-radius:11px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:rgba(255,255,255,0.08) !important;color:${isBgDark ? '#fff' : '#1e293b'} !important;-webkit-text-fill-color:${isBgDark ? '#fff' : '#1e293b'} !important;scrollbar-width:none !important;-ms-overflow-style:none !important;border:1px solid ${isBgDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'} !important;}
       #maic-w-input::-webkit-scrollbar{display:none !important;}
-      #maic-w-input:focus{border-color:${P};background:#ffffff !important;box-shadow: 0 0 0 2px ${P}20 !important;}
+      #maic-w-input:focus{border-color:${P} !important;box-shadow: 0 0 0 2px ${P}20 !important;}
       #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
       
       #maic-w-social { position:absolute; bottom:8px; display:flex; gap:10px; pointer-events:none; z-index:10; transition:all .4s; }
