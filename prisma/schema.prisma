@@ -52,6 +52,7 @@ model Agent {
   chatBg          String   @default("#f8fafc") @map("chat_bg")
   useGradient     Boolean  @default(false) @map("use_gradient")
   widgetTheme     String   @default("bubble") @map("widget_theme")
+  popupBg         String   @default("#ffffff") @map("popup_bg")
   welcomeMessage  String   @default("Hi there! How can I help you today?") @map("welcome_message")
   botAvatar       String?  @map("bot_avatar")
   isActive       Boolean  @default(true) @map("is_active")

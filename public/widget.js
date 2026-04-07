@@ -61,6 +61,7 @@
           if (!attr('data-welcome') && c.welcomeMessage) CONFIG.welcome = c.welcomeMessage;
           if (!attr('data-bot-avatar') && c.botAvatar) CONFIG.botAvatar = c.botAvatar;
           if (!attr('data-chat-bg') && c.chatBg) CONFIG.chatBg = c.chatBg;
+          if (!attr('data-popup-bg') && c.popupBg) CONFIG.popupBg = c.popupBg;
           CONFIG.socialLinks = c.socialLinks || {};
           console.log('[InmeTech] Config loaded:', CONFIG);
         }
@@ -319,13 +320,8 @@
     return `
       <div id="maic-w-social" class="maic-w-pos-${pos}"></div>
       <div id="maic-w-popup" class="maic-w-hidden maic-w-pos-${pos}">
-        <div class="maic-w-p-body">
-          <div id="maic-w-p-av"></div>
-          <div class="maic-w-p-msg">
-            <div class="maic-w-p-title">Hey <span class="maic-w-p-hl">Boss</span> 👋</div>
-            <div id="maic-w-p-text">How can I help you?</div>
-          </div>
-        </div>
+        <div id="maic-w-p-av"></div>
+        <div id="maic-w-p-text"></div>
       </div>
       <button id="maic-w-trigger" aria-label="Open chat">
         <svg id="maic-w-ic-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -444,22 +440,17 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:0; min-width:180px; max-width:240px; background:rgba(15, 23, 42, 0.9); padding:10px 12px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both, maic-p-glow 3s infinite ease-in-out; z-index:5; visibility:visible !important; }
+      #maic-w-popup { position:absolute; bottom:0; min-width:180px; max-width:240px; background:${c.popupBg || '#ffffff'}; padding:10px 12px; border-radius:16px; box-shadow:0 15px 45px rgba(0,0,0,0.12); border:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; gap:10px; animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible !important; }
       #maic-w-popup.maic-w-pos-right { right:82px; }
       #maic-w-popup.maic-w-pos-left { left:82px; }
-      #maic-w-popup::after { content:''; position:absolute; top:50%; width:14px; height:14px; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(20px); transform:translateY(-50%) rotate(45deg); z-index:-1; }
-      #maic-w-popup.maic-w-pos-right::after { right:-7px; border-top:1px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.1); }
-      #maic-w-popup.maic-w-pos-left::after { left:-7px; border-bottom:1px solid rgba(255,255,255,0.1); border-left:1px solid rgba(255,255,255,0.1); }
-      .maic-w-p-body { display:flex; gap:10px; align-items:center; }
-      #maic-w-p-av { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, ${P}, #000); flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#fff; border:1.5px solid rgba(255,255,255,0.15); box-shadow: 0 0 12px rgba(56, 189, 248, 0.3); }
-      .maic-w-p-msg { flex:1; }
-      .maic-w-p-title { font-size:13px; color:#fff; font-weight:700; margin-bottom:1px; }
-      .maic-w-p-hl { color:#38bdf8; text-shadow:0 0 8px rgba(56, 189, 248, 0.5); }
-      #maic-w-p-text { font-size:11.5px; color:rgba(255,255,255,0.7); line-height:1.4; font-weight:500; }
-      @keyframes maic-p-mag { from { opacity:0; transform:translateX(30px) scale(0.8); } to { opacity:1; transform:translateX(0) scale(1); } }
-      #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag-left, maic-p-glow; }
-      @keyframes maic-p-mag-left { from { opacity:0; transform:translateX(-30px) scale(0.8); } to { opacity:1; transform:translateX(0) scale(1); } }
-      @keyframes maic-p-glow { 0%, 100% { box-shadow:0 25px 50px rgba(0,0,0,0.4), 0 0 10px rgba(56, 189, 248, 0); } 50% { box-shadow:0 25px 50px rgba(0,0,0,0.4), 0 0 20px rgba(56, 189, 248, 0.15); } }
+      #maic-w-popup::after { content:''; position:absolute; top:50%; width:14px; height:14px; background:${c.popupBg || '#ffffff'}; transform:translateY(-50%) rotate(45deg); z-index:-1; }
+      #maic-w-popup.maic-w-pos-right::after { right:-7px; border-top:1px solid rgba(0,0,0,0.06); border-right:1px solid rgba(0,0,0,0.06); }
+      #maic-w-popup.maic-w-pos-left::after { left:-7px; border-bottom:1px solid rgba(0,0,0,0.06); border-left:1px solid rgba(0,0,0,0.06); }
+      #maic-w-p-av { width:32px; height:32px; border-radius:50%; background:${P}15; flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:${P}; border:1px solid ${P}20; }
+      #maic-w-p-text { font-size:12.5px; color:${isDark(c.popupBg || '#ffffff') ? '#fff' : '#1e293b'}; line-height:1.4; font-weight:600; flex:1; }
+      @keyframes maic-p-mag { from { opacity:0; transform:translateX(30px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
+      #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag-left; }
+      @keyframes maic-p-mag-left { from { opacity:0; transform:translateX(-30px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
 
       @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
     `;

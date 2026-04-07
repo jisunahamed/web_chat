@@ -26,6 +26,7 @@ function WidgetPreview({ form }) {
     ? `linear-gradient(135deg, ${form.primaryColor}cc, ${form.useGradient && form.secondaryColor ? form.secondaryColor + 'cc' : form.primaryColor + '99'})`
     : bg;
   const chatBg = form.chatBg || (t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc');
+  const popupBg = form.popupBg || '#ffffff';
   const isDark = (col) => {
     if (!col) return false;
     if (col.startsWith('rgba')) return false;
@@ -102,9 +103,16 @@ function WidgetPreview({ form }) {
         </div>
       </div>
 
-      {/* Trigger & Social Icons */}
       <div style={{alignSelf:'flex-end',display:'flex',alignItems:'center',gap:12, position: 'relative'}}>
-        {/* Animated Social Icons (Slide-out effect simulation) */}
+        {/* Simplified Popup Preview */}
+        <div style={{position:'absolute',bottom:80,right:0,minWidth:180,background:popupBg,padding:'10px 14px',borderRadius:16,boxShadow:'0 10px 30px rgba(0,0,0,0.1)',border:'1px solid rgba(0,0,0,0.05)',display:'flex',alignItems:'center',gap:10,zIndex:10}}>
+          <div style={{width:30,height:30,borderRadius:'50%',background:`${form.primaryColor}15`,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
+            {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
+          </div>
+          <div style={{fontSize:12.5,color:isDark(popupBg)?'#fff':'#1e293b',fontWeight:600,flex:1,lineHeight:1.4}}>
+            {form.welcomeMessage || 'Hi! How can I help?'}
+          </div>
+        </div>
         {sl.messenger && (
           <div style={{width:42,height:42,borderRadius:'50%',background:'#0084FF',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>
@@ -378,6 +386,15 @@ export default function AgentsPage() {
                     <input className="form-input" style={{ flex: 1 }} value={form.chatBg || ''} onChange={upd('chatBg')} placeholder="#f8fafc" />
                   </div>
                   <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: form.chatBg }}></div>
+                </div>
+
+                <div className="form-group">
+                  <label>Popup Background Color</label>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <input type="color" value={form.popupBg || '#ffffff'} onChange={upd('popupBg')} style={{ width: 44, height: 44, padding: 0, border: 'none', borderRadius: 10, cursor: 'pointer', background: 'transparent' }} />
+                    <input className="form-input" style={{ flex: 1 }} value={form.popupBg || ''} onChange={upd('popupBg')} placeholder="#ffffff" />
+                  </div>
+                  <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: form.popupBg || '#ffffff' }}></div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 12 }}>

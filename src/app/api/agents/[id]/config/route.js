@@ -28,6 +28,7 @@ export async function GET(request, { params }) {
         chatBg: true,
         useGradient: true,
         widgetTheme: true,
+        popupBg: true,
         welcomeMessage: true,
         botAvatar: true,
         collectLeads: true,
