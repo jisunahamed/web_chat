@@ -26,12 +26,20 @@ function WidgetPreview({ form }) {
     ? `linear-gradient(135deg, ${form.primaryColor}cc, ${form.useGradient && form.secondaryColor ? form.secondaryColor + 'cc' : form.primaryColor + '99'})`
     : bg;
   const chatBg = form.chatBg || (t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc');
-  const isDark = (color) => {
-    if (!color || color.startsWith('rgba')) return false;
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
+  const isDark = (col) => {
+    if (!col) return false;
+    if (col.startsWith('rgba')) return false;
+    let hex = '';
+    if (col.startsWith('linear')) {
+      const m = col.match(/#([A-Fa-f0-9]{3,6})/);
+      if (m) hex = m[1]; else return true;
+    } else {
+      hex = col.replace('#', '');
+    }
+    if (hex.length < 3) return false;
+    const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.substring(0, 2), 16);
+    const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.substring(2, 4), 16);
+    const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.substring(4, 6), 16);
     return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
   };
   const textColor = isDark(chatBg) ? '#f8fafc' : '#1e293b';

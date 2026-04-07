@@ -295,7 +295,7 @@
       <div id="maic-w-chat" class="maic-w-hidden maic-w-pos-${pos}">
         <div id="maic-w-header">
           <div class="maic-w-hleft">
-            <div class="maic-w-hav">${c.botAvatar ? '' : c.botName.charAt(0)}</div>
+            <div class="maic-w-hav" style="${c.botAvatar ? `background-image:url(${c.botAvatar})` : ''}">${c.botAvatar ? '' : c.botName.charAt(0)}</div>
             <div><div class="maic-w-hname">${esc(c.botName)}</div><div class="maic-w-hstatus"><span class="maic-w-dot"></span> Online</div></div>
           </div>
           <button id="maic-w-min" aria-label="Minimize"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -331,9 +331,16 @@
 
     // Brightness detection for auto-text color
     const isDark = (col) => {
-      if (!col || col.startsWith('rgba') || col.startsWith('linear')) return false;
-      const hex = col.replace('#', '');
-      if (hex.length < 6) return false;
+      if (!col) return false;
+      if (col.startsWith('rgba')) return false;
+      let hex = '';
+      if (col.startsWith('linear')) {
+        const m = col.match(/#([A-Fa-f0-9]{3,6})/);
+        if (m) hex = m[1]; else return true; // Assume dark for brand gradients if no hex found
+      } else {
+        hex = col.replace('#', '');
+      }
+      if (hex.length < 3) return false;
       const r = parseInt(hex.substring(0, 2), 16);
       const g = parseInt(hex.substring(2, 4), 16);
       const b = parseInt(hex.substring(4, 6), 16);
@@ -384,7 +391,8 @@
       .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:${mutedText} !important}
       .maic-w-branding a{color:${P} !important;text-decoration:none !important;font-weight:600 !important}
       #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:12px 18px;background:transparent}
-      #maic-w-input{flex:1;border:1px solid rgba(0,0,0,0.1);border-radius:11px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:rgba(255,255,255,0.08) !important;color:${isBgDark ? '#fff' : '#1e293b'} !important;-webkit-text-fill-color:${isBgDark ? '#fff' : '#1e293b'} !important;scrollbar-width:none !important;-ms-overflow-style:none !important;border:1px solid ${isBgDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'} !important;}
+      #maic-w-input{flex:1;border:1px solid rgba(0,0,0,0.1);border-radius:11px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:rgba(255,255,255,0.08) !important;color:${isBgDark ? '#fff' : '#1e293b'} !important;-webkit-text-fill-color:${isBgDark ? '#fff' : '#1e293b'} !important;scrollbar-width:none !important;-ms-overflow-style:none !important;border:1px solid ${isBgDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'} !important;caret-color:${isBgDark ? '#fff' : '#1e293b'} !important;}
+      #maic-w-input::placeholder{color:${isBgDark ? 'rgba(255,255,255,0.5)' : '#94a3b8'} !important;}
       #maic-w-input::-webkit-scrollbar{display:none !important;}
       #maic-w-input:focus{border-color:${P} !important;box-shadow: 0 0 0 2px ${P}20 !important;}
       #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
