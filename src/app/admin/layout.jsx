@@ -7,30 +7,46 @@ import {
   LogOut, Shield, Zap, Bell, Search, Menu, X, ChevronRight,
   Bot, Ticket
 } from 'lucide-react';
-import { useSession, signOut } from 'next-auth/react';
+import { getMe, logout, getToken } from '@/lib/api';
 
 const AdminLayout = ({ children }) => {
-  const { data: session, status } = useSession();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    // 1. Loading state - do nothing
-    if (status === 'loading') return;
+    const checkAuth = async () => {
+      const token = getToken();
+      if (!token) {
+        console.log('No token found, redirecting to login...');
+        router.replace('/login');
+        return;
+      }
 
-    // 2. Explicit bypass for the primary admin (Case-insensitive & Trimmed)
-    const userEmail = session?.user?.email?.toLowerCase()?.trim();
-    if (userEmail === 'jisunahamed525@gmail.com') {
-      console.log('Admin Access Bypassed for:', userEmail);
-      return;
-    }
+      try {
+        const data = await getMe();
+        const userData = data.user;
+        
+        // Primary admin bypass or role verification
+        const isPrimaryAdmin = userData.email?.toLowerCase()?.trim() === 'jisunahamed525@gmail.com';
+        
+        if (userData.role === 'admin' || isPrimaryAdmin) {
+          setUser(userData);
+          setLoading(false);
+        } else {
+          console.warn('Unauthorized access attempt by:', userData.email);
+          router.replace('/dashboard');
+        }
+      } catch (err) {
+        console.error('Auth verification failed:', err);
+        logout();
+      }
+    };
 
-    // 3. Redirection logic for everyone else
-    if (status === 'unauthenticated' || (session && session.user.role !== 'admin')) {
-      router.replace('/dashboard');
-    }
-  }, [session, status, router]);
+    checkAuth();
+  }, [router]);
 
   const navItems = [
     { name: 'Overview', href: '/admin', icon: LineChart },
@@ -41,23 +57,11 @@ const AdminLayout = ({ children }) => {
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  const isPrimaryAdmin = session?.user?.email?.toLowerCase()?.trim() === 'jisunahamed525@gmail.com';
-
-  if (status === 'loading') {
+  if (loading) {
      return (
        <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white/50">
           <Bot className="text-violet-500 animate-bounce mb-4" size={48} />
           <p className="text-lg font-medium tracking-tighter uppercase">Initializing Systems...</p>
-       </div>
-     );
-  }
-
-  if (!isPrimaryAdmin && (!session || session.user.role !== 'admin')) {
-     return (
-       <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white/50">
-          <Bot className="text-rose-500 mb-4" size={48} />
-          <p className="text-lg font-medium tracking-tighter">UNAUTHORIZED ACCESS</p>
-          <p className="text-[10px] mt-2 opacity-50 uppercase tracking-widest leading-none">Security Protocol Active</p>
        </div>
      );
   }
@@ -69,7 +73,7 @@ const AdminLayout = ({ children }) => {
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-2">
             <Bot className="text-violet-500" size={24} />
-            <span className="font-black text-xl tracking-tighter">ADMIN</span>
+            <span className="font-black text-xl tracking-tighter uppercase">Admin Panel</span>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-zinc-500">
             <X size={20} />
@@ -94,7 +98,7 @@ const AdminLayout = ({ children }) => {
         </nav>
 
         <div className="p-4 border-t border-white/5">
-           <button onClick={() => signOut()} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-400/10 transition-all">
+           <button onClick={() => logout()} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-400/10 transition-all">
               <LogOut size={18} />
               Logout
            </button>
@@ -121,11 +125,11 @@ const AdminLayout = ({ children }) => {
              </div>
              <div className="flex items-center gap-3 pl-6 border-l border-white/5">
                 <div className="text-right">
-                   <p className="text-sm font-bold">{session.user.name}</p>
+                   <p className="text-sm font-bold">{user.name}</p>
                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none">Super Administrator</p>
                 </div>
                 <div className="w-10 h-10 bg-violet-600 rounded-lg flex items-center justify-center font-black shadow-lg shadow-violet-600/10">
-                   {session.user.name.charAt(0)}
+                   {user.name?.charAt(0).toUpperCase()}
                 </div>
              </div>
           </div>
