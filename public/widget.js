@@ -389,7 +389,7 @@
 
       #maic-w-footer{background:${footerBg} !important;border-top:1px solid rgba(0,0,0,0.06) !important}
       .maic-w-branding{text-align:center;padding:0 10px 8px;font-size:11px;color:${mutedText} !important}
-      .maic-w-branding a{color:${P} !important;text-decoration:none !important;font-weight:600 !important}
+      .maic-w-branding a{color:${isBgDark ? '#fff' : P} !important;text-decoration:none !important;font-weight:600 !important}
       #maic-w-bar{display:flex;align-items:flex-end;gap:10px;padding:12px 18px;background:transparent}
       #maic-w-input{flex:1;border:1px solid rgba(0,0,0,0.1);border-radius:11px;padding:10px 15px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:120px;background:rgba(255,255,255,0.08) !important;color:${isBgDark ? '#fff' : '#1e293b'} !important;-webkit-text-fill-color:${isBgDark ? '#fff' : '#1e293b'} !important;scrollbar-width:none !important;-ms-overflow-style:none !important;border:1px solid ${isBgDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'} !important;caret-color:${isBgDark ? '#fff' : '#1e293b'} !important;}
       #maic-w-input::placeholder{color:${isBgDark ? 'rgba(255,255,255,0.5)' : '#94a3b8'} !important;}

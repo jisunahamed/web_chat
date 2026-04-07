@@ -97,7 +97,7 @@ function WidgetPreview({ form }) {
             </div>
           </div>
           <div style={{textAlign:'center',paddingBottom:8,fontSize:11,color:mutedTextColor}}>
-            Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
+            Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:isDark(chatBg) ? '#f8fafc' : form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
           </div>
         </div>
       </div>
