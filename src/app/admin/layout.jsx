@@ -27,8 +27,12 @@ const AdminLayout = ({ children }) => {
 
       try {
         const data = await getMe();
-        const userData = data.user;
+        const userData = data?.user;
         
+        if (!userData) {
+          throw new Error('User data not found in session');
+        }
+
         // Primary admin bypass or role verification
         const isPrimaryAdmin = userData.email?.toLowerCase()?.trim() === 'jisunahamed525@gmail.com';
         
@@ -57,7 +61,7 @@ const AdminLayout = ({ children }) => {
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  if (loading) {
+  if (loading || !user) {
      return (
        <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white/50">
           <Bot className="text-violet-500 animate-bounce mb-4" size={48} />
@@ -73,7 +77,7 @@ const AdminLayout = ({ children }) => {
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-2">
             <Bot className="text-violet-500" size={24} />
-            <span className="font-black text-xl tracking-tighter uppercase">Admin Panel</span>
+            <span className="font-black text-xl tracking-tighter uppercase text-white">Admin Panel</span>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-zinc-500">
             <X size={20} />
@@ -125,17 +129,17 @@ const AdminLayout = ({ children }) => {
              </div>
              <div className="flex items-center gap-3 pl-6 border-l border-white/5">
                 <div className="text-right">
-                   <p className="text-sm font-bold">{user.name}</p>
+                   <p className="text-sm font-bold text-white">{user?.name || 'Admin'}</p>
                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none">Super Administrator</p>
                 </div>
-                <div className="w-10 h-10 bg-violet-600 rounded-lg flex items-center justify-center font-black shadow-lg shadow-violet-600/10">
-                   {user.name?.charAt(0).toUpperCase()}
+                <div className="w-10 h-10 bg-violet-600 rounded-lg flex items-center justify-center font-black shadow-lg shadow-violet-600/10 text-white">
+                   {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
                 </div>
              </div>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8 lg:p-12 relative">
+        <div className="flex-1 overflow-y-auto p-8 lg:p-12 relative text-white">
            {children}
         </div>
       </main>
