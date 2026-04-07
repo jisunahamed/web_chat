@@ -141,8 +141,7 @@
 
     if (popup && pText) {
       if (CONFIG.botAvatar) $('#maic-w-p-av').style.backgroundImage = 'url(' + CONFIG.botAvatar + ')';
-      else $('#maic-w-p-av text').textContent = CONFIG.botName.charAt(0);
-      pText.textContent = CONFIG.welcome;
+      else $('#maic-w-p-av').textContent = CONFIG.botName.charAt(0);
       setTimeout(() => {
         if (!isOpen && !localStorage.getItem('maic_p_closed')) {
           popup.classList.remove('maic-w-hidden');
@@ -158,8 +157,8 @@
 
     function playPop() {
       try {
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
-        audio.volume = 0.4;
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.volume = 0.3;
         audio.play();
       } catch (e) {}
     }
@@ -322,7 +321,10 @@
       <div id="maic-w-popup" class="maic-w-hidden maic-w-pos-${pos}">
         <div class="maic-w-p-body">
           <div id="maic-w-p-av"></div>
-          <div id="maic-w-p-text"></div>
+          <div class="maic-w-p-msg">
+            <div class="maic-w-p-title">Hey <span class="maic-w-p-hl">Boss</span> 👋</div>
+            <div id="maic-w-p-text">How can I help you?</div>
+          </div>
         </div>
         <button id="maic-w-p-close" title="Close">&times;</button>
       </div>
@@ -443,20 +445,24 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:0; min-width:200px; max-width:280px; background:rgba(255,255,255,0.85); padding:10px 14px; border-radius:16px; box-shadow:0 15px 45px rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.5); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); animation:maic-p-side-in .7s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible !important; }
-      #maic-w-popup.maic-w-pos-right { right:82px; }
-      #maic-w-popup.maic-w-pos-left { left:82px; }
-      #maic-w-popup::after { content:''; position:absolute; top:50%; width:14px; height:14px; background:rgba(255,255,255,0.85); backdrop-filter:blur(18px); transform:translateY(-50%) rotate(45deg); z-index:-1; }
-      #maic-w-popup.maic-w-pos-right::after { right:-7px; border-top:1px solid rgba(255,255,255,0.4); border-right:1px solid rgba(255,255,255,0.4); }
-      #maic-w-popup.maic-w-pos-left::after { left:-7px; border-bottom:1px solid rgba(255,255,255,0.4); border-left:1px solid rgba(255,255,255,0.4); }
-      .maic-w-p-body { display:flex; gap:12px; align-items:center; }
-      #maic-w-p-av { width:36px; height:36px; border-radius:12px; background:${P}15; flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:${P}; border:1.5px solid ${P}25; }
-      #maic-w-p-text { font-size:13.5px; color:#1e293b; line-height:1.4; font-weight:600; padding-right:10px; flex:1; }
-      #maic-w-p-close { position:absolute; top:-8px; right:-8px; width:24px; height:24px; border-radius:50%; border:none; background:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.12); font-size:14px; color:#94a3b8; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-      #maic-w-p-close:hover { background:#fef2f2; color:#ef4444; transform:scale(1.15) rotate(90deg); }
-      @keyframes maic-p-side-in { from { opacity:0; transform:translateX(20px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
-      #maic-w-popup.maic-w-pos-left { animation-name: maic-p-side-in-left; }
-      @keyframes maic-p-side-in-left { from { opacity:0; transform:translateX(-20px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
+      #maic-w-popup { position:absolute; bottom:0; min-width:240px; max-width:320px; background:rgba(15, 23, 42, 0.9); padding:14px; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both, maic-p-glow 3s infinite ease-in-out; z-index:5; visibility:visible !important; }
+      #maic-w-popup.maic-w-pos-right { right:86px; }
+      #maic-w-popup.maic-w-pos-left { left:86px; }
+      #maic-w-popup::after { content:''; position:absolute; top:50%; width:16px; height:16px; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(20px); transform:translateY(-50%) rotate(45deg); z-index:-1; }
+      #maic-w-popup.maic-w-pos-right::after { right:-8px; border-top:1px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.1); }
+      #maic-w-popup.maic-w-pos-left::after { left:-8px; border-bottom:1px solid rgba(255,255,255,0.1); border-left:1px solid rgba(255,255,255,0.1); }
+      .maic-w-p-body { display:flex; gap:14px; align-items:center; }
+      #maic-w-p-av { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, ${P}, #000); flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#fff; border:2px solid rgba(255,255,255,0.15); box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+      .maic-w-p-msg { flex:1; }
+      .maic-w-p-title { font-size:14px; color:#fff; font-weight:700; margin-bottom:2px; }
+      .maic-w-p-hl { color:#38bdf8; text-shadow:0 0 8px rgba(56, 189, 248, 0.5); }
+      #maic-w-p-text { font-size:12.5px; color:rgba(255,255,255,0.7); line-height:1.4; font-weight:500; }
+      #maic-w-p-close { position:absolute; top:-10px; right:-10px; width:26px; height:26px; border-radius:50%; border:none; background:#1e293b; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-size:13px; color:#94a3b8; cursor:pointer; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.15); transition:all 0.3s; }
+      #maic-w-p-close:hover { background:#ef4444; color:#fff; transform:scale(1.1) rotate(90deg); border-color:#ef4444; }
+      @keyframes maic-p-mag { from { opacity:0; transform:translateX(30px) scale(0.8); } to { opacity:1; transform:translateX(0) scale(1); } }
+      #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag-left, maic-p-glow; }
+      @keyframes maic-p-mag-left { from { opacity:0; transform:translateX(-30px) scale(0.8); } to { opacity:1; transform:translateX(0) scale(1); } }
+      @keyframes maic-p-glow { 0%, 100% { box-shadow:0 25px 60px rgba(0,0,0,0.4), 0 0 10px rgba(56, 189, 248, 0); } 50% { box-shadow:0 25px 60px rgba(0,0,0,0.4), 0 0 20px rgba(56, 189, 248, 0.15); } }
 
       @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
     `;
