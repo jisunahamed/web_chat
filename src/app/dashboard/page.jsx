@@ -155,7 +155,7 @@ export default function DashboardOverview() {
               <p className="text-white/80 text-sm mb-8 leading-relaxed">
                  Install our specialized WordPress plugin to connect your AI agents seamlessly to your site.
               </p>
-              <a href={pluginInfo.path} download className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 shadow-xl shadow-black/10">
+              <a href={pluginInfo.path} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 shadow-xl shadow-black/10">
                  Download ZIP <ArrowRight size={14} />
               </a>
            </div>
