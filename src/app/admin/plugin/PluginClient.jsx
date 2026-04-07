@@ -117,14 +117,33 @@ const PluginManagement = ({ initialSettings }) => {
                </div>
                
                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-zinc-600 tracking-widest pl-1">Public Download URL (Internal)</label>
+                  <label className="text-[10px] font-black uppercase text-zinc-600 tracking-widest pl-1 flex items-center justify-between">
+                    <span>Public Download URL</span>
+                    <span className="text-[9px] text-amber-500 lowercase font-medium italic">Hint: Use manual URL for Vercel/DigitalOcean hosting</span>
+                  </label>
                   <div className="flex gap-2">
-                    <div className="flex-1 px-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-mono text-zinc-500 overflow-hidden text-ellipsis whitespace-nowrap">
-                       {zipPath}
+                    <div className="relative flex-1 group">
+                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-hover:text-violet-500">
+                          <Globe size={16} />
+                       </div>
+                       <input 
+                         type="text"
+                         value={zipPath}
+                         onChange={(e) => setZipPath(e.target.value)}
+                         placeholder="https://example.com/plugin.zip"
+                         className="w-full pl-12 pr-12 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-mono outline-none focus:border-violet-600 transition-all"
+                       />
+                       <button 
+                         type="button"
+                         onClick={() => {
+                           navigator.clipboard.writeText(zipPath);
+                           alert("URL copied to clipboard!");
+                         }}
+                         className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white p-1"
+                       >
+                          <Copy size={16} />
+                       </button>
                     </div>
-                    <button className="px-6 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors">
-                       <Copy size={16} />
-                    </button>
                   </div>
                </div>
             </div>
