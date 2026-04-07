@@ -124,13 +124,15 @@
       input.style.setProperty('background-color', '#ffffff', 'important');
     }
 
-    // Events
-    triggerBtn.addEventListener('click', toggle);
-    minBtn.addEventListener('click', toggle);
-    sendBtn.addEventListener('click', send);
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
-    input.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
-    leadSubBtn.addEventListener('click', submitLead);
+    // Events with safety checks
+    if (triggerBtn) triggerBtn.addEventListener('click', toggle);
+    if (minBtn) minBtn.addEventListener('click', toggle);
+    if (sendBtn) sendBtn.addEventListener('click', send);
+    if (input) {
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+      input.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
+    }
+    if (leadSubBtn) leadSubBtn.addEventListener('click', submitLead);
 
     // Initialization complete. Social icons will render on toggle.
 
