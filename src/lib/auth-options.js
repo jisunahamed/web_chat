@@ -9,6 +9,9 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       async profile(profile) {
+        if (!process.env.GOOGLE_CLIENT_ID) {
+          console.error("CRITICAL: GOOGLE_CLIENT_ID is missing from environment!");
+        }
         const user = await prisma.user.upsert({
           where: { email: profile.email },
           update: { name: profile.name },
