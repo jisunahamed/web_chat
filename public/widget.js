@@ -134,11 +134,40 @@
     }
     if (leadSubBtn) leadSubBtn.addEventListener('click', submitLead);
 
+    // ─── Welcome Popup Timer (3s) ───────────────────
+    const popup = $('#maic-w-popup');
+    const pClose = $('#maic-w-p-close');
+    const pText = $('#maic-w-p-text');
+
+    if (popup && pText) {
+      pText.textContent = CONFIG.welcome;
+      setTimeout(() => {
+        if (!isOpen && !localStorage.getItem('maic_p_closed')) {
+          popup.classList.remove('maic-w-hidden');
+          playPop();
+        }
+      }, 3000);
+    }
+    if (pClose) pClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popup.classList.add('maic-w-hidden');
+      localStorage.setItem('maic_p_closed', '1');
+    });
+
+    function playPop() {
+      try {
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+        audio.volume = 0.4;
+        audio.play();
+      } catch (e) {}
+    }
+
     // Initialization complete. Social icons will render on toggle.
 
     function toggle() {
       isOpen = !isOpen;
       chatWin.classList.toggle('maic-w-hidden', !isOpen);
+      popup.classList.add('maic-w-hidden'); // Hide popup when opening chat
       iconChat.style.display = isOpen ? 'none' : 'block';
       iconClose.style.display = isOpen ? 'block' : 'none';
 
@@ -288,6 +317,10 @@
     const pos = c.position;
     return `
       <div id="maic-w-social" class="maic-w-pos-${pos}"></div>
+      <div id="maic-w-popup" class="maic-w-hidden maic-w-pos-${pos}">
+        <button id="maic-w-p-close" title="Close">&times;</button>
+        <div id="maic-w-p-text"></div>
+      </div>
       <button id="maic-w-trigger" aria-label="Open chat">
         <svg id="maic-w-ic-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <svg id="maic-w-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -404,6 +437,17 @@
       .maic-w-social-icon { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; box-shadow:0 4px 12px rgba(0,0,0,0.15); opacity:0; transform:scale(0.5); transition:all .3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
+      
+      #maic-w-popup { position:absolute; bottom:85px; width:220px; background:#fff; padding:12px 34px 12px 16px; border-radius:14px; box-shadow:0 8px 32px rgba(0,0,0,0.15); border:1px solid rgba(0,0,0,0.06); animation:maic-p-in .5s cubic-bezier(0.18, 0.89, 0.32, 1.28) both; z-index:5; }
+      #maic-w-popup.maic-w-pos-right { right:0; transform-origin: bottom right; }
+      #maic-w-popup.maic-w-pos-left { left:0; transform-origin: bottom left; }
+      #maic-w-popup::after { content:''; position:absolute; bottom:-8px; width:15px; height:15px; background:#fff; transform:rotate(45deg); border-right:1px solid rgba(0,0,0,0.06); border-bottom:1px solid rgba(0,0,0,0.06); }
+      #maic-w-popup.maic-w-pos-right::after { right:22px; }
+      #maic-w-popup.maic-w-pos-left::after { left:22px; }
+      #maic-w-p-text { font-size:13px; color:#1e293b; line-height:1.4; font-weight:500; }
+      #maic-w-p-close { position:absolute; top:6px; right:8px; border:none; background:none; font-size:18px; color:#94a3b8; cursor:pointer; padding:0 4px; }
+      #maic-w-p-close:hover { color:#64748b; }
+      @keyframes maic-p-in { from { opacity:0; transform:scale(0.8) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
 
       @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
     `;
