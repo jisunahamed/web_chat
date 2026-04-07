@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import prisma from './db';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
@@ -19,10 +21,20 @@ export function verifyToken(request) {
 }
 
 export async function getAuthUser(request) {
-  const decoded = verifyToken(request);
+  let decoded = verifyToken(request);
+  
+  // Fallback to NextAuth Session for Social Logins
+  if (!decoded) {
+    const session = await getServerSession(authOptions);
+    if (session?.user) {
+      decoded = { email: session.user.email };
+    }
+  }
+
   if (!decoded) return null;
+
   const user = await prisma.user.findUnique({
-    where: { id: decoded.id },
+    where: decoded.id ? { id: decoded.id } : { email: decoded.email },
     select: { id: true, email: true, name: true, company: true, role: true, apiKey: true, createdAt: true },
   });
   return user;

@@ -18,13 +18,8 @@ const AdminLayout = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = getToken();
-      if (!token) {
-        console.log('No token found, redirecting to login...');
-        router.replace('/login');
-        return;
-      }
-
+      // We don't strictly require a local 'maic_token' anymore because 
+      // Google Login (NextAuth) uses cookies which the server can verify.
       try {
         const data = await getMe();
         const userData = data?.user;
