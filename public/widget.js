@@ -333,7 +333,7 @@
 
     // Brightness detection for auto-text color
     const isDark = (col) => {
-      if (!col || col.startsWith('rgba')) return false;
+      if (!col || col.startsWith('rgba') || col.startsWith('linear')) return false;
       const hex = col.replace('#', '');
       if (hex.length < 6) return false;
       const r = parseInt(hex.substring(0, 2), 16);

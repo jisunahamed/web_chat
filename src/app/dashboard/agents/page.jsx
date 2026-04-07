@@ -352,9 +352,21 @@ export default function AgentsPage() {
                 </div>
 
                 <div className="form-group">
-                  <label>Chat Area Background Color</label>
+                  <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Chat Area Background Color</span>
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const bg = colorBg(form);
+                        setForm({ ...form, chatBg: bg });
+                      }}
+                      className="text-[10px] font-black uppercase text-violet-500 hover:text-violet-400 tracking-widest pl-1"
+                    >
+                      ✨ Use Brand Color
+                    </button>
+                  </label>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <input type="color" value={form.chatBg || '#f8fafc'} onChange={upd('chatBg')} style={{ width: 44, height: 44, padding: 0, border: 'none', borderRadius: 10, cursor: 'pointer', background: 'transparent' }} />
+                    <input type="color" value={form.chatBg?.startsWith('linear') ? '#ffffff' : (form.chatBg || '#f8fafc')} onChange={upd('chatBg')} style={{ width: 44, height: 44, padding: 0, border: 'none', borderRadius: 10, cursor: 'pointer', background: 'transparent' }} />
                     <input className="form-input" style={{ flex: 1 }} value={form.chatBg || ''} onChange={upd('chatBg')} placeholder="#f8fafc" />
                   </div>
                   <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: form.chatBg }}></div>
