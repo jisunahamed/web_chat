@@ -27,6 +27,7 @@ function WidgetPreview({ form }) {
     : bg;
   const chatBg = form.chatBg || (t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc');
   const popupBg = form.popupBg || '#ffffff';
+  const faqs = form.faqs || [];
   const isDark = (col) => {
     if (!col) return false;
     if (col.startsWith('rgba')) return false;
@@ -72,21 +73,46 @@ function WidgetPreview({ form }) {
           </div>
         </div>
 
-        {/* Messages */}
-        <div style={{padding:'20px 16px',background:chatBg,display:'flex',flexDirection:'column',gap:14,minHeight:200}}>
-          {/* Bot */}
-          <div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
-            <div style={{width:26,height:26,borderRadius:t==='minimal'?6:'50%',background:`${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
-              {form.name ? form.name.charAt(0) : 'A'}
+        {/* Messages / FAQ Starter */}
+        <div style={{padding:'20px 16px',background:chatBg,display:'flex',flexDirection:'column',gap:14,minHeight:200,maxHeight:300,overflowY:'auto'}}>
+          {faqs.length > 0 ? (
+            <div style={{animation:'mwf .3s both'}}>
+              <div style={{textAlign:'center',marginBottom:20}}>
+                <div style={{fontSize:18,fontWeight:700,color:textColor,marginBottom:4}}>Hello :)</div>
+                <div style={{fontSize:12,opacity:0.6,color:textColor}}>Here's what you can ask me</div>
+              </div>
+              {faqs.map((cat, ci) => (
+                <div key={ci} style={{marginBottom:16}}>
+                  <div style={{fontSize:10,fontWeight:700,color:mutedTextColor,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:8,opacity:0.7}}>{cat.category}</div>
+                  <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                    {cat.questions.map((q, qi) => (
+                      <div key={qi} style={{background:'#fff',padding:'8px 12px',borderRadius:20,fontSize:12,fontWeight:600,color:'#1e293b',display:'flex',alignItems:'center',gap:8,boxShadow:'0 2px 8px rgba(0,0,0,0.05)',border:'1px solid rgba(0,0,0,0.05)'}}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color:form.primaryColor}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        {q}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div style={{fontSize:11,fontWeight:600,color:form.primaryColor,marginTop:4,cursor:'pointer',display:'inline-block'}}>+ See all suggestions</div>
             </div>
-            <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:t==='glass'?'rgba(255,255,255,0.7)':'#fff',color: '#1e293b',border:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'?2:4,boxShadow:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:t==='glass'?'blur(8px)':'none'}}>
-              {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
-            </div>
-          </div>
-          {/* User */}
-          <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:bg,color:'#fff',borderBottomRightRadius:t==='minimal'?2:4,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
-            I have a question!
-          </div>
+          ) : (
+            <>
+              {/* Bot */}
+              <div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
+                <div style={{width:26,height:26,borderRadius:t==='minimal'?6:'50%',background:`${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
+                  {form.name ? form.name.charAt(0) : 'A'}
+                </div>
+                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:t==='glass'?'rgba(255,255,255,0.7)':'#fff',color: '#1e293b',border:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'?2:4,boxShadow:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:t==='glass'?'blur(8px)':'none'}}>
+                  {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
+                </div>
+              </div>
+              {/* User */}
+              <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:bg,color:'#fff',borderBottomRightRadius:t==='minimal'?2:4,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
+                I have a question!
+              </div>
+            </>
+          )}
         </div>
 
         {/* Input & Footer Branding */}
@@ -152,7 +178,8 @@ export default function AgentsPage() {
     primaryColor: '#7C3AED', secondaryColor: '#EC4899', chatBg: '#f8fafc',
     useGradient: false, widgetTheme: 'bubble', botAvatar: '',
     integrationType: 'both',
-    socialLinks: { messenger: '', whatsapp: '', telegram: '' }
+    socialLinks: { messenger: '', whatsapp: '', telegram: '' },
+    faqs: []
   };
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
@@ -395,6 +422,46 @@ export default function AgentsPage() {
                     <input className="form-input" style={{ flex: 1 }} value={form.popupBg || ''} onChange={upd('popupBg')} placeholder="#ffffff" />
                   </div>
                   <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: form.popupBg || '#ffffff' }}></div>
+                </div>
+
+                <div className="form-group">
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+                    <label style={{margin:0}}>FAQ / Starter Questions</label>
+                    <button type="button" onClick={() => setForm({...form, faqs: [...(form.faqs||[]), {category:'', questions:['']}]})} style={{fontSize:12,padding:'4px 10px',background:form.primaryColor+'15',color:form.primaryColor,border:'none',borderRadius:6,fontWeight:600,cursor:'pointer'}}>+ Add Category</button>
+                  </div>
+                  <div style={{display:'flex',flexDirection:'column',gap:16}}>
+                    {(form.faqs || []).map((cat, ci) => (
+                      <div key={ci} style={{background:'#f8fafc',padding:12,borderRadius:12,border:'1px solid #e2e8f0'}}>
+                        <div style={{display:'flex',gap:8,marginBottom:12}}>
+                          <input className="form-input" style={{flex:1,fontWeight:700,fontSize:12}} value={cat.category} placeholder="Category Name (e.g. SHOPPING)" onChange={(e)=>{
+                            const n = [...form.faqs]; n[ci].category = e.target.value.toUpperCase(); setForm({...form, faqs:n});
+                          }} />
+                          <button type="button" onClick={()=>{
+                            const n = [...form.faqs]; n.splice(ci,1); setForm({...form, faqs:n});
+                          }} style={{padding:'4px 8px',background:'#fee2e2',color:'#ef4444',border:'none',borderRadius:6,cursor:'pointer'}}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          </button>
+                        </div>
+                        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                          {cat.questions.map((q, qi) => (
+                            <div key={qi} style={{display:'flex',gap:8}}>
+                              <input className="form-input" style={{flex:1,fontSize:12}} value={q} placeholder="Question..." onChange={(e)=>{
+                                const n = [...form.faqs]; n[ci].questions[qi] = e.target.value; setForm({...form, faqs:n});
+                              }} />
+                              <button type="button" onClick={()=>{
+                                const n = [...form.faqs]; n[ci].questions.splice(qi,1); setForm({...form, faqs:n});
+                              }} style={{padding:8,opacity:0.5,border:'none',background:'transparent',cursor:'pointer'}}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                              </button>
+                            </div>
+                          ))}
+                          <button type="button" onClick={()=>{
+                            const n = [...form.faqs]; n[ci].questions.push(''); setForm({...form, faqs:n});
+                          }} style={{alignSelf:'flex-start',fontSize:11,fontWeight:600,color:form.primaryColor,background:'none',border:'none',padding:'4px 0',cursor:'pointer'}}>+ Add Question</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 12 }}>

@@ -57,6 +57,7 @@ export async function POST(request) {
         secondaryColor: body.secondaryColor || '#EC4899',
         chatBg: body.chatBg || '#f8fafc',
         popupBg: body.popupBg || '#ffffff',
+        faqs: body.faqs || [],
         useGradient: Boolean(body.useGradient),
         widgetTheme: body.widgetTheme || 'bubble',
         welcomeMessage: body.welcomeMessage || 'Hi there! How can I help you today?',

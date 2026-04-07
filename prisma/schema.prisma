@@ -55,6 +55,7 @@ model Agent {
   popupBg         String   @default("#ffffff") @map("popup_bg")
   welcomeMessage  String   @default("Hi there! How can I help you today?") @map("welcome_message")
   botAvatar       String?  @map("bot_avatar")
+  faqs            Json?    @map("faqs")
   isActive       Boolean  @default(true) @map("is_active")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")

@@ -62,6 +62,7 @@
           if (!attr('data-bot-avatar') && c.botAvatar) CONFIG.botAvatar = c.botAvatar;
           if (!attr('data-chat-bg') && c.chatBg) CONFIG.chatBg = c.chatBg;
           if (!attr('data-popup-bg') && c.popupBg) CONFIG.popupBg = c.popupBg;
+          if (!attr('data-faqs') && c.faqs) CONFIG.faqs = c.faqs || [];
           CONFIG.socialLinks = c.socialLinks || {};
           console.log('[InmeTech] Config loaded:', CONFIG);
         }
@@ -141,8 +142,6 @@
     const pText = $('#maic-w-p-text');
 
     if (popup && pText) {
-      if (CONFIG.botAvatar) $('#maic-w-p-av').style.backgroundImage = 'url(' + CONFIG.botAvatar + ')';
-      else $('#maic-w-p-av').textContent = CONFIG.botName.charAt(0);
       setTimeout(() => {
         if (!isOpen && !localStorage.getItem('maic_p_closed')) {
           popup.classList.remove('maic-w-hidden');
@@ -184,10 +183,66 @@
       }
 
       if (isOpen) {
-        if (msgArea.children.length === 0) addMsg('bot', CONFIG.welcome);
+        if (msgArea.children.length === 0) {
+          if (CONFIG.faqs && CONFIG.faqs.length > 0) renderFaqView();
+          else addMsg('bot', CONFIG.welcome);
+        }
         input.focus();
         scroll();
       }
+    }
+
+    function renderFaqView() {
+      msgArea.innerHTML = `
+        <div class="maic-w-faq-cont">
+          <div class="maic-w-faq-h">
+            <div class="maic-w-faq-title">Hello :)</div>
+            <div class="maic-w-faq-sub">Here's what you can ask me</div>
+          </div>
+          ${CONFIG.faqs.map(cat => `
+            <div class="maic-w-faq-cat-group">
+              <div class="maic-w-faq-cat">${cat.category}</div>
+              <div class="maic-w-faq-list">
+                ${cat.questions.map(q => `
+                  <div class="maic-w-faq-pill" data-q="${esc(q)}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span>${esc(q)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+          <div class="maic-w-faq-more">+ See all suggestions</div>
+        </div>
+      `;
+      msgArea.querySelectorAll('.maic-w-faq-pill').forEach(p => {
+        p.onclick = () => {
+          const text = p.getAttribute('data-q');
+          msgArea.innerHTML = '';
+          sendMessage(text);
+        };
+      });
+    }
+
+    function sendMessage(text) {
+      if (!text || isSending) return;
+      addMsg('user', text);
+      isSending = true;
+      showTyping();
+
+      fetch(CONFIG.apiUrl + '/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Api-Key': CONFIG.apiKey },
+        body: JSON.stringify({ agent_id: CONFIG.agentId, session_id: sessionId, message: text, user_info: userInfo }),
+      })
+        .then(r => r.json())
+        .then(d => {
+          hideTyping(); isSending = false;
+          if (d.reply) addMsg('bot', d.reply);
+          else if (d.data?.reply) addMsg('bot', d.data.reply);
+          else addMsg('bot', 'Sorry, something went wrong.');
+        })
+        .catch(() => { hideTyping(); isSending = false; addMsg('bot', 'Connection error.'); });
     }
 
     function renderSocial(cont) {
@@ -208,26 +263,10 @@
 
     function send() {
       const text = input.value.trim();
-      if (!text || isSending) return;
-      addMsg('user', text);
       input.value = '';
       input.style.height = 'auto';
-      isSending = true;
-      showTyping();
-
-      fetch(CONFIG.apiUrl + '/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Api-Key': CONFIG.apiKey },
-        body: JSON.stringify({ agent_id: CONFIG.agentId, session_id: sessionId, message: text, user_info: userInfo }),
-      })
-        .then(r => r.json())
-        .then(d => {
-          hideTyping(); isSending = false;
-          if (d.reply) addMsg('bot', d.reply);
-          else if (d.data?.reply) addMsg('bot', d.data.reply);
-          else addMsg('bot', 'Sorry, something went wrong.');
-        })
-        .catch(() => { hideTyping(); isSending = false; addMsg('bot', 'Connection error.'); });
+      if (msgArea.querySelector('.maic-w-faq-cont')) msgArea.innerHTML = '';
+      sendMessage(text);
     }
 
     function addMsg(who, text) {
@@ -320,12 +359,11 @@
     return `
       <div id="maic-w-social" class="maic-w-pos-${pos}"></div>
       <div id="maic-w-popup" class="maic-w-hidden maic-w-pos-${pos}">
-        <div id="maic-w-p-av"></div>
-        <div id="maic-w-p-text"></div>
+        <div id="maic-w-p-text">${c.welcome.length > 28 ? c.welcome.substring(0, 25) + '...' : c.welcome}</div>
       </div>
       <button id="maic-w-trigger" aria-label="Open chat">
-        <svg id="maic-w-ic-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <svg id="maic-w-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <div id="maic-w-ic-chat" class="maic-w-tr-av" style="${c.botAvatar ? `background-image:url(${c.botAvatar})` : ''}">${c.botAvatar ? '' : c.botName.charAt(0)}</div>
+        <svg id="maic-w-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none; color:#1e293b"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div id="maic-w-chat" class="maic-w-hidden maic-w-pos-${pos}">
         <div id="maic-w-header">
@@ -394,11 +432,12 @@
 
     return `
       #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;overflow:visible !important;}
-      #maic-w-trigger{width:62px;height:62px;border-radius:${triggerR};border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:transform .35s;position:relative;z-index:2}
-      #maic-w-trigger:hover{transform:scale(1.1) translateY(-3px)}
-      #maic-w-trigger::before{content:'';position:absolute;inset:-5px;border-radius:${triggerR};background:${P};opacity:0;animation:mwp 2.5s infinite;z-index:-1}
-      @keyframes mwp{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.2;transform:scale(1.3)}}
-
+      #maic-w-trigger{width:60px;height:60px;border-radius:50%;border:none;background:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.15);transition:transform .35s;position:relative;z-index:2}
+      #maic-w-trigger:hover{transform:scale(1.08) translateY(-2px)}
+      #maic-w-trigger::before{content:'';position:absolute;top:4px;right:4px;width:12px;height:12px;background:#4438ca;border-radius:50%;border:2px solid #fff;z-index:3}
+      #maic-w-trigger::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-top:8px solid #fff}
+      .maic-w-tr-av{width:46px;height:46px;border-radius:50%;background:#f1f5f9;background-size:cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1e293b;font-size:16px}
+      
       #maic-w-chat{position:absolute;bottom:80px;${pos}:0;width:380px;max-height:620px;background:${chatBg};border-radius:${chatR};box-shadow:${chatShadow};display:flex;flex-direction:column;overflow:hidden;transition:all .35s;border:${chatBorder};transform-origin:bottom ${pos};${blurVal}}
       #maic-w-chat.maic-w-hidden{opacity:0;transform:scale(.85) translateY(20px);pointer-events:none}
       #maic-w-header{background:${headerBg};color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;${headerBlur}}
@@ -440,17 +479,27 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:0; min-width:140px; max-width:220px; background:${c.popupBg || '#ffffff'}; padding:6px 12px; border-radius:12px; box-shadow:0 12px 35px rgba(0,0,0,0.1); border:1px solid rgba(0,0,0,0.05); display:flex; align-items:center; gap:8px; animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible !important; }
-      #maic-w-popup.maic-w-pos-right { right:82px; }
-      #maic-w-popup.maic-w-pos-left { left:82px; }
-      #maic-w-popup::after { content:''; position:absolute; top:50%; width:12px; height:12px; background:${c.popupBg || '#ffffff'}; transform:translateY(-50%) rotate(45deg); z-index:-1; }
-      #maic-w-popup.maic-w-pos-right::after { right:-6px; border-top:1px solid rgba(0,0,0,0.04); border-right:1px solid rgba(0,0,0,0.04); }
-      #maic-w-popup.maic-w-pos-left::after { left:-6px; border-bottom:1px solid rgba(0,0,0,0.04); border-left:1px solid rgba(0,0,0,0.04); }
-      #maic-w-p-av { width:26px; height:26px; border-radius:50%; background:${P}15; flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:${P}; border:1px solid ${P}15; }
-      #maic-w-p-text { font-size:11.5px; color:${isDark(c.popupBg || '#ffffff') ? '#fff' : '#1e293b'}; line-height:1.3; font-weight:600; flex:1; }
+      #maic-w-popup { position:absolute; bottom:5px; min-width:140px; max-width:240px; background:#ffffff; padding:8px 16px; border-radius:50px; box-shadow:0 8px 30px rgba(0,0,0,0.12); border:1px solid rgba(0,0,0,0.04); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible !important; display:flex; align-items:center; justify-content:center; }
+      #maic-w-popup.maic-w-pos-right { right:76px; }
+      #maic-w-popup.maic-w-pos-left { left:76px; }
+      #maic-w-popup::after { display:none; }
+      #maic-w-p-text { font-size:12.5px; color:#1e293b; line-height:1.4; font-weight:600; white-space:nowrap; }
       @keyframes maic-p-mag { from { opacity:0; transform:translateX(30px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
       #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag-left; }
       @keyframes maic-p-mag-left { from { opacity:0; transform:translateX(-30px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
+
+      .maic-w-faq-cont { animation:mwf .4s both; }
+      .maic-w-faq-h { text-align:center; margin-bottom:20px; }
+      .maic-w-faq-title { font-size:20px; font-weight:700; color:#1e293b; margin-bottom:4px; }
+      .maic-w-faq-sub { font-size:13px; color:#64748b; font-weight:500; }
+      .maic-w-faq-cat-group { margin-bottom:18px; }
+      .maic-w-faq-cat { font-size:11px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px; padding-left:2px; }
+      .maic-w-faq-list { display:flex; flexDirection:column; gap:9px; }
+      .maic-w-faq-pill { display:flex; align-items:center; gap:10px; background:#ffffff; padding:10px 14px; border-radius:22px; border:1px solid rgba(0,0,0,0.06); box-shadow:0 3px 12px rgba(0,0,0,0.04); cursor:pointer; transition:all 0.2s; color:#1e293b; font-size:13.5px; font-weight:600; }
+      .maic-w-faq-pill:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.08); border-color:rgba(0,0,0,0.12); }
+      .maic-w-faq-pill svg { color:${P}; flex-shrink:0; }
+      .maic-w-faq-more { font-size:12px; font-weight:700; color:${P}; margin-top:6px; cursor:pointer; padding-left:4px; opacity:0.8; transition:opacity 0.2s; }
+      .maic-w-faq-more:hover { opacity:1; }
 
       @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
     `;
