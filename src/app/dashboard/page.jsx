@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getAgents, getLeads, getConversations, getAnalytics } from '@/lib/api';
+import { getSystemSettings } from '@/app/actions/adminActions';
 import { Download, Zap, Shield, AlertCircle, CheckCircle, Package, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -11,16 +12,25 @@ export default function DashboardOverview() {
   const [recentLeads, setRecentLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [pluginInfo, setPluginInfo] = useState({ version: '1.0.4', path: '/inmetech_chatbot.zip' });
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [a, c, l, an] = await Promise.allSettled([
+        const [a, c, l, an, settings] = await Promise.allSettled([
           getAgents(),
           getConversations(),
           getLeads(),
-          getAnalytics()
+          getAnalytics(),
+          getSystemSettings()
         ]);
+
+        if (settings.status === 'fulfilled' && settings.value) {
+          setPluginInfo({
+            version: settings.value.pluginVersion || '1.0.4',
+            path: settings.value.pluginZipPath || '/inmetech_chatbot.zip'
+          });
+        }
 
         const newStats = { ...stats };
         
@@ -139,13 +149,13 @@ export default function DashboardOverview() {
                  </div>
                  <div>
                     <h3 className="font-black text-lg uppercase tracking-tighter">WP Plugin</h3>
-                    <p className="text-[10px] opacity-70 font-bold uppercase tracking-widest">Version 1.0.4</p>
+                    <p className="text-[10px] opacity-70 font-bold uppercase tracking-widest">Version {pluginInfo.version}</p>
                  </div>
               </div>
               <p className="text-white/80 text-sm mb-8 leading-relaxed">
                  Install our specialized WordPress plugin to connect your AI agents seamlessly to your site.
               </p>
-              <a href="/inmetech_chatbot.zip" download className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 shadow-xl shadow-black/10">
+              <a href={pluginInfo.path} download className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all active:scale-95 shadow-xl shadow-black/10">
                  Download ZIP <ArrowRight size={14} />
               </a>
            </div>

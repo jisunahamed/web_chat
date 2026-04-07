@@ -163,6 +163,13 @@ model Settings {
   pluginZipPath String? @map("plugin_zip_path")
   pluginVersion String? @map("plugin_version") @default("1.0.4")
 
+  // Branding & SEO
+  siteName           String  @default("Inmetech Bot") @map("site_name")
+  siteLogo           String? @map("site_logo")
+  siteDescription    String? @default("Premium AI Chatbot SaaS") @map("site_description")
+  sitePrimaryColor   String  @default("#7C3AED") @map("site_primary_color")
+  supportEmail       String? @map("support_email")
+
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("settings")

@@ -9,21 +9,29 @@ import {
   ChevronRight, Star, Play, Network, TrendingUp, Users
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { getSystemSettings } from '@/app/actions/adminActions';
 
 // --- Components ---
 
-const Logo = ({ className = "" }) => (
+const Logo = ({ className = "", settings = null }) => (
   <div className={`flex items-center gap-3 group ${className}`}>
     <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-cyan-500/50 transition-all duration-500">
-      <img src="/logo.png" alt="InmeTech Bot" className="w-8 h-8 object-contain" />
+      {settings?.siteLogo ? (
+        <img src={settings.siteLogo} alt={settings.siteName} className="w-8 h-8 object-contain" />
+      ) : (
+        <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+      )}
     </div>
     <span className="text-2xl font-black bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent tracking-tighter uppercase italic">
-      INMETECH <span className="text-cyan-500">BOT</span>
+      {settings?.siteName ? settings.siteName.split(' ')[0] : 'INMETECH'} 
+      <span className="text-cyan-500 ml-2">
+        {settings?.siteName ? settings.siteName.split(' ').slice(1).join(' ') : 'BOT'}
+      </span>
     </span>
   </div>
 );
 
-const Navbar = () => {
+const Navbar = ({ settings }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
@@ -42,7 +50,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         <Link href="/">
-          <Logo />
+          <Logo settings={settings} />
         </Link>
 
         {/* Desktop Nav */}
@@ -238,12 +246,17 @@ const PricingCard = ({ title, price, features, premium = false, cta }) => (
 const LandingPage = () => {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const [settings, setSettings] = useState(null);
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
+  useEffect(() => {
+    getSystemSettings().then(res => setSettings(res));
+  }, []);
+
   return (
     <div ref={containerRef} className="min-h-screen bg-[#070708] text-white selection:bg-cyan-500/30 overflow-x-hidden font-sans">
-      <Navbar />
+      <Navbar settings={settings} />
       
       {/* --- HERO SECTION --- */}
       <section className="relative min-h-screen flex items-center pt-32 px-6 overflow-hidden">
@@ -281,8 +294,10 @@ const LandingPage = () => {
               transition={{ duration: 1, delay: 0.2 }}
               className="text-[10vw] md:text-[7vw] lg:text-[6vw] font-black tracking-[-0.04em] leading-[0.9] mb-10 text-white uppercase italic"
             >
-              Enterprise AI <br/> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400 drop-shadow-2xl">Evolution.</span>
+              {settings?.siteName ? settings.siteName.split(' ')[0] : 'Enterprise'} AI <br/> 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400 drop-shadow-2xl">
+                {settings?.siteName ? settings.siteName.split(' ').slice(1).join(' ') : 'Evolution.'}
+              </span>
             </motion.h1>
 
             <motion.p 
@@ -435,7 +450,7 @@ const LandingPage = () => {
                          Initiate WordPress sync protocol.
                       </motion.div>
                       <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 1 }} className="max-w-[80%] p-5 bg-zinc-900 border border-white/5 rounded-3xl rounded-bl-sm text-sm font-medium leading-relaxed">
-                         Confirmed. Download the InmeTech Plugin from the console, enter your unique key, and deployment will commence.
+                         Confirmed. Download the {settings?.siteName || 'InmeTech'} Plugin from the console, enter your unique key, and deployment will commence.
                       </motion.div>
                    </div>
                    <div className="p-8">
@@ -504,7 +519,7 @@ const LandingPage = () => {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-20 mb-24 text-center md:text-left">
              <div className="lg:col-span-2">
-                <Logo className="justify-center md:justify-start mb-10" />
+                <Logo settings={settings} className="justify-center md:justify-start mb-10" />
                 <p className="text-white/30 text-lg font-medium max-w-sm leading-relaxed mb-12 mx-auto md:mx-0">
                    Neural infrastructure for the commerce of tomorrow. Intelligent. Secure. Sovereign.
                 </p>
@@ -539,7 +554,7 @@ const LandingPage = () => {
           
           <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5 gap-8">
              <p className="text-white/20 text-[10px] font-black uppercase tracking-widest">
-                © 2026 INMETECH NEURAL SYSTEMS. ALL PROTOCOLS RESERVED.
+                © {new Date().getFullYear()} {settings?.siteName ? settings.siteName.toUpperCase() : 'INMETECH NEURAL SYSTEMS'}. ALL PROTOCOLS RESERVED.
              </p>
              <div className="flex items-center gap-2 text-white/20 text-[10px] font-black uppercase tracking-widest">
                 Engineered for <Sparkles size={12} className="text-cyan-600" /> High Intelligence

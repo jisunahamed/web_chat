@@ -45,7 +45,12 @@ export async function updateSystemSettings(data) {
         googleClientId: data.googleClientId,
         googleClientSecret: data.googleClientSecret,
         pluginZipPath: data.pluginZipPath,
-        pluginVersion: data.pluginVersion
+        pluginVersion: data.pluginVersion,
+        siteName: data.siteName,
+        siteLogo: data.siteLogo,
+        siteDescription: data.siteDescription,
+        sitePrimaryColor: data.sitePrimaryColor,
+        supportEmail: data.supportEmail
       },
       create: {
         id: 'global',
@@ -54,10 +59,17 @@ export async function updateSystemSettings(data) {
         googleClientId: data.googleClientId,
         googleClientSecret: data.googleClientSecret,
         pluginZipPath: data.pluginZipPath,
-        pluginVersion: data.pluginVersion
+        pluginVersion: data.pluginVersion,
+        siteName: data.siteName || 'Inmetech Bot',
+        siteLogo: data.siteLogo,
+        siteDescription: data.siteDescription || 'Premium AI Chatbot SaaS',
+        sitePrimaryColor: data.sitePrimaryColor || '#7C3AED',
+        supportEmail: data.supportEmail
       }
     });
 
+    revalidatePath('/');
+    revalidatePath('/dashboard');
     revalidatePath('/admin/settings');
     revalidatePath('/admin/plugin');
     return { success: true, settings };
@@ -79,7 +91,12 @@ export async function getSystemSettings() {
       googleClientId: '',
       googleClientSecret: '',
       pluginZipPath: '',
-      pluginVersion: '1.0.0'
+      pluginVersion: '1.0.4',
+      siteName: 'Inmetech Bot',
+      siteLogo: '',
+      siteDescription: 'Premium AI Chatbot SaaS',
+      sitePrimaryColor: '#7C3AED',
+      supportEmail: ''
     };
   } catch (error) {
     return null;

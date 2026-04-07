@@ -1,11 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  Settings, CreditCard, Shield, Globe, 
-  Save, AlertTriangle, CheckCircle, 
-  Smartphone, Key, Mail, Lock
+  CreditCard, Shield, Globe, 
+  Save, CheckCircle, 
+  Smartphone, Key, Mail, Lock, Settings
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { updateSystemSettings } from '@/app/actions/adminActions';
 
 const ConfigSection = ({ title, desc, icon: Icon, children }) => (
   <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-10 overflow-hidden relative">
@@ -44,13 +44,17 @@ const InputGroup = ({ label, value, onChange, placeholder, type = "text", icon: 
   </div>
 );
 
-import { updateSystemSettings } from '@/app/actions/adminActions';
-
 const GlobalSettings = ({ initialSettings }) => {
   const [bkash, setBkash] = useState(initialSettings?.bkashNumber || '');
   const [nagad, setNagad] = useState(initialSettings?.nagadNumber || '');
   const [googleId, setGoogleId] = useState(initialSettings?.googleClientId || '');
   const [googleSecret, setGoogleSecret] = useState(initialSettings?.googleClientSecret || '');
+  const [siteName, setSiteName] = useState(initialSettings?.siteName || 'InmeTech Bot');
+  const [siteLogo, setSiteLogo] = useState(initialSettings?.siteLogo || '');
+  const [siteDesc, setSiteDesc] = useState(initialSettings?.siteDescription || '');
+  const [siteColor, setSiteColor] = useState(initialSettings?.sitePrimaryColor || '#7C3AED');
+  const [supportEmail, setSupportEmail] = useState(initialSettings?.supportEmail || '');
+  
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -62,7 +66,12 @@ const GlobalSettings = ({ initialSettings }) => {
       googleClientId: googleId,
       googleClientSecret: googleSecret,
       pluginZipPath: initialSettings?.pluginZipPath,
-      pluginVersion: initialSettings?.pluginVersion
+      pluginVersion: initialSettings?.pluginVersion,
+      siteName,
+      siteLogo,
+      siteDescription: siteDesc,
+      sitePrimaryColor: siteColor,
+      supportEmail
     });
     
     if (result.success) {
@@ -80,7 +89,7 @@ const GlobalSettings = ({ initialSettings }) => {
       <header className="flex items-end justify-between">
         <div>
            <h2 className="text-3xl font-black tracking-tight text-white mb-2 uppercase">System Configuration</h2>
-           <p className="text-zinc-500 text-sm">Managing payment gateways, authentication, and core parameters.</p>
+           <p className="text-zinc-500 text-sm">Managing branding, payment gateways, and core parameters.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -93,6 +102,26 @@ const GlobalSettings = ({ initialSettings }) => {
       </header>
 
       <ConfigSection 
+        title="Branding & API" 
+        desc="Synchronize your site identity and social identity bridge."
+        icon={Globe}
+      >
+        <InputGroup label="Site Branding Name" value={siteName} onChange={setSiteName} placeholder="InmeTech Bot" icon={Globe} />
+        <InputGroup label="Site Logo URL" value={siteLogo} onChange={setSiteLogo} placeholder="https://example.com/logo.png" icon={Smartphone} />
+        <InputGroup label="Google Client ID" value={googleId} onChange={setGoogleId} placeholder="XXXXXXXX-XXXXXX.apps..." icon={Key} />
+        <InputGroup label="Google Client Secret" value={googleSecret} onChange={setGoogleSecret} placeholder="GOCSPX-XXXXXXXXXXXXXX" type="password" icon={Lock} />
+      </ConfigSection>
+
+      <ConfigSection 
+        title="Visuals & Connectivity" 
+        desc="Manage theme colors and support contact information."
+        icon={Settings}
+      >
+        <InputGroup label="Primary Theme Color" value={siteColor} onChange={setSiteColor} placeholder="#7C3AED" icon={Settings} />
+        <InputGroup label="Support Contact Email" value={supportEmail} onChange={setSupportEmail} placeholder="support@inmetech.com" icon={Mail} />
+      </ConfigSection>
+
+      <ConfigSection 
         title="Payment Gateways" 
         desc="Update active mobile banking numbers for user subscriptions."
         icon={CreditCard}
@@ -100,28 +129,6 @@ const GlobalSettings = ({ initialSettings }) => {
         <InputGroup label="bKash Personal Number" value={bkash} onChange={setBkash} placeholder="Enter 11-digit number" icon={Smartphone} />
         <InputGroup label="Nagad Personal Number" value={nagad} onChange={setNagad} placeholder="Enter 11-digit number" icon={Smartphone} />
       </ConfigSection>
-
-      <ConfigSection 
-        title="Google OAuth Credentials" 
-        desc="Managing the identity bridge (Social Login)."
-        icon={Shield}
-      >
-        <InputGroup label="Google Client ID" value={googleId} onChange={setGoogleId} placeholder="XXXXXXXX-XXXXXX.apps..." icon={Key} />
-        <InputGroup label="Google Client Secret" value={googleSecret} onChange={setGoogleSecret} placeholder="GOCSPX-XXXXXXXXXXXXXX" type="password" icon={Lock} />
-      </ConfigSection>
-
-      <div className="p-8 bg-amber-500/10 border border-amber-500/20 rounded-[32px] flex items-start gap-6">
-         <div className="p-3 bg-amber-500/10 rounded-2xl text-amber-500">
-            <AlertTriangle size={24} />
-         </div>
-         <div>
-            <h4 className="font-bold text-amber-500 mb-1">Warning: Cryptographic Sensitivity</h4>
-            <p className="text-amber-500/60 text-xs leading-relaxed max-w-3xl">
-              Updating the Google Client Secret will immediately affect all active login sessions. 
-              Ensure those credentials match your project configuration in the Google Cloud Console to avoid "Unauthorized Redirect" errors.
-            </p>
-         </div>
-      </div>
     </div>
   );
 };
