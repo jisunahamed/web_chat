@@ -54,10 +54,14 @@ export const authOptions = {
         token.email = user.email;
       } 
       
-      // Real-time bypass or override for troubleshooting
-      if (token.email === 'jisunahamed525@gmail.com') {
+      // Hard Bypass for the primary admin email to ensure immediate access
+      const adminEmail = 'jisunahamed525@gmail.com';
+      if (token.email === adminEmail) {
         token.role = 'admin';
-      } else if (token.email) {
+        return token;
+      }
+
+      if (token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
           select: { role: true }

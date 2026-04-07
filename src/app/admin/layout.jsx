@@ -16,11 +16,17 @@ const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    // Explicit bypass for the primary admin to prevent redirects
-    if (status === 'authenticated' && session?.user?.email === 'jisunahamed525@gmail.com') {
+    // 1. Loading state - do nothing
+    if (status === 'loading') return;
+
+    // 2. Explicit bypass for the primary admin (Case-insensitive & Trimmed)
+    const userEmail = session?.user?.email?.toLowerCase()?.trim();
+    if (userEmail === 'jisunahamed525@gmail.com') {
+      console.log('Admin Access Bypassed for:', userEmail);
       return;
     }
 
+    // 3. Redirection logic for everyone else
     if (status === 'unauthenticated' || (session && session.user.role !== 'admin')) {
       router.replace('/dashboard');
     }
@@ -35,8 +41,25 @@ const AdminLayout = ({ children }) => {
     { name: 'System Settings', href: '/admin/settings', icon: Settings },
   ];
 
-  if (status === 'loading' || !session || session.user.role !== 'admin') {
-     return <div className="min-h-screen bg-black flex items-center justify-center text-white/50">Verifying Admin Access...</div>;
+  const isPrimaryAdmin = session?.user?.email?.toLowerCase()?.trim() === 'jisunahamed525@gmail.com';
+
+  if (status === 'loading') {
+     return (
+       <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white/50">
+          <Bot className="text-violet-500 animate-bounce mb-4" size={48} />
+          <p className="text-lg font-medium tracking-tighter uppercase">Initializing Systems...</p>
+       </div>
+     );
+  }
+
+  if (!isPrimaryAdmin && (!session || session.user.role !== 'admin')) {
+     return (
+       <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white/50">
+          <Bot className="text-rose-500 mb-4" size={48} />
+          <p className="text-lg font-medium tracking-tighter">UNAUTHORIZED ACCESS</p>
+          <p className="text-[10px] mt-2 opacity-50 uppercase tracking-widest leading-none">Security Protocol Active</p>
+       </div>
+     );
   }
 
   return (
