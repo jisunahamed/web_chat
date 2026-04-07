@@ -326,7 +326,6 @@
             <div id="maic-w-p-text">How can I help you?</div>
           </div>
         </div>
-        <button id="maic-w-p-close" title="Close">&times;</button>
       </div>
       <button id="maic-w-trigger" aria-label="Open chat">
         <svg id="maic-w-ic-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -445,24 +444,22 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:0; min-width:240px; max-width:320px; background:rgba(15, 23, 42, 0.9); padding:14px; border-radius:20px; box-shadow:0 25px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both, maic-p-glow 3s infinite ease-in-out; z-index:5; visibility:visible !important; }
-      #maic-w-popup.maic-w-pos-right { right:86px; }
-      #maic-w-popup.maic-w-pos-left { left:86px; }
-      #maic-w-popup::after { content:''; position:absolute; top:50%; width:16px; height:16px; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(20px); transform:translateY(-50%) rotate(45deg); z-index:-1; }
-      #maic-w-popup.maic-w-pos-right::after { right:-8px; border-top:1px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.1); }
-      #maic-w-popup.maic-w-pos-left::after { left:-8px; border-bottom:1px solid rgba(255,255,255,0.1); border-left:1px solid rgba(255,255,255,0.1); }
-      .maic-w-p-body { display:flex; gap:14px; align-items:center; }
-      #maic-w-p-av { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, ${P}, #000); flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#fff; border:2px solid rgba(255,255,255,0.15); box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+      #maic-w-popup { position:absolute; bottom:0; min-width:180px; max-width:240px; background:rgba(15, 23, 42, 0.9); padding:10px 12px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both, maic-p-glow 3s infinite ease-in-out; z-index:5; visibility:visible !important; }
+      #maic-w-popup.maic-w-pos-right { right:82px; }
+      #maic-w-popup.maic-w-pos-left { left:82px; }
+      #maic-w-popup::after { content:''; position:absolute; top:50%; width:14px; height:14px; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(20px); transform:translateY(-50%) rotate(45deg); z-index:-1; }
+      #maic-w-popup.maic-w-pos-right::after { right:-7px; border-top:1px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.1); }
+      #maic-w-popup.maic-w-pos-left::after { left:-7px; border-bottom:1px solid rgba(255,255,255,0.1); border-left:1px solid rgba(255,255,255,0.1); }
+      .maic-w-p-body { display:flex; gap:10px; align-items:center; }
+      #maic-w-p-av { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, ${P}, #000); flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#fff; border:1.5px solid rgba(255,255,255,0.15); box-shadow: 0 0 12px rgba(56, 189, 248, 0.3); }
       .maic-w-p-msg { flex:1; }
-      .maic-w-p-title { font-size:14px; color:#fff; font-weight:700; margin-bottom:2px; }
+      .maic-w-p-title { font-size:13px; color:#fff; font-weight:700; margin-bottom:1px; }
       .maic-w-p-hl { color:#38bdf8; text-shadow:0 0 8px rgba(56, 189, 248, 0.5); }
-      #maic-w-p-text { font-size:12.5px; color:rgba(255,255,255,0.7); line-height:1.4; font-weight:500; }
-      #maic-w-p-close { position:absolute; top:-10px; right:-10px; width:26px; height:26px; border-radius:50%; border:none; background:#1e293b; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-size:13px; color:#94a3b8; cursor:pointer; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.15); transition:all 0.3s; }
-      #maic-w-p-close:hover { background:#ef4444; color:#fff; transform:scale(1.1) rotate(90deg); border-color:#ef4444; }
+      #maic-w-p-text { font-size:11.5px; color:rgba(255,255,255,0.7); line-height:1.4; font-weight:500; }
       @keyframes maic-p-mag { from { opacity:0; transform:translateX(30px) scale(0.8); } to { opacity:1; transform:translateX(0) scale(1); } }
       #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag-left, maic-p-glow; }
       @keyframes maic-p-mag-left { from { opacity:0; transform:translateX(-30px) scale(0.8); } to { opacity:1; transform:translateX(0) scale(1); } }
-      @keyframes maic-p-glow { 0%, 100% { box-shadow:0 25px 60px rgba(0,0,0,0.4), 0 0 10px rgba(56, 189, 248, 0); } 50% { box-shadow:0 25px 60px rgba(0,0,0,0.4), 0 0 20px rgba(56, 189, 248, 0.15); } }
+      @keyframes maic-p-glow { 0%, 100% { box-shadow:0 25px 50px rgba(0,0,0,0.4), 0 0 10px rgba(56, 189, 248, 0); } 50% { box-shadow:0 25px 50px rgba(0,0,0,0.4), 0 0 20px rgba(56, 189, 248, 0.15); } }
 
       @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
     `;
