@@ -71,25 +71,41 @@ const UserRow = ({ user, index }) => {
   );
 };
 
+import { getUsers } from '@/app/actions/adminActions';
+
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all'); // all, premium, trial
 
-  // Placeholder fetching for real build
+  const fetchUsers = async () => {
+    setLoading(true);
+    const data = await getUsers();
+    setUsers(data || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    setUsers([
-      { id: '1', name: 'Jisun Ahamed', email: 'jisun@inmetech.com', role: 'admin', isPremium: true, trialEndsAt: '2026-05-01', apiKey: '8x2y-9z1w-5v3u-4t2k' },
-      { id: '2', name: 'Abir Rahman', email: 'abir@gmail.com', role: 'user', isPremium: false, trialEndsAt: '2026-04-15', apiKey: '3v2b-7n9m-4r3c-8x1q' },
-      { id: '3', name: 'Sakib Hasan', email: 'sakib@outlook.com', role: 'user', isPremium: false, trialEndsAt: '2026-03-10', apiKey: '5f4g-3h2j-1k9l-7p0o' },
-    ]);
+    fetchUsers();
   }, []);
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = 
+      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (filter === 'premium') return matchesSearch && user.isPremium;
+    if (filter === 'trial') return matchesSearch && !user.isPremium && new Date(user.trialEndsAt) > new Date();
+    return matchesSearch;
+  });
 
   return (
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
            <h2 className="text-3xl font-black tracking-tight text-white mb-2 uppercase">Ecosystem Residents</h2>
-           <p className="text-zinc-500 text-sm">Managing {users.length} active users and subscription tiers.</p>
+            <p className="text-zinc-500 text-sm font-medium uppercase tracking-widest pl-1 leading-none">{filteredUsers.length} Users found</p>
         </div>
         <div className="flex items-center gap-3">
            <div className="relative">
@@ -97,26 +113,20 @@ const UserManagement = () => {
               <input 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-11 pr-6 py-3 bg-[#0c0c0e] border border-white/5 rounded-2xl text-sm outline-none w-[280px] focus:border-violet-600 transition-all font-medium" 
-                placeholder="Search by ID, name, email..." 
+                className="pl-11 pr-6 py-3.5 bg-[#0c0c0e] border border-white/5 rounded-2xl text-sm outline-none w-[280px] focus:border-violet-600 transition-all font-medium text-white" 
+                placeholder="Search Identity..." 
               />
            </div>
-           <button className="p-3 bg-violet-600 text-white rounded-2xl shadow-lg shadow-violet-600/20 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
-              <UserPlus size={20} />
-           </button>
         </div>
       </header>
 
       <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] overflow-hidden">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
            <div className="flex bg-white/5 p-1 rounded-xl">
-              <button className="px-4 py-1.5 bg-white/10 rounded-lg text-xs font-bold text-white uppercase tracking-widest leading-none">All Users</button>
-              <button className="px-4 py-1.5 text-xs text-zinc-500 hover:text-white transition-all uppercase tracking-widest leading-none">Premium Only</button>
-              <button className="px-4 py-1.5 text-xs text-zinc-500 hover:text-white transition-all uppercase tracking-widest leading-none">Free Trials</button>
+              <button onClick={() => setFilter('all')} className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'all' ? 'bg-white/10 text-white' : 'text-zinc-500 hover:text-white'}`}>All</button>
+              <button onClick={() => setFilter('premium')} className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'premium' ? 'bg-emerald-500/20 text-emerald-500' : 'text-zinc-500 hover:text-white'}`}>Premium</button>
+              <button onClick={() => setFilter('trial')} className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${filter === 'trial' ? 'bg-violet-600/20 text-violet-600' : 'text-zinc-500 hover:text-white'}`}>Trial</button>
            </div>
-           <button className="flex items-center gap-2 text-zinc-500 hover:text-white text-xs font-bold transition-all">
-              <Filter size={14} /> Filter Results
-           </button>
         </div>
         
         <div className="overflow-x-auto">
@@ -125,15 +135,28 @@ const UserManagement = () => {
               <tr className="bg-white/[0.01]">
                 <th className="py-4 pl-6 text-[10px] font-black uppercase text-zinc-600 tracking-widest">Identity</th>
                 <th className="py-4 text-[10px] font-black uppercase text-zinc-600 tracking-widest">Privileges</th>
-                <th className="py-4 text-[10px] font-black uppercase text-zinc-600 tracking-widest">Subscription</th>
+                <th className="py-4 text-[10px] font-black uppercase text-zinc-600 tracking-widest">Subscription Status</th>
                 <th className="py-4 text-[10px] font-black uppercase text-zinc-600 tracking-widest">Secret Key</th>
                 <th className="py-4 pr-6 text-right text-[10px] font-black uppercase text-zinc-600 tracking-widest">Modality</th>
               </tr>
             </thead>
-            <tbody>
-              {users.map((user, i) => (
-                <UserRow key={user.id} user={user} index={i} />
-              ))}
+            <tbody className="divide-y divide-white/5">
+              {loading ? (
+                <tr>
+                   <td colSpan="5" className="py-32 text-center text-zinc-600 font-bold uppercase tracking-widest text-[10px]">
+                      <div className="w-8 h-8 border-2 border-white/5 border-t-violet-600 rounded-full animate-spin mx-auto mb-4" />
+                      Auditing Database...
+                   </td>
+                </tr>
+              ) : filteredUsers.length > 0 ? (
+                filteredUsers.map((user, i) => (
+                  <UserRow key={user.id} user={user} index={i} />
+                ))
+              ) : (
+                <tr>
+                   <td colSpan="5" className="py-32 text-center text-zinc-600 font-bold uppercase tracking-widest text-[10px]">No matches found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

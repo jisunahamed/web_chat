@@ -7,7 +7,7 @@ import {
   XCircle, Filter, Zap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createCoupon, deleteCoupon } from '@/app/actions/adminActions';
+import { createCoupon, deleteCoupon, getCoupons } from '@/app/actions/adminActions';
 
 const CouponCard = ({ coupon, onDelete }) => (
   <motion.div 
@@ -51,7 +51,6 @@ const CouponCard = ({ coupon, onDelete }) => (
     </button>
   </motion.div>
 );
-
 const CouponsManager = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,9 +62,8 @@ const CouponsManager = () => {
   const fetchCoupons = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/coupons');
-      const data = await res.json();
-      setCoupons(data);
+      const data = await getCoupons();
+      setCoupons(data || []);
     } catch (error) { console.error(error); }
     setLoading(false);
   };

@@ -37,13 +37,15 @@ export async function getAdminStats() {
  */
 export async function updateSystemSettings(data) {
   try {
-    await prisma.settings.upsert({
+    const settings = await prisma.settings.upsert({
       where: { id: 'global' },
       update: {
         bkashNumber: data.bkashNumber,
         nagadNumber: data.nagadNumber,
         googleClientId: data.googleClientId,
         googleClientSecret: data.googleClientSecret,
+        pluginZipPath: data.pluginZipPath,
+        pluginVersion: data.pluginVersion
       },
       create: {
         id: 'global',
@@ -51,14 +53,36 @@ export async function updateSystemSettings(data) {
         nagadNumber: data.nagadNumber,
         googleClientId: data.googleClientId,
         googleClientSecret: data.googleClientSecret,
+        pluginZipPath: data.pluginZipPath,
+        pluginVersion: data.pluginVersion
       }
     });
 
     revalidatePath('/admin/settings');
-    return { success: true };
+    revalidatePath('/admin/plugin');
+    return { success: true, settings };
   } catch (error) {
     console.error('Error updating settings:', error);
     return { success: false, error: 'Failed to update settings' };
+  }
+}
+
+export async function getSystemSettings() {
+  try {
+    const settings = await prisma.settings.findUnique({
+      where: { id: 'global' }
+    });
+    return settings || {
+      id: 'global',
+      bkashNumber: '',
+      nagadNumber: '',
+      googleClientId: '',
+      googleClientSecret: '',
+      pluginZipPath: '',
+      pluginVersion: '1.0.0'
+    };
+  } catch (error) {
+    return null;
   }
 }
 
@@ -141,5 +165,41 @@ export async function deleteCoupon(id) {
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
+  }
+}
+
+export async function getUsers() {
+  try {
+    return await prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        _count: { select: { agents: true } }
+      }
+    });
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function getCoupons() {
+  try {
+    return await prisma.coupon.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function getPayments(status = null) {
+  try {
+    const where = status ? { status } : {};
+    return await prisma.payment.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: { user: true }
+    });
+  } catch (error) {
+    return [];
   }
 }

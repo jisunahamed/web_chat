@@ -7,7 +7,7 @@ import {
   User, Hash, Calendar, Smartphone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { handlePaymentAction } from '@/app/actions/adminActions';
+import { handlePaymentAction, getPayments } from '@/app/actions/adminActions';
 
 const PaymentRow = ({ payment, onUpdate }) => {
   const [processing, setProcessing] = useState(false);
@@ -101,7 +101,6 @@ const PaymentRow = ({ payment, onUpdate }) => {
     </motion.div>
   );
 };
-
 const PaymentsQueue = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,9 +109,8 @@ const PaymentsQueue = () => {
   const fetchPayments = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/payments?status=${filter}`);
-      const data = await res.json();
-      setPayments(data);
+      const data = await getPayments(filter);
+      setPayments(data || []);
     } catch (error) {
       console.error(error);
     }
