@@ -129,36 +129,35 @@ function WidgetPreview({ form }) {
         </div>
       </div>
 
-      <div style={{alignSelf:'flex-end',display:'flex',alignItems:'center',gap:12, position: 'relative'}}>
-        {/* Simplified Popup Preview */}
-        <div style={{position:'absolute',bottom:80,right:0,minWidth:180,background:popupBg,padding:'10px 14px',borderRadius:16,boxShadow:'0 10px 30px rgba(0,0,0,0.1)',border:'1px solid rgba(0,0,0,0.05)',display:'flex',alignItems:'center',gap:10,zIndex:10}}>
-          <div style={{width:30,height:30,borderRadius:'50%',background:`${form.primaryColor}15`,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
-            {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
-          </div>
-          <div style={{fontSize:12.5,color:isDark(popupBg)?'#fff':'#1e293b',fontWeight:600,flex:1,lineHeight:1.4}}>
-            {form.welcomeMessage || 'Hi! How can I help?'}
-          </div>
-        </div>
-        {sl.messenger && (
-          <div style={{width:42,height:42,borderRadius:'50%',background:'#0084FF',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>
-          </div>
-        )}
-        {sl.whatsapp && (
-          <div style={{width:42,height:42,borderRadius:'50%',background:'#25D366',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>
-          </div>
-        )}
-        {sl.telegram && (
-          <div style={{width:42,height:42,borderRadius:'50%',background:'#0088CC',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
-            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.88.03-.24.37-.48 1.01-.74 3.94-1.72 6.56-2.85 7.87-3.39 3.75-1.55 4.53-1.82 5.04-1.83.11 0 .36.03.52.16.14.11.18.26.2.37.03.11.03.3.01.46z"/></svg>
+      {/* Footer / Trigger Area */}
+      <div style={{width:'100%', position: 'relative', marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+        {/* Simplified Popup Preview (Slim Pill) */}
+        {!form.faqs?.length && (
+          <div style={{position:'absolute', bottom: 70, right: 76, minWidth:140, background:popupBg, padding:'8px 16px', borderRadius:50, boxShadow:'0 8px 30px rgba(0,0,0,0.12)', border:'1px solid rgba(0,0,0,0.04)', display:'flex', alignItems:'center', justifyContent: 'center', zIndex:5}}>
+            <div style={{fontSize:12.5, color:'#1e293b', fontWeight:600, whiteSpace: 'nowrap'}}>
+              {form.welcomeMessage?.length > 28 ? form.welcomeMessage.substring(0, 25) + '...' : (form.welcomeMessage || 'Hi!')}
+            </div>
           </div>
         )}
 
-        <div style={{width:56,height:56,borderRadius:t==='minimal'?14:'50%',background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',boxShadow:'0 6px 20px rgba(0,0,0,0.2)'}}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div style={{display:'flex', alignItems:'center', gap:12}}>
+          {sl.whatsapp && (
+            <div style={{width:42, height:42, borderRadius:'50%', background:'#25D366', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
+              <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>
+            </div>
+          )}
+          {sl.messenger && (
+            <div style={{width:42, height:42, borderRadius:'50%', background:'#0084FF', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.44 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>
+            </div>
+          )}
+          
+          <div style={{width:60, height:60, borderRadius:'50%', background:bg, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 8px 28px rgba(0,0,0,0.22)', position: 'relative'}}>
+             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
