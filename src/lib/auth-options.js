@@ -6,24 +6,30 @@ import bcrypt from 'bcryptjs';
 export const authOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: (process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_ID || "").replace(/"/g, '').trim(),
+      clientSecret: (process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_SECRET || "").replace(/"/g, '').trim(),
       async profile(profile) {
-        if (!process.env.GOOGLE_CLIENT_ID) {
-          console.error("CRITICAL: GOOGLE_CLIENT_ID is missing from environment!");
+        try {
+          if (!profile.email) {
+            throw new Error("No email found in Google profile");
+          }
+          
+          const user = await prisma.user.upsert({
+            where: { email: profile.email },
+            update: { name: profile.name },
+            create: {
+              email: profile.email,
+              name: profile.name,
+              role: "user",
+              trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+              agentLimit: 1,
+            },
+          });
+          return { id: user.id, name: user.name, email: user.email, role: user.role };
+        } catch (error) {
+          console.error("CRITICAL AUTH ERROR (Profile Callback):", error);
+          throw error;
         }
-        const user = await prisma.user.upsert({
-          where: { email: profile.email },
-          update: { name: profile.name },
-          create: {
-            email: profile.email,
-            name: profile.name,
-            role: "user",
-            trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-            agentLimit: 1,
-          },
-        });
-        return { id: user.id, name: user.name, email: user.email, role: user.role };
       },
     }),
     CredentialsProvider({
