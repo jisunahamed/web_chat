@@ -140,6 +140,8 @@
     const pText = $('#maic-w-p-text');
 
     if (popup && pText) {
+      if (CONFIG.botAvatar) $('#maic-w-p-av').style.backgroundImage = 'url(' + CONFIG.botAvatar + ')';
+      else $('#maic-w-p-av text').textContent = CONFIG.botName.charAt(0);
       pText.textContent = CONFIG.welcome;
       setTimeout(() => {
         if (!isOpen && !localStorage.getItem('maic_p_closed')) {
@@ -318,8 +320,11 @@
     return `
       <div id="maic-w-social" class="maic-w-pos-${pos}"></div>
       <div id="maic-w-popup" class="maic-w-hidden maic-w-pos-${pos}">
+        <div class="maic-w-p-body">
+          <div id="maic-w-p-av"></div>
+          <div id="maic-w-p-text"></div>
+        </div>
         <button id="maic-w-p-close" title="Close">&times;</button>
-        <div id="maic-w-p-text"></div>
       </div>
       <button id="maic-w-trigger" aria-label="Open chat">
         <svg id="maic-w-ic-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -438,15 +443,17 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:85px; width:220px; background:#fff; padding:12px 34px 12px 16px; border-radius:14px; box-shadow:0 8px 32px rgba(0,0,0,0.15); border:1px solid rgba(0,0,0,0.06); animation:maic-p-in .5s cubic-bezier(0.18, 0.89, 0.32, 1.28) both; z-index:5; }
+      #maic-w-popup { position:absolute; bottom:88px; min-width:180px; max-width:260px; background:rgba(255,255,255,0.72); padding:12px; border-radius:18px; box-shadow:0 12px 40px rgba(0,0,0,0.12); border:1px solid rgba(255,255,255,0.4); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); animation:maic-p-in .6s cubic-bezier(0.18, 0.89, 0.32, 1.28) both; z-index:5; }
       #maic-w-popup.maic-w-pos-right { right:0; transform-origin: bottom right; }
       #maic-w-popup.maic-w-pos-left { left:0; transform-origin: bottom left; }
-      #maic-w-popup::after { content:''; position:absolute; bottom:-8px; width:15px; height:15px; background:#fff; transform:rotate(45deg); border-right:1px solid rgba(0,0,0,0.06); border-bottom:1px solid rgba(0,0,0,0.06); }
+      #maic-w-popup::after { content:''; position:absolute; bottom:-9px; width:18px; height:18px; background:rgba(255,255,255,0.72); backdrop-filter:blur(14px); transform:rotate(45deg); border-right:1px solid rgba(255,255,255,0.3); border-bottom:1px solid rgba(255,255,255,0.3); z-index:-1; }
       #maic-w-popup.maic-w-pos-right::after { right:22px; }
       #maic-w-popup.maic-w-pos-left::after { left:22px; }
-      #maic-w-p-text { font-size:13px; color:#1e293b; line-height:1.4; font-weight:500; }
-      #maic-w-p-close { position:absolute; top:6px; right:8px; border:none; background:none; font-size:18px; color:#94a3b8; cursor:pointer; padding:0 4px; }
-      #maic-w-p-close:hover { color:#64748b; }
+      .maic-w-p-body { display:flex; gap:10px; align-items:center; }
+      #maic-w-p-av { width:32px; height:32px; border-radius:10px; background:${P}15; flex-shrink:0; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:${P}; border:1px solid ${P}20; }
+      #maic-w-p-text { font-size:13px; color:#1e293b; line-height:1.4; font-weight:600; padding-right:8px; }
+      #maic-w-p-close { position:absolute; top:-10px; right:-10px; width:22px; height:22px; border-radius:50%; border:none; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-size:14px; color:#94a3b8; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+      #maic-w-p-close:hover { background:#f1f5f9; color:#ef4444; transform:scale(1.1); }
       @keyframes maic-p-in { from { opacity:0; transform:scale(0.8) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
 
       @media(max-width:480px){#maic-w-chat{width:calc(100vw - 32px);max-height:calc(100vh - 120px)}}
