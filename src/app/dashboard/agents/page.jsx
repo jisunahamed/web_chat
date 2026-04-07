@@ -26,6 +26,16 @@ function WidgetPreview({ form }) {
     ? `linear-gradient(135deg, ${form.primaryColor}cc, ${form.useGradient && form.secondaryColor ? form.secondaryColor + 'cc' : form.primaryColor + '99'})`
     : bg;
   const chatBg = form.chatBg || (t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc');
+  const isDark = (color) => {
+    if (!color || color.startsWith('rgba')) return false;
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
+  };
+  const textColor = isDark(chatBg) ? '#f8fafc' : '#1e293b';
+  const mutedTextColor = isDark(chatBg) ? 'rgba(255,255,255,0.6)' : '#64748b';
   const cardShadow = t === 'glass' ? '0 20px 60px rgba(0,0,0,0.15)' : '0 20px 40px rgba(0,0,0,0.12)';
   const cardBorder = t === 'glass' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.06)';
   const backdropFilter = t === 'glass' ? 'blur(16px)' : 'none';
@@ -60,7 +70,7 @@ function WidgetPreview({ form }) {
             <div style={{width:26,height:26,borderRadius:t==='minimal'?6:'50%',background:`${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
               {form.name ? form.name.charAt(0) : 'A'}
             </div>
-            <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:t==='glass'?'rgba(255,255,255,0.7)':'#fff',color:'#1e293b',border:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'?2:4,boxShadow:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:t==='glass'?'blur(8px)':'none'}}>
+            <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:t==='glass'?'rgba(255,255,255,0.7)':'#fff',color: '#1e293b',border:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'?2:4,boxShadow:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:t==='glass'?'blur(8px)':'none'}}>
               {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
             </div>
           </div>
@@ -71,14 +81,14 @@ function WidgetPreview({ form }) {
         </div>
 
         {/* Input & Footer Branding */}
-        <div style={{background:'#fff',borderTop:'1px solid #e2e8f0'}}>
+        <div style={{background:chatBg,borderTop:'1px solid rgba(0,0,0,0.06)'}}>
            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 16px'}}>
-            <div style={{flex:1,border:'1px solid #cbd5e1',borderRadius:t==='minimal'?6:14,padding:'9px 14px',fontSize:13.5,color:'#94a3b8',background:'#f8fafc'}}>Type a message...</div>
+            <div style={{flex:1,border:'1px solid rgba(0,0,0,0.1)',borderRadius:t==='minimal'?6:14,padding:'9px 14px',fontSize:13.5,color:mutedTextColor,background:'rgba(255,255,255,0.05)'}}>Type a message...</div>
             <div style={{width:38,height:38,borderRadius:t==='minimal'?6:12,background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </div>
           </div>
-          <div style={{textAlign:'center',paddingBottom:8,fontSize:11,color:'#94a3b8'}}>
+          <div style={{textAlign:'center',paddingBottom:8,fontSize:11,color:mutedTextColor}}>
             Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
           </div>
         </div>
