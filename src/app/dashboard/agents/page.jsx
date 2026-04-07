@@ -158,7 +158,6 @@ function WidgetPreview({ form }) {
         </div>
       </div>
     </div>
-    </div>
   );
 }
 

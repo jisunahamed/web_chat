@@ -143,8 +143,9 @@
 
     if (popup && pText) {
       setTimeout(() => {
-        if (!isOpen && !localStorage.getItem('maic_p_closed') && !chatWin.classList.contains('maic-w-hidden')) {
+        if (!isOpen && !localStorage.getItem('maic_p_closed') && chatWin.classList.contains('maic-w-hidden')) {
           popup.classList.remove('maic-w-hidden');
+          popup.style.display = 'flex';
           playPop();
         }
       }, 5000);
@@ -168,7 +169,7 @@
     function toggle() {
       isOpen = !isOpen;
       chatWin.classList.toggle('maic-w-hidden', !isOpen);
-      if (isOpen) popup.style.display = 'none'; // Force hide popup
+      popup.style.display = 'none'; // Always hide popup when user interacts
       popup.classList.add('maic-w-hidden');
       iconChat.style.display = isOpen ? 'none' : 'block';
       iconClose.style.display = isOpen ? 'block' : 'none';
