@@ -143,7 +143,7 @@
 
     if (popup && pText) {
       setTimeout(() => {
-        if (!isOpen && !localStorage.getItem('maic_p_closed')) {
+        if (!isOpen && !localStorage.getItem('maic_p_closed') && !chatWin.classList.contains('maic-w-hidden')) {
           popup.classList.remove('maic-w-hidden');
           playPop();
         }
@@ -168,7 +168,8 @@
     function toggle() {
       isOpen = !isOpen;
       chatWin.classList.toggle('maic-w-hidden', !isOpen);
-      popup.classList.add('maic-w-hidden'); // Hide popup when opening chat
+      if (isOpen) popup.style.display = 'none'; // Force hide popup
+      popup.classList.add('maic-w-hidden');
       iconChat.style.display = isOpen ? 'none' : 'block';
       iconClose.style.display = isOpen ? 'block' : 'none';
 
@@ -438,7 +439,8 @@
       @keyframes mwp{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.2;transform:scale(1.3)}}
       
       #maic-w-chat{position:absolute;bottom:80px;${pos}:0;width:380px;max-height:620px;background:${chatBg};border-radius:${chatR};box-shadow:${chatShadow};display:flex;flex-direction:column;overflow:hidden;transition:all .35s;border:${chatBorder};transform-origin:bottom ${pos};${blurVal}}
-      #maic-w-chat.maic-w-hidden{opacity:0;transform:scale(.85) translateY(20px);pointer-events:none}
+      .maic-w-hidden{display:none !important;visibility:hidden !important;opacity:0 !important;pointer-events:none !important}
+      #maic-w-chat.maic-w-hidden{display:flex !important;visibility:visible !important;opacity:0;transform:scale(.85) translateY(20px);pointer-events:none}
       #maic-w-header{background:${headerBg};color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;${headerBlur}}
       .maic-w-hleft{display:flex;align-items:center;gap:12px}
       .maic-w-hav{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;background-size:cover;border:2px solid rgba(255,255,255,0.3)}
@@ -470,15 +472,15 @@
       #maic-w-input:focus{border-color:${P} !important;box-shadow: 0 0 0 2px ${P}20 !important;}
       #maic-w-send{width:42px;height:42px;border-radius:12px;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
       
-      #maic-w-social { position:absolute; bottom:8px; display:flex; gap:10px; pointer-events:none; z-index:10; transition:all .4s; }
-      #maic-w-social.maic-w-pos-right { right:72px; flex-direction:row-reverse; }
-      #maic-w-social.maic-w-pos-left { left:72px; }
+      #maic-w-social { position:absolute; bottom:10px; display:flex; gap:12px; pointer-events:none; z-index:10; transition:all .4s; }
+      #maic-w-social.maic-w-pos-right { right:84px; flex-direction:row-reverse; }
+      #maic-w-social.maic-w-pos-left { left:84px; }
       #maic-w-social.maic-w-social-show { pointer-events:auto; }
       .maic-w-social-icon { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; box-shadow:0 4px 12px rgba(0,0,0,0.15); opacity:0; transform:scale(0.5); transition:all .3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:5px; min-width:140px; max-width:240px; background:#ffffff; padding:8px 16px; border-radius:50px; box-shadow:0 8px 30px rgba(0,0,0,0.12); border:1px solid rgba(0,0,0,0.04); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible !important; display:flex; align-items:center; justify-content:center; }
+      #maic-w-popup { position:absolute; bottom:5px; min-width:140px; max-width:240px; background:#ffffff; padding:8px 16px; border-radius:50px; box-shadow:0 8px 30px rgba(0,0,0,0.12); border:1px solid rgba(0,0,0,0.04); animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible; display:flex; align-items:center; justify-content:center; }
       #maic-w-popup.maic-w-pos-right { right:76px; }
       #maic-w-popup.maic-w-pos-left { left:76px; }
       #maic-w-popup::after { display:none; }

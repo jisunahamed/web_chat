@@ -16,7 +16,20 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
+      // 1. NextAuth Credentials Login (Sets session cookie)
+      const res = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        throw new Error('Invalid email or password');
+      }
+
+      // 2. Custom Login (Sets localStorage maic_token for backward compatibility)
       await login(email, password);
+      
       router.push('/dashboard');
     } catch (err) {
       setError(err.message);
