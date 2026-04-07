@@ -63,7 +63,7 @@ export async function updateSystemSettings(data) {
     return { success: true, settings };
   } catch (error) {
     console.error('Error updating settings:', error);
-    return { success: false, error: 'Failed to update settings' };
+    return { success: false, error: 'DB Error: ' + error.message };
   }
 }
 
