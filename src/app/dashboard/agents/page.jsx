@@ -25,7 +25,7 @@ function WidgetPreview({ form }) {
   const headerBg = t === 'glass'
     ? `linear-gradient(135deg, ${form.primaryColor}cc, ${form.useGradient && form.secondaryColor ? form.secondaryColor + 'cc' : form.primaryColor + '99'})`
     : bg;
-  const chatBg = t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc';
+  const chatBg = form.chatBg || (t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc');
   const cardShadow = t === 'glass' ? '0 20px 60px rgba(0,0,0,0.15)' : '0 20px 40px rgba(0,0,0,0.12)';
   const cardBorder = t === 'glass' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.06)';
   const backdropFilter = t === 'glass' ? 'blur(16px)' : 'none';
@@ -123,7 +123,7 @@ export default function AgentsPage() {
 
   const defaultForm = {
     welcomeMessage: 'Hi there! 👋 How can I help you today?',
-    primaryColor: '#7C3AED', secondaryColor: '#EC4899',
+    primaryColor: '#7C3AED', secondaryColor: '#EC4899', chatBg: '#f8fafc',
     useGradient: false, widgetTheme: 'bubble', botAvatar: '',
     integrationType: 'both',
     socialLinks: { messenger: '', whatsapp: '', telegram: '' }
@@ -149,6 +149,7 @@ export default function AgentsPage() {
       welcomeMessage: agent.welcomeMessage || 'Hi there! 👋 How can I help you today?',
       primaryColor: agent.primaryColor || '#7C3AED',
       secondaryColor: agent.secondaryColor || '#EC4899',
+      chatBg: agent.chatBg || '#f8fafc',
       useGradient: Boolean(agent.useGradient), widgetTheme: agent.widgetTheme || 'bubble',
       botAvatar: agent.botAvatar || '',
       socialLinks: agent.socialLinks || { messenger: '', whatsapp: '', telegram: '' }
@@ -338,6 +339,15 @@ export default function AgentsPage() {
                   </div>
                   {/* Color Preview Bar */}
                   <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: colorBg(form) }}></div>
+                </div>
+
+                <div className="form-group">
+                  <label>Chat Area Background Color</label>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <input type="color" value={form.chatBg || '#f8fafc'} onChange={upd('chatBg')} style={{ width: 44, height: 44, padding: 0, border: 'none', borderRadius: 10, cursor: 'pointer', background: 'transparent' }} />
+                    <input className="form-input" style={{ flex: 1 }} value={form.chatBg || ''} onChange={upd('chatBg')} placeholder="#f8fafc" />
+                  </div>
+                  <div style={{ marginTop: 8, height: 6, borderRadius: 3, background: form.chatBg }}></div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 12 }}>

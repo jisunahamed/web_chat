@@ -25,6 +25,7 @@ export async function GET(request, { params }) {
         name: true,
         primaryColor: true,
         secondaryColor: true,
+        chatBg: true,
         useGradient: true,
         widgetTheme: true,
         welcomeMessage: true,

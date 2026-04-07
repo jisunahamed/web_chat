@@ -49,6 +49,7 @@ model Agent {
   allowedDomains String?  @map("allowed_domains")
   primaryColor    String   @default("#6C5CE7") @map("primary_color")
   secondaryColor  String?  @map("secondary_color")
+  chatBg          String   @default("#f8fafc") @map("chat_bg")
   useGradient     Boolean  @default(false) @map("use_gradient")
   widgetTheme     String   @default("bubble") @map("widget_theme")
   welcomeMessage  String   @default("Hi there! How can I help you today?") @map("welcome_message")

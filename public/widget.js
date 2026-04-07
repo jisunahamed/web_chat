@@ -35,6 +35,7 @@
     botName:        attr('data-bot-name')       || 'AI Assistant',
     welcome:        attr('data-welcome')        || 'Hi there! 👋 How can I help you today?',
     botAvatar:      attr('data-bot-avatar')     || '',
+    chatBg:         attr('data-chat-bg')         || '#f8fafc',
     socialLinks:    {},
   };
 
@@ -59,6 +60,7 @@
           if (!attr('data-bot-name') && c.name) CONFIG.botName = c.name;
           if (!attr('data-welcome') && c.welcomeMessage) CONFIG.welcome = c.welcomeMessage;
           if (!attr('data-bot-avatar') && c.botAvatar) CONFIG.botAvatar = c.botAvatar;
+          if (!attr('data-chat-bg') && c.chatBg) CONFIG.chatBg = c.chatBg;
           CONFIG.socialLinks = c.socialLinks || {};
           console.log('[InmeTech] Config loaded:', CONFIG);
         }
@@ -327,7 +329,7 @@
     const headerR = chatR;
     const chatBg = th === 'glass' ? 'rgba(255,255,255,0.92)' : '#ffffff';
     const msgBg = th === 'glass' ? 'rgba(255,255,255,0.75)' : '#ffffff';
-    const areaBg = th === 'glass' ? 'rgba(248,250,252,0.8)' : '#f8fafc';
+    const areaBg = c.chatBg || (th === 'glass' ? 'rgba(248,250,252,0.8)' : '#f8fafc');
     const chatShadow = th === 'glass' ? '0 32px 80px rgba(0,0,0,0.18)' : '0 24px 64px rgba(0,0,0,0.14)';
     const chatBorder = th === 'glass' ? '1px solid rgba(255,255,255,0.25)' : '1px solid rgba(0,0,0,0.06)';
     const blurVal = th === 'glass' ? 'backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);' : '';
