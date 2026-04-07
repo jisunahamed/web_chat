@@ -11,9 +11,43 @@ import { updateSystemSettings } from '@/app/actions/adminActions';
 
 const PluginManagement = ({ initialSettings }) => {
   const [version, setVersion] = useState(initialSettings?.pluginVersion || '1.0.0');
-  const [zipPath, setZipPath] = useState(initialSettings?.pluginZipPath || '/inmetech_chatbot.zip');
+  const [zipPath, setZipPath] = useState(initialSettings?.pluginZipPath || '/downloads/inmetech_chatbot.zip');
   const [uploading, setUploading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const fileInputRef = React.useRef(null);
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.zip')) {
+      alert("Please upload a .zip file only.");
+      return;
+    }
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/admin/plugin/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        setZipPath(data.path);
+        alert(`Successfully uploaded ${file.name}! Now click "Push Update" to finalize.`);
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      alert("Upload failed: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Real data for distribution updates
   const stats = [
@@ -95,14 +129,24 @@ const PluginManagement = ({ initialSettings }) => {
                </div>
             </div>
 
-            <div className="w-full md:w-[400px] bg-white/[0.02] border-2 border-dashed border-white/5 rounded-[32px] flex flex-col items-center justify-center p-12 text-center group hover:border-violet-600/30 transition-all cursor-pointer">
+            <div 
+               onClick={() => fileInputRef.current?.click()}
+               className="w-full md:w-[400px] bg-white/[0.02] border-2 border-dashed border-white/5 rounded-[32px] flex flex-col items-center justify-center p-12 text-center group hover:border-violet-600/30 transition-all cursor-pointer relative"
+            >
+               <input 
+                 type="file" 
+                 ref={fileInputRef} 
+                 onChange={handleFileSelect} 
+                 accept=".zip" 
+                 className="hidden" 
+               />
                <div className="w-20 h-20 bg-violet-600/10 rounded-full flex items-center justify-center text-violet-500 mb-6 group-hover:scale-110 transition-transform">
                   <FileArchive size={32} />
                </div>
                <h5 className="font-bold mb-2">Upload ZIP Archive</h5>
                <p className="text-zinc-600 text-xs mb-6">Drag and drop your updated inmetech_chatbot.zip here.</p>
                <div className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black tracking-widest uppercase text-zinc-400 group-hover:text-white group-hover:border-violet-600 transition-all">
-                  Browse Files
+                  {uploading ? 'Processing...' : 'Browse Files'}
                </div>
             </div>
          </div>
