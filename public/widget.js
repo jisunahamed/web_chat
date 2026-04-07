@@ -362,8 +362,8 @@
         <div id="maic-w-p-text">${c.welcome.length > 28 ? c.welcome.substring(0, 25) + '...' : c.welcome}</div>
       </div>
       <button id="maic-w-trigger" aria-label="Open chat">
-        <div id="maic-w-ic-chat" class="maic-w-tr-av" style="${c.botAvatar ? `background-image:url(${c.botAvatar})` : ''}">${c.botAvatar ? '' : c.botName.charAt(0)}</div>
-        <svg id="maic-w-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none; color:#1e293b"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg id="maic-w-ic-chat" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <svg id="maic-w-ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none; color:#ffffff"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div id="maic-w-chat" class="maic-w-hidden maic-w-pos-${pos}">
         <div id="maic-w-header">
@@ -432,11 +432,10 @@
 
     return `
       #maic-wgt{position:fixed;bottom:24px;${pos}:24px;z-index:999999;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;overflow:visible !important;}
-      #maic-w-trigger{width:60px;height:60px;border-radius:50%;border:none;background:#ffffff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.15);transition:transform .35s;position:relative;z-index:2}
-      #maic-w-trigger:hover{transform:scale(1.08) translateY(-2px)}
-      #maic-w-trigger::before{content:'';position:absolute;top:4px;right:4px;width:12px;height:12px;background:#4438ca;border-radius:50%;border:2px solid #fff;z-index:3}
-      #maic-w-trigger::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-top:8px solid #fff}
-      .maic-w-tr-av{width:46px;height:46px;border-radius:50%;background:#f1f5f9;background-size:cover;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1e293b;font-size:16px}
+      #maic-w-trigger{width:60px;height:60px;border-radius:50%;border:none;background:${grad};color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:transform .35s;position:relative;z-index:2}
+      #maic-w-trigger:hover{transform:scale(1.1) translateY(-3px)}
+      #maic-w-trigger::before{content:'';position:absolute;inset:-5px;border-radius:50%;background:${P};opacity:0;animation:mwp 2.5s infinite;z-index:-1}
+      @keyframes mwp{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.2;transform:scale(1.3)}}
       
       #maic-w-chat{position:absolute;bottom:80px;${pos}:0;width:380px;max-height:620px;background:${chatBg};border-radius:${chatR};box-shadow:${chatShadow};display:flex;flex-direction:column;overflow:hidden;transition:all .35s;border:${chatBorder};transform-origin:bottom ${pos};${blurVal}}
       #maic-w-chat.maic-w-hidden{opacity:0;transform:scale(.85) translateY(20px);pointer-events:none}
