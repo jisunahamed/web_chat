@@ -45,7 +45,15 @@ const AdminOverview = () => {
   const fetchStats = async () => {
     setLoading(true);
     const data = await getAdminStats();
-    if (data) setStats(data);
+    if (data) {
+      setStats({
+        totalUsers: data?.totalUsers || 0,
+        paidUsers: data?.paidUsers || 0,
+        activeAgents: data?.activeAgents || 0,
+        revenue: data?.revenue || 0,
+        pendingPayments: data?.pendingPayments || 0
+      });
+    }
     setLoading(false);
   };
 

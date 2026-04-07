@@ -21,11 +21,11 @@ const UserRow = ({ user, index }) => {
       <td className="py-5 pl-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-violet-600/10 rounded-xl flex items-center justify-center font-black text-violet-500 group-hover:bg-violet-600 group-hover:text-white transition-all">
-            {user.name.charAt(0)}
+            {user?.name?.charAt(0) || 'U'}
           </div>
           <div>
-            <p className="text-sm font-bold text-white">{user.name}</p>
-            <p className="text-[10px] text-zinc-500 mt-0.5">{user.email}</p>
+            <p className="text-sm font-bold text-white">{user?.name || 'Unknown User'}</p>
+            <p className="text-[10px] text-zinc-500 mt-0.5">{user?.email || 'No Email'}</p>
           </div>
         </div>
       </td>
@@ -40,7 +40,7 @@ const UserRow = ({ user, index }) => {
       </td>
       <td className="py-5">{getStatusBadge()}</td>
       <td className="py-5 font-mono text-zinc-500 text-[10px] tracking-tighter">
-        {user.apiKey.slice(0, 8)}...{user.apiKey.slice(-8)}
+        {user?.apiKey ? `${user.apiKey.slice(0, 8)}...${user.apiKey.slice(-8)}` : 'No Key'}
       </td>
       <td className="py-5 text-right pr-4 relative">
         <button onClick={() => setShowActions(!showActions)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-600 hover:text-white transition-all">

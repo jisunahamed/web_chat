@@ -45,13 +45,13 @@ const PaymentRow = ({ payment, onUpdate }) => {
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h4 className="font-black text-white uppercase tracking-tight italic">
-                {payment.method} – {payment.amount}৳
+                {payment?.method || 'N/A'} – {payment?.amount || 0}৳
               </h4>
-              <span className={`px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${statusColors[payment.status]}`}>
-                {payment.status}
+              <span className={`px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${statusColors[payment?.status || 'PENDING']}`}>
+                {payment?.status || 'UNKNOWN'}
               </span>
             </div>
-            <p className="text-zinc-500 text-xs font-medium">TRX ID: <span className="text-white font-bold">{payment.trxId}</span> • Plan: {payment.plan}</p>
+            <p className="text-zinc-400 text-xs font-medium">TRX ID: <span className="text-white font-bold">{payment?.trxId || 'N/A'}</span> • Plan: {payment?.plan || 'Standard'}</p>
           </div>
         </div>
 
