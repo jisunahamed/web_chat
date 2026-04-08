@@ -82,14 +82,14 @@ function WidgetPreview({ form }) {
       {/* Chat Window */}
       <div style={{width:'100%',background:T.chatBg,borderRadius:chatRadius,boxShadow:cardShadow,display:'flex',flexDirection:'column',overflow:'hidden',border:cardBorder,backdropFilter}}>
         {/* Header */}
-        <div style={{background:headerBg,color: t === 'neon' ? '#00ffaa' : '#fff',padding:'18px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:T.headerBlur, borderBottom: t === 'neon' ? '1px solid rgba(0,255,170,0.2)' : 'none'}}>
+        <div style={{background:headerBg,color: t==='neon' ? P : '#fff',padding:'18px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:T.headerBlur, borderBottom: t === 'neon' ? `1px solid ${P}33` : 'none'}}>
           <div style={{display:'flex',alignItems:'center',gap:12}}>
-            <div style={{width:42,height:42,borderRadius:t==='minimal'?8: t==='corporate'?4:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border: t==='neon' ? '2px solid rgba(0,255,170,0.5)' : '2px solid rgba(255,255,255,0.35)'}}>
+            <div style={{width:42,height:42,borderRadius:t==='minimal'?8: t==='corporate'?4:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border: t==='neon' ? `2px solid ${P}80` : '2px solid rgba(255,255,255,0.35)'}}>
               {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
             </div>
             <div>
               <div style={{fontWeight:700,fontSize:15}}>{form.name || 'AI Assistant'}</div>
-              <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:7,height:7,borderRadius:'50%',background: t==='neon'?'#00ffaa':'#4ade80',boxShadow: t==='neon'?'0 0 10px #00ffaa':'0 0 6px #4ade80'}}></span> Online</div>
+              <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:7,height:7,borderRadius:'50%',background: t==='neon'?P:'#4ade80',boxShadow: t==='neon'?`0 0 10px ${P}`:'0 0 6px #4ade80'}}></span> Online</div>
             </div>
           </div>
           <div style={{width:30,height:30,borderRadius:t==='minimal'?6:t==='corporate'?4:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -110,29 +110,29 @@ function WidgetPreview({ form }) {
                   <div style={{fontSize:10,fontWeight:700,color:mutedTextColor,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:8,opacity:0.7}}>{cat.category}</div>
                   <div style={{display:'flex',flexDirection:'column',gap:8}}>
                     {cat.questions.map((q, qi) => (
-                      <div key={qi} style={{background:T.msgBg,padding:'8px 12px',borderRadius:20,fontSize:12,fontWeight:600,color:textColor,display:'flex',alignItems:'center',gap:8,boxShadow: t==='neon' ? '0 0 10px rgba(0,255,170,0.1)' : '0 2px 8px rgba(0,0,0,0.05)',border: t==='neon' ? '1px solid rgba(0,255,170,0.2)' : isBgDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)'}}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color: t==='neon'?'#00ffaa':form.primaryColor}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <div key={qi} style={{background:T.msgBg,padding:'8px 12px',borderRadius:20,fontSize:12,fontWeight:600,color:textColor,display:'flex',alignItems:'center',gap:8,boxShadow: t==='neon' ? `0 0 10px ${P}1A` : '0 2px 8px rgba(0,0,0,0.05)',border: t==='neon' ? `1px solid ${P}33` : isBgDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)'}}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color: t==='neon'? P :form.primaryColor}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         {q}
                       </div>
                     ))}
                   </div>
                 </div>
               ))}
-              <div style={{fontSize:11,fontWeight:600,color: t==='neon' ? '#00ffaa' : form.primaryColor,marginTop:4,cursor:'pointer',display:'inline-block'}}>+ See all suggestions</div>
+              <div style={{fontSize:11,fontWeight:600,color: t==='neon' ? P : form.primaryColor,marginTop:4,cursor:'pointer',display:'inline-block'}}>+ See all suggestions</div>
             </div>
           ) : (
             <>
               {/* Bot */}
               <div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
-                <div style={{width:26,height:26,borderRadius:t==='minimal'?6:t==='corporate'?2:'50%',background: t==='neon' ? 'rgba(0,255,170,0.15)' : `${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:t==='neon'?'#00ffaa':form.primaryColor,border: t==='neon'?'1px solid rgba(0,255,170,0.3)':`1px solid ${form.primaryColor}25`,flexShrink:0}}>
+                <div style={{width:26,height:26,borderRadius:t==='minimal'?6:t==='corporate'?2:'50%',background: t==='neon' ? `${P}26` : `${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:t==='neon'?P:form.primaryColor,border: t==='neon'?`1px solid ${P}4D`:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
                   {form.name ? form.name.charAt(0) : 'A'}
                 </div>
-                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.msgBg,color: textColor,border: t==='neon'?'1px solid rgba(0,255,170,0.2)': isBgDark ? '1px solid rgba(255,255,255,0.08)' : t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'||t==='corporate'?2:4,boxShadow: t==='neon'?'0 0 10px rgba(0,255,170,0.1)':'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:T.blur}}>
+                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.msgBg,color: textColor,border: t==='neon'?`1px solid ${P}33`: isBgDark ? '1px solid rgba(255,255,255,0.08)' : t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'||t==='corporate'?2:4,boxShadow: t==='neon'?`0 0 10px ${P}1A`:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:T.blur}}>
                   {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
                 </div>
               </div>
               {/* User */}
-              <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.triggerBg,color:t==='neon'?'#0a0a0f':'#fff',borderBottomRightRadius:t==='minimal'||t==='corporate'?2:4,boxShadow:t==='neon'?'0 0 15px rgba(0,255,170,0.2)':'0 2px 8px rgba(0,0,0,0.1)'}}>
+              <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.triggerBg,color:t==='neon'?'#0a0a0f':'#fff',borderBottomRightRadius:t==='minimal'||t==='corporate'?2:4,boxShadow:t==='neon'?`0 0 15px ${P}33`:'0 2px 8px rgba(0,0,0,0.1)'}}>
                 I have a question!
               </div>
             </>
@@ -176,7 +176,7 @@ function WidgetPreview({ form }) {
             </div>
           )}
           
-          <div style={{width:60, height:60, borderRadius:T.triggerR, background:T.triggerBg, display:'flex', alignItems:'center', justifyContent:'center', color: t==='neon'?'#0a0a0f':'#fff', boxShadow: t==='neon'?'0 0 30px rgba(0,255,170,0.4),0 8px 28px rgba(0,0,0,0.5)':'0 8px 28px rgba(0,0,0,0.22)', position: 'relative'}}>
+          <div style={{width:60, height:60, borderRadius:T.triggerR, background:T.triggerBg, display:'flex', alignItems:'center', justifyContent:'center', color: t==='neon'?'#0a0a0f':'#fff', boxShadow: t==='neon'?`0 0 30px ${P}66,0 8px 28px rgba(0,0,0,0.5)`:'0 8px 28px rgba(0,0,0,0.22)', position: 'relative'}}>
              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
         </div>

@@ -396,14 +396,14 @@
     const pos = c.position;
     const th = c.theme;
 
-    // Theme-specific overrides
+    // Theme-specific overrides dynamically tracking Brand Color (P)
     const themeConfig = {
       bubble:    { chatR:'28px', msgR:'22px', triggerR:'50%', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:c.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'', headerBlur:'', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
       glass:     { chatR:'24px', msgR:'16px', triggerR:'50%', chatBg:'rgba(255,255,255,0.92)', msgBg:'rgba(255,255,255,0.75)', headerBg:c.useGradient?`linear-gradient(135deg,${P}dd,${S}dd)`:`${P}dd`, areaBg:c.chatBg||'rgba(248,250,252,0.8)', chatShadow:'0 32px 80px rgba(0,0,0,0.18)', chatBorder:'1px solid rgba(255,255,255,0.25)', blur:'backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);', headerBlur:'backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
       minimal:   { chatR:'12px', msgR:'10px', triggerR:'16px', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:c.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'', headerBlur:'', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
-      mocha:     { chatR:'24px', msgR:'18px', triggerR:'50%', chatBg:'#1a1210', msgBg:'#2a1f1a', headerBg:'linear-gradient(135deg, #5c3d2e, #8b6914)', areaBg:c.chatBg||'#1a1210', chatShadow:'0 32px 80px rgba(0,0,0,0.4)', chatBorder:'1px solid rgba(212,165,116,0.15)', blur:'', headerBlur:'', textColor:'#f5e6d3', mutedText:'rgba(212,165,116,0.6)', inputBg:'rgba(212,165,116,0.08)', triggerBg:'linear-gradient(135deg, #5c3d2e, #8b6914)' },
-      aurora:    { chatR:'24px', msgR:'18px', triggerR:'50%', chatBg:'#ffffff', msgBg:'#f0f4ff', headerBg:`linear-gradient(135deg, ${P}, #06b6d4, #ec4899)`, areaBg:c.chatBg||'#f0f4ff', chatShadow:'0 24px 64px rgba(124,58,237,0.15)', chatBorder:'1px solid rgba(124,58,237,0.12)', blur:'', headerBlur:'', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(124,58,237,0.04)', triggerBg:`linear-gradient(135deg, ${P}, #06b6d4, #ec4899)` },
-      neon:      { chatR:'8px', msgR:'6px', triggerR:'8px', chatBg:'#0a0a0f', msgBg:'#12121a', headerBg:'linear-gradient(135deg, #0a0a0f, #1a1a2e)', areaBg:c.chatBg||'#0a0a0f', chatShadow:`0 0 40px rgba(0,255,170,0.15), 0 24px 64px rgba(0,0,0,0.5)`, chatBorder:'1px solid rgba(0,255,170,0.2)', blur:'', headerBlur:'', textColor:'#e0ffe0', mutedText:'rgba(0,255,170,0.5)', inputBg:'rgba(0,255,170,0.06)', triggerBg:'linear-gradient(135deg, #00ffaa, #00d4ff)' },
+      mocha:     { chatR:'24px', msgR:'18px', triggerR:'50%', chatBg:'#1a1210', msgBg:'#2a1f1a', headerBg:grad, areaBg:c.chatBg||'#1a1210', chatShadow:'0 32px 80px rgba(0,0,0,0.4)', chatBorder:`1px solid ${P}26`, blur:'', headerBlur:'', textColor:'#f5e6d3', mutedText:`${P}99`, inputBg:`${P}1A`, triggerBg:grad },
+      aurora:    { chatR:'24px', msgR:'18px', triggerR:'50%', chatBg:'#ffffff', msgBg:'#f0f4ff', headerBg:`linear-gradient(135deg, ${P}, #06b6d4, ${S||P})`, areaBg:c.chatBg||'#f0f4ff', chatShadow:`0 24px 64px ${P}26`, chatBorder:`1px solid ${P}1F`, blur:'', headerBlur:'', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:`${P}0A`, triggerBg:grad },
+      neon:      { chatR:'8px', msgR:'6px', triggerR:'8px', chatBg:'#0a0a0f', msgBg:'#12121a', headerBg:'linear-gradient(135deg, #0a0a0f, #1a1a2e)', areaBg:c.chatBg||'#0a0a0f', chatShadow:`0 0 40px ${P}26, 0 24px 64px rgba(0,0,0,0.5)`, chatBorder:`1px solid ${P}33`, blur:'', headerBlur:'', textColor:'#e0ffe0', mutedText:`${P}80`, inputBg:`${P}0F`, triggerBg:grad },
       gradient:  { chatR:'28px', msgR:'18px', triggerR:'50%', chatBg:`linear-gradient(180deg, ${P}15, ${S || P}15)`, msgBg:'rgba(255,255,255,0.12)', headerBg:grad, areaBg:c.chatBg||`linear-gradient(180deg, ${P}10, #ffffff)`, chatShadow:`0 32px 80px ${P}30`, chatBorder:`1px solid ${P}20`, blur:'backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);', headerBlur:'', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.15)', triggerBg:grad },
       corporate: { chatR:'4px', msgR:'4px', triggerR:'4px', chatBg:'#ffffff', msgBg:'#f9fafb', headerBg:grad, areaBg:c.chatBg||'#f9fafb', chatShadow:'0 4px 20px rgba(0,0,0,0.08)', chatBorder:'1px solid #e5e7eb', blur:'', headerBlur:'', textColor:'#111827', mutedText:'#6b7280', inputBg:'#f3f4f6', triggerBg:grad },
     };
@@ -436,12 +436,12 @@
 
     // Neon-specific glow effects
     const neonGlow = th === 'neon' ? `
-      #maic-w-header{border-bottom:1px solid rgba(0,255,170,0.2)}
-      .maic-w-dot{background:#00ffaa;box-shadow:0 0 10px #00ffaa,0 0 20px #00ffaa50}
-      #maic-w-send{box-shadow:0 0 12px rgba(0,255,170,0.3)}
-      .maic-w-usr{box-shadow:0 0 12px rgba(0,255,170,0.15)}
-      #maic-w-trigger{box-shadow:0 0 30px rgba(0,255,170,0.3),0 8px 28px rgba(0,0,0,0.3)}
-      #maic-w-trigger::before{background:#00ffaa}
+      #maic-w-header{border-bottom:1px solid ${P}33}
+      .maic-w-dot{background:${P};box-shadow:0 0 10px ${P},0 0 20px ${P}80}
+      #maic-w-send{box-shadow:0 0 12px ${P}4D}
+      .maic-w-usr{box-shadow:0 0 12px ${P}26}
+      #maic-w-trigger{box-shadow:0 0 30px ${P}4D,0 8px 28px rgba(0,0,0,0.3)}
+      #maic-w-trigger::before{background:${P}}
     ` : '';
 
     // Aurora animated header
