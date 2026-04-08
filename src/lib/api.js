@@ -57,3 +57,8 @@ export const getAdminSettings = () => apiFetch('/api/admin/settings');
 export const updateAdminSettings = (data) => apiFetch('/api/admin/settings', { method: 'PUT', body: JSON.stringify(data) });
 export const getAdminUsers = () => apiFetch('/api/admin/users');
 export const fetchAdminModels = (baseUrl, apiKey) => apiFetch('/api/admin/models', { method: 'POST', body: JSON.stringify({ baseUrl, apiKey }) });
+
+// User AI Config
+export const updateAiConfig = (data) => apiFetch('/api/user/ai-config', { method: 'PUT', body: JSON.stringify(data) });
+export const testAiConnection = (data) => apiFetch('/api/user/ai-config/test', { method: 'POST', body: JSON.stringify(data) });
+

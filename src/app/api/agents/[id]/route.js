@@ -31,7 +31,8 @@ export async function PUT(request, { params }) {
     'name', 'companyName', 'integrationType', 'systemPrompt', 'websiteUrl', 'tone', 'model',
     'socialLinks', 'collectLeads', 'allowedDomains', 'primaryColor',
     'secondaryColor', 'chatBg', 'popupBg', 'faqs', 'useGradient', 'widgetTheme',
-    'welcomeMessage', 'botAvatar', 'isActive',
+    'welcomeMessage', 'botAvatar', 'isActive', 'languages',
+    'agentAiProvider', 'agentAiApiKey', 'agentAiBaseUrl',
   ];
 
   const data = {};

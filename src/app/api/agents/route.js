@@ -33,13 +33,18 @@ export async function POST(request) {
     }
 
     // Get global model — safe fallback if settings table doesn't exist yet
-    let globalModel = 'openai-gpt-oss-120b';
+    let globalModel = 'gpt-4o-mini';
     try {
       const settings = await prisma.$queryRaw`SELECT ai_model FROM settings WHERE id = 'global' LIMIT 1`;
       if (settings?.[0]?.ai_model) globalModel = settings[0].ai_model;
     } catch (e) {
       console.log('Settings table not found, using default model:', e.message);
     }
+
+    // Validate languages (max 2)
+    let languages = body.languages || [];
+    if (!Array.isArray(languages)) languages = [];
+    if (languages.length > 2) languages = languages.slice(0, 2);
 
     const agent = await prisma.agent.create({
       data: {
@@ -58,10 +63,14 @@ export async function POST(request) {
         chatBg: body.chatBg || '#f8fafc',
         popupBg: body.popupBg || '#ffffff',
         faqs: body.faqs || [],
+        languages: languages,
         useGradient: Boolean(body.useGradient),
         widgetTheme: body.widgetTheme || 'bubble',
         welcomeMessage: body.welcomeMessage || 'Hi there! How can I help you today?',
         botAvatar: body.botAvatar || null,
+        agentAiProvider: body.agentAiProvider || null,
+        agentAiApiKey: body.agentAiApiKey || null,
+        agentAiBaseUrl: body.agentAiBaseUrl || null,
       },
     });
 

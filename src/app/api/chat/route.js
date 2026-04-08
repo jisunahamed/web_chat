@@ -1,6 +1,6 @@
 import prisma from '@/lib/db';
 import { getUserByApiKey } from '@/lib/auth';
-import { getChatCompletion } from '@/lib/openai';
+import { getChatCompletion, resolveBaseUrl } from '@/lib/openai';
 import { dispatchWebhook } from '@/lib/webhook';
 
 // CORS headers
@@ -18,19 +18,19 @@ export async function OPTIONS() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { agent_id, session_id, message, user_info } = body;
+    const { agent_id, session_id, message, user_info, page_url } = body;
 
     if (!agent_id || !session_id || !message) {
       return Response.json({ error: 'agent_id, session_id, and message are required.' }, { status: 400, headers: cors });
     }
 
-    // 1. Validate API key
+    // 1. Validate API key & get the agent owner user
     const user = await getUserByApiKey(request);
     if (!user) {
       return Response.json({ error: 'Invalid API key.' }, { status: 401, headers: cors });
     }
 
-    // 2. Get agent
+    // 2. Get agent with full details
     const agent = await prisma.agent.findFirst({
       where: { id: agent_id, userId: user.id, isActive: true },
     });
@@ -38,21 +38,30 @@ export async function POST(request) {
       return Response.json({ error: 'Agent not found or inactive.' }, { status: 404, headers: cors });
     }
 
-    // 3. Get global AI settings (base URL, API key, and model from admin panel)
-    let aiBaseUrl = 'https://inference.do-ai.run/v1'; // Permanent default
-    let aiModel = 'openai-gpt-oss-120b'; // Permanent default
-    let aiApiKey = null;
-    
+    // 3. Resolve AI config: Agent Override → User Default → Admin Global Fallback
+    // Fetch user's AI config
+    const agentOwner = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { aiProvider: true, aiApiKey: true, aiBaseUrl: true, aiModel: true },
+    });
+
+    // Fetch admin global settings as fallback
+    let globalSettings = { ai_model: 'gpt-4o-mini', ai_base_url: null, ai_api_key: null };
     try {
       const settings = await prisma.$queryRaw`SELECT ai_model, ai_base_url, ai_api_key FROM settings WHERE id = 'global' LIMIT 1`;
-      if (settings?.[0]) {
-        if (settings[0].ai_base_url) aiBaseUrl = settings[0].ai_base_url;
-        if (settings[0].ai_model) aiModel = settings[0].ai_model;
-        if (settings[0].ai_api_key) aiApiKey = settings[0].ai_api_key;
-      }
+      if (settings?.[0]) globalSettings = settings[0];
     } catch (e) {
-      console.log('Settings lookup failed:', e.message);
+      console.log('Settings lookup failed, using defaults:', e.message);
     }
+
+    // Resolution chain: Agent → User → Admin Global
+    const resolvedProvider = agent.agentAiProvider || agentOwner?.aiProvider || 'openai';
+    const resolvedApiKey = agent.agentAiApiKey || agentOwner?.aiApiKey || globalSettings.ai_api_key || process.env.OPENAI_API_KEY;
+    const resolvedBaseUrl = resolveBaseUrl(
+      resolvedProvider,
+      agent.agentAiBaseUrl || agentOwner?.aiBaseUrl || globalSettings.ai_base_url
+    );
+    const resolvedModel = agentOwner?.aiModel || globalSettings.ai_model || 'gpt-4o-mini';
 
     // 4. Get or create conversation
     let conversation = await prisma.conversation.findUnique({
@@ -74,18 +83,20 @@ export async function POST(request) {
       select: { role: true, content: true },
     });
 
-    // 6. Call AI with settings from Admin panel
+    // 6. Call AI with resolved config + page URL + languages
     let reply;
     try {
       const fullSystemPrompt = `Agent Name: ${agent.name}\nCompany Name: ${agent.companyName || 'Not specified'}\n\nSystem Instructions:\n${agent.systemPrompt}`;
       reply = await getChatCompletion({
         systemPrompt: fullSystemPrompt,
-        model: aiModel,
+        model: resolvedModel,
         history,
         userMessage: message,
         tone: agent.tone,
-        baseUrl: aiBaseUrl,
-        apiKey: aiApiKey,
+        baseUrl: resolvedBaseUrl,
+        apiKey: resolvedApiKey,
+        pageUrl: page_url || null,
+        languages: agent.languages || [],
       });
     } catch (aiErr) {
       console.error('AI call failed:', aiErr.message);
@@ -120,13 +131,11 @@ export async function POST(request) {
           source: 'auto-extracted',
         };
 
-        // Check if lead already exists for this session
         const existingLead = await prisma.lead.findFirst({
           where: { agentId: agent_id, sessionId: session_id },
         });
 
         if (existingLead) {
-          // Update with new info
           const updateData = {};
           if (foundPhones[0] && !existingLead.phone) updateData.phone = foundPhones[0];
           if (foundEmails[0] && !existingLead.email) updateData.email = foundEmails[0];

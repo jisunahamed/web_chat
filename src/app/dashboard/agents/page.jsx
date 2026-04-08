@@ -3,9 +3,34 @@ import { useEffect, useState } from 'react';
 import { getAgents, createAgent, updateAgent, deleteAgent, getMe } from '@/lib/api';
 
 const THEMES = [
-  { id: 'bubble', label: 'Bubble', desc: 'Rounded, soft, modern bubble style' },
-  { id: 'glass', label: 'Glass', desc: 'Glassmorphism with frosted panels' },
-  { id: 'minimal', label: 'Minimal', desc: 'Clean, sharp, professional edges' },
+  { id: 'bubble', label: 'Bubble', desc: 'Rounded, soft, modern' },
+  { id: 'glass', label: 'Glass', desc: 'Frosted glassmorphism' },
+  { id: 'minimal', label: 'Minimal', desc: 'Clean, sharp edges' },
+  { id: 'mocha', label: 'Mocha', desc: 'Warm coffee/chocolate dark' },
+  { id: 'aurora', label: 'Aurora', desc: 'Animated gradient header' },
+  { id: 'neon', label: 'Neon', desc: 'Cyberpunk glow effects' },
+  { id: 'gradient', label: 'Gradient', desc: 'Full immersive gradient' },
+  { id: 'corporate', label: 'Corporate', desc: 'Ultra-clean professional' },
+];
+
+const LANGUAGES = [
+  { code: 'bn', name: 'Bangla', native: 'বাংলা' },
+  { code: 'en', name: 'English', native: 'English' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी' },
+  { code: 'ur', name: 'Urdu', native: 'اردو' },
+  { code: 'ar', name: 'Arabic', native: 'العربية' },
+  { code: 'es', name: 'Spanish', native: 'Español' },
+  { code: 'fr', name: 'French', native: 'Français' },
+  { code: 'de', name: 'German', native: 'Deutsch' },
+  { code: 'zh', name: 'Chinese', native: '中文' },
+  { code: 'ja', name: 'Japanese', native: '日本語' },
+  { code: 'ko', name: 'Korean', native: '한국어' },
+  { code: 'tr', name: 'Turkish', native: 'Türkçe' },
+  { code: 'id', name: 'Indonesian', native: 'Indonesia' },
+  { code: 'th', name: 'Thai', native: 'ไทย' },
+  { code: 'pt', name: 'Portuguese', native: 'Português' },
+  { code: 'ru', name: 'Russian', native: 'Русский' },
+  { code: 'it', name: 'Italian', native: 'Italiano' },
 ];
 
 function colorBg(form) {
@@ -177,7 +202,12 @@ export default function AgentsPage() {
     useGradient: false, widgetTheme: 'bubble', botAvatar: '',
     integrationType: 'both',
     socialLinks: { messenger: '', whatsapp: '', telegram: '' },
-    faqs: []
+    faqs: [],
+    languages: [],
+    useCustomAi: false,
+    agentAiProvider: '',
+    agentAiApiKey: '',
+    agentAiBaseUrl: '',
   };
   const [form, setForm] = useState(defaultForm);
   const [error, setError] = useState('');
@@ -203,7 +233,12 @@ export default function AgentsPage() {
       chatBg: agent.chatBg || '#f8fafc',
       useGradient: Boolean(agent.useGradient), widgetTheme: agent.widgetTheme || 'bubble',
       botAvatar: agent.botAvatar || '',
-      socialLinks: agent.socialLinks || { messenger: '', whatsapp: '', telegram: '' }
+      socialLinks: agent.socialLinks || { messenger: '', whatsapp: '', telegram: '' },
+      languages: agent.languages || [],
+      useCustomAi: Boolean(agent.agentAiProvider || agent.agentAiApiKey),
+      agentAiProvider: agent.agentAiProvider || '',
+      agentAiApiKey: agent.agentAiApiKey || '',
+      agentAiBaseUrl: agent.agentAiBaseUrl || '',
     });
     setEditingAgent(agent);
   };
@@ -352,18 +387,33 @@ export default function AgentsPage() {
                 {/* ─── WIDGET THEME ─── */}
                 <div className="form-group">
                   <label>Widget Theme</label>
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    {THEMES.map(th => (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 8 }}>
+                    {THEMES.slice(0, 4).map(th => (
                       <button type="button" key={th.id} onClick={() => setForm({ ...form, widgetTheme: th.id })}
                         style={{
-                          flex: 1, padding: '14px 12px', borderRadius: 12, cursor: 'pointer', textAlign: 'center',
+                          padding: '10px 8px', borderRadius: 12, cursor: 'pointer', textAlign: 'center',
                           background: form.widgetTheme === th.id ? 'rgba(124,58,237,0.12)' : 'var(--bg-input)',
                           border: form.widgetTheme === th.id ? '2px solid var(--primary)' : '1px solid var(--border)',
                           color: form.widgetTheme === th.id ? 'var(--primary-light)' : 'var(--text-secondary)',
-                          transition: 'all .2s'
+                          transition: 'all .2s',
                         }}>
-                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{th.label}</div>
-                        <div style={{ fontSize: 11, opacity: .8 }}>{th.desc}</div>
+                        <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 1 }}>{th.label}</div>
+                        <div style={{ fontSize: 9, opacity: .8 }}>{th.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                    {THEMES.slice(4).map(th => (
+                      <button type="button" key={th.id} onClick={() => setForm({ ...form, widgetTheme: th.id })}
+                        style={{
+                          padding: '10px 8px', borderRadius: 12, cursor: 'pointer', textAlign: 'center',
+                          background: form.widgetTheme === th.id ? 'rgba(124,58,237,0.12)' : 'var(--bg-input)',
+                          border: form.widgetTheme === th.id ? '2px solid var(--primary)' : '1px solid var(--border)',
+                          color: form.widgetTheme === th.id ? 'var(--primary-light)' : 'var(--text-secondary)',
+                          transition: 'all .2s',
+                        }}>
+                        <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 1 }}>{th.label}</div>
+                        <div style={{ fontSize: 9, opacity: .8 }}>{th.desc}</div>
                       </button>
                     ))}
                   </div>
@@ -479,6 +529,81 @@ export default function AgentsPage() {
                 </div>
                   </>
                 )}
+
+                {/* ─── LANGUAGE SELECTION ─── */}
+                <div className="form-group">
+                  <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Response Languages <span style={{ fontWeight: 400, color: 'var(--text-secondary)', fontSize: 12 }}>(max 2)</span></span>
+                  </label>
+                  {/* Selected chips */}
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+                    {(form.languages || []).map(code => {
+                      const lang = LANGUAGES.find(l => l.code === code);
+                      return lang ? (
+                        <span key={code} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'rgba(124,58,237,0.12)', color: 'var(--primary-light)', fontSize: 12, fontWeight: 600, border: '1px solid rgba(124,58,237,0.25)' }}>
+                          {lang.native} ({lang.name})
+                          <button type="button" onClick={() => setForm({ ...form, languages: form.languages.filter(l => l !== code) })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', fontSize: 14, padding: 0, lineHeight: 1 }}>×</button>
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                  {/* Selector */}
+                  {(form.languages || []).length < 2 && (
+                    <select
+                      className="form-input"
+                      value=""
+                      onChange={e => {
+                        if (e.target.value && !(form.languages || []).includes(e.target.value)) {
+                          setForm({ ...form, languages: [...(form.languages || []), e.target.value] });
+                        }
+                      }}
+                    >
+                      <option value="">+ Add a language...</option>
+                      {LANGUAGES.filter(l => !(form.languages || []).includes(l.code)).map(l => (
+                        <option key={l.code} value={l.code}>{l.native} — {l.name}</option>
+                      ))}
+                    </select>
+                  )}
+                  <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6, opacity: 0.7 }}>
+                    Your agent will only respond in the selected language(s). If empty, it follows user's language.
+                  </p>
+                </div>
+
+                {/* ─── ADVANCED AI OVERRIDE ─── */}
+                <div style={{ marginTop: 8, marginBottom: 16, borderTop: '1px solid var(--border)', paddingTop: 16 }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: 'var(--bg-input)', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)' }}>
+                    <input type="checkbox" checked={form.useCustomAi || false} onChange={e => setForm({ ...form, useCustomAi: e.target.checked })} style={{ width: 18, height: 18, accentColor: 'var(--primary)' }} />
+                    <div>
+                      <span style={{ fontSize: 14, fontWeight: 600, display: 'block' }}>Use custom AI for this agent</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Override your default AI settings for this specific agent</span>
+                    </div>
+                  </label>
+
+                  {form.useCustomAi && (
+                    <div style={{ marginTop: 16, padding: 16, background: 'rgba(124,58,237,0.04)', borderRadius: 14, border: '1px solid rgba(124,58,237,0.15)' }}>
+                      <div className="form-group" style={{ marginBottom: 12 }}>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>AI Provider</label>
+                        <select className="form-input" value={form.agentAiProvider || ''} onChange={e => setForm({ ...form, agentAiProvider: e.target.value })}>
+                          <option value="">Use default (from Settings)</option>
+                          <option value="openai">OpenAI</option>
+                          <option value="gemini">Google Gemini</option>
+                          <option value="groq">Groq</option>
+                          <option value="custom">Custom API</option>
+                        </select>
+                      </div>
+                      <div className="form-group" style={{ marginBottom: 12 }}>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>API Key</label>
+                        <input className="form-input" type="password" value={form.agentAiApiKey || ''} onChange={e => setForm({ ...form, agentAiApiKey: e.target.value })} placeholder="Leave empty to use your default key" />
+                      </div>
+                      {form.agentAiProvider === 'custom' && (
+                        <div className="form-group">
+                          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Custom Base URL</label>
+                          <input className="form-input" value={form.agentAiBaseUrl || ''} onChange={e => setForm({ ...form, agentAiBaseUrl: e.target.value })} placeholder="https://your-api.com/v1" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 <div className="form-group"><label>Website URL</label><input className="form-input" placeholder="https://..." value={form.websiteUrl} onChange={upd('websiteUrl')} /></div>
 
