@@ -60,5 +60,5 @@ export const fetchAdminModels = (baseUrl, apiKey) => apiFetch('/api/admin/models
 
 // User AI Config
 export const updateAiConfig = (data) => apiFetch('/api/user/ai-config', { method: 'PUT', body: JSON.stringify(data) });
-export const testAiConnection = (data) => apiFetch('/api/user/ai-config/test', { method: 'POST', body: JSON.stringify(data) });
+export const testAiConnection = (data) => apiFetch('/api/user/ai-config', { method: 'POST', body: JSON.stringify(data) });
 
