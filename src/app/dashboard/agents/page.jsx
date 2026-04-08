@@ -42,38 +42,37 @@ function colorBg(form) {
 
 // ────────────────────────────── LIVE PREVIEW ──────────────────────────────
 function WidgetPreview({ form }) {
-  const bg = colorBg(form);
   const t = form.widgetTheme || 'bubble';
-  const radius = t === 'minimal' ? 8 : t === 'glass' ? 20 : 28;
-  const chatRadius = t === 'minimal' ? 4 : t === 'glass' ? 12 : 20;
-  const msgRadius = t === 'minimal' ? 8 : t === 'glass' ? 14 : 20;
-  const headerBg = t === 'glass'
-    ? `linear-gradient(135deg, ${form.primaryColor}cc, ${form.useGradient && form.secondaryColor ? form.secondaryColor + 'cc' : form.primaryColor + '99'})`
-    : bg;
-  const chatBg = form.chatBg || (t === 'glass' ? 'rgba(248,250,252,0.85)' : '#f8fafc');
+  const P = form.primaryColor || '#000000';
+  const S = form.secondaryColor || P;
+  const grad = form.useGradient ? `linear-gradient(135deg, ${P}, ${S})` : P;
+  
+  const themeConfig = {
+    bubble:    { chatR:28, msgR:22, triggerR:'50%', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:form.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
+    glass:     { chatR:24, msgR:16, triggerR:'50%', chatBg:'rgba(255,255,255,0.92)', msgBg:'rgba(255,255,255,0.75)', headerBg:form.useGradient?`linear-gradient(135deg,${P}dd,${S}dd)`:`${P}dd`, areaBg:form.chatBg||'rgba(248,250,252,0.8)', chatShadow:'0 32px 80px rgba(0,0,0,0.18)', chatBorder:'1px solid rgba(255,255,255,0.25)', blur:'blur(20px)', headerBlur:'blur(16px)', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
+    minimal:   { chatR:12, msgR:10, triggerR:'16px', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:form.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
+    mocha:     { chatR:24, msgR:18, triggerR:'50%', chatBg:'#1a1210', msgBg:'#2a1f1a', headerBg:'linear-gradient(135deg, #5c3d2e, #8b6914)', areaBg:form.chatBg||'#1a1210', chatShadow:'0 32px 80px rgba(0,0,0,0.4)', chatBorder:'1px solid rgba(212,165,116,0.15)', blur:'none', headerBlur:'none', textColor:'#f5e6d3', mutedText:'rgba(212,165,116,0.6)', inputBg:'rgba(212,165,116,0.08)', triggerBg:'linear-gradient(135deg, #5c3d2e, #8b6914)' },
+    aurora:    { chatR:24, msgR:18, triggerR:'50%', chatBg:'#ffffff', msgBg:'#f0f4ff', headerBg:`linear-gradient(135deg, ${P}, #06b6d4, #ec4899)`, areaBg:form.chatBg||'#f0f4ff', chatShadow:'0 24px 64px rgba(124,58,237,0.15)', chatBorder:'1px solid rgba(124,58,237,0.12)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(124,58,237,0.04)', triggerBg:`linear-gradient(135deg, ${P}, #06b6d4, #ec4899)` },
+    neon:      { chatR:8, msgR:6, triggerR:'8px', chatBg:'#0a0a0f', msgBg:'#12121a', headerBg:'linear-gradient(135deg, #0a0a0f, #1a1a2e)', areaBg:form.chatBg||'#0a0a0f', chatShadow:`0 0 40px rgba(0,255,170,0.15), 0 24px 64px rgba(0,0,0,0.5)`, chatBorder:'1px solid rgba(0,255,170,0.2)', blur:'none', headerBlur:'none', textColor:'#e0ffe0', mutedText:'rgba(0,255,170,0.5)', inputBg:'rgba(0,255,170,0.06)', triggerBg:'linear-gradient(135deg, #00ffaa, #00d4ff)' },
+    gradient:  { chatR:28, msgR:18, triggerR:'50%', chatBg:`linear-gradient(180deg, ${P}15, ${S || P}15)`, msgBg:'rgba(255,255,255,0.12)', headerBg:grad, areaBg:form.chatBg||`linear-gradient(180deg, ${P}10, #ffffff)`, chatShadow:`0 32px 80px ${P}30`, chatBorder:`1px solid ${P}20`, blur:'blur(12px)', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.15)', triggerBg:grad },
+    corporate: { chatR:4, msgR:4, triggerR:'4px', chatBg:'#ffffff', msgBg:'#f9fafb', headerBg:grad, areaBg:form.chatBg||'#f9fafb', chatShadow:'0 4px 20px rgba(0,0,0,0.08)', chatBorder:'1px solid #e5e7eb', blur:'none', headerBlur:'none', textColor:'#111827', mutedText:'#6b7280', inputBg:'#f3f4f6', triggerBg:grad },
+  };
+
+  const T = themeConfig[t] || themeConfig.bubble;
+  const isBgDark = ['mocha','neon'].includes(t);
+  
+  const chatRadius = T.chatR;
+  const msgRadius = T.msgR;
+  const headerBg = T.headerBg;
+  const chatBg = T.areaBg;
   const popupBg = form.popupBg || '#ffffff';
   const faqs = form.faqs || [];
-  const isDark = (col) => {
-    if (!col) return false;
-    if (col.startsWith('rgba')) return false;
-    let hex = '';
-    if (col.startsWith('linear')) {
-      const m = col.match(/#([A-Fa-f0-9]{3,6})/);
-      if (m) hex = m[1]; else return true;
-    } else {
-      hex = col.replace('#', '');
-    }
-    if (hex.length < 3) return false;
-    const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.substring(0, 2), 16);
-    const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.substring(2, 4), 16);
-    const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.substring(4, 6), 16);
-    return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
-  };
-  const textColor = isDark(chatBg) ? '#f8fafc' : '#1e293b';
-  const mutedTextColor = isDark(chatBg) ? 'rgba(255,255,255,0.6)' : '#64748b';
-  const cardShadow = t === 'glass' ? '0 20px 60px rgba(0,0,0,0.15)' : '0 20px 40px rgba(0,0,0,0.12)';
-  const cardBorder = t === 'glass' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.06)';
-  const backdropFilter = t === 'glass' ? 'blur(16px)' : 'none';
+  
+  const textColor = isBgDark ? '#f5f5f5' : T.textColor;
+  const mutedTextColor = isBgDark ? T.mutedText : T.mutedText;
+  const cardShadow = T.chatShadow;
+  const cardBorder = T.chatBorder;
+  const backdropFilter = T.blur;
 
   const sl = form.socialLinks || {};
   const hasSocial = sl.messenger || sl.whatsapp || sl.telegram;
@@ -81,19 +80,19 @@ function WidgetPreview({ form }) {
   return (
     <div style={{width:'100%',maxWidth:350,display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
       {/* Chat Window */}
-      <div style={{width:'100%',background:'#fff',borderRadius:chatRadius,boxShadow:cardShadow,display:'flex',flexDirection:'column',overflow:'hidden',border:cardBorder,backdropFilter}}>
+      <div style={{width:'100%',background:T.chatBg,borderRadius:chatRadius,boxShadow:cardShadow,display:'flex',flexDirection:'column',overflow:'hidden',border:cardBorder,backdropFilter}}>
         {/* Header */}
-        <div style={{background:headerBg,color:'#fff',padding:'18px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:t==='glass'?'blur(12px)':'none'}}>
+        <div style={{background:headerBg,color: t === 'neon' ? '#00ffaa' : '#fff',padding:'18px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:T.headerBlur, borderBottom: t === 'neon' ? '1px solid rgba(0,255,170,0.2)' : 'none'}}>
           <div style={{display:'flex',alignItems:'center',gap:12}}>
-            <div style={{width:42,height:42,borderRadius:t==='minimal'?8:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border:'2px solid rgba(255,255,255,0.35)'}}>
+            <div style={{width:42,height:42,borderRadius:t==='minimal'?8: t==='corporate'?4:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border: t==='neon' ? '2px solid rgba(0,255,170,0.5)' : '2px solid rgba(255,255,255,0.35)'}}>
               {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
             </div>
             <div>
               <div style={{fontWeight:700,fontSize:15}}>{form.name || 'AI Assistant'}</div>
-              <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:7,height:7,borderRadius:'50%',background:'#4ade80',boxShadow:'0 0 6px #4ade80'}}></span> Online</div>
+              <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:7,height:7,borderRadius:'50%',background: t==='neon'?'#00ffaa':'#4ade80',boxShadow: t==='neon'?'0 0 10px #00ffaa':'0 0 6px #4ade80'}}></span> Online</div>
             </div>
           </div>
-          <div style={{width:30,height:30,borderRadius:t==='minimal'?6:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{width:30,height:30,borderRadius:t==='minimal'?6:t==='corporate'?4:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </div>
@@ -111,29 +110,29 @@ function WidgetPreview({ form }) {
                   <div style={{fontSize:10,fontWeight:700,color:mutedTextColor,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:8,opacity:0.7}}>{cat.category}</div>
                   <div style={{display:'flex',flexDirection:'column',gap:8}}>
                     {cat.questions.map((q, qi) => (
-                      <div key={qi} style={{background:'#fff',padding:'8px 12px',borderRadius:20,fontSize:12,fontWeight:600,color:'#1e293b',display:'flex',alignItems:'center',gap:8,boxShadow:'0 2px 8px rgba(0,0,0,0.05)',border:'1px solid rgba(0,0,0,0.05)'}}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color:form.primaryColor}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <div key={qi} style={{background:T.msgBg,padding:'8px 12px',borderRadius:20,fontSize:12,fontWeight:600,color:textColor,display:'flex',alignItems:'center',gap:8,boxShadow: t==='neon' ? '0 0 10px rgba(0,255,170,0.1)' : '0 2px 8px rgba(0,0,0,0.05)',border: t==='neon' ? '1px solid rgba(0,255,170,0.2)' : isBgDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)'}}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color: t==='neon'?'#00ffaa':form.primaryColor}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         {q}
                       </div>
                     ))}
                   </div>
                 </div>
               ))}
-              <div style={{fontSize:11,fontWeight:600,color:form.primaryColor,marginTop:4,cursor:'pointer',display:'inline-block'}}>+ See all suggestions</div>
+              <div style={{fontSize:11,fontWeight:600,color: t==='neon' ? '#00ffaa' : form.primaryColor,marginTop:4,cursor:'pointer',display:'inline-block'}}>+ See all suggestions</div>
             </div>
           ) : (
             <>
               {/* Bot */}
               <div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
-                <div style={{width:26,height:26,borderRadius:t==='minimal'?6:'50%',background:`${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:form.primaryColor,border:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
+                <div style={{width:26,height:26,borderRadius:t==='minimal'?6:t==='corporate'?2:'50%',background: t==='neon' ? 'rgba(0,255,170,0.15)' : `${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:t==='neon'?'#00ffaa':form.primaryColor,border: t==='neon'?'1px solid rgba(0,255,170,0.3)':`1px solid ${form.primaryColor}25`,flexShrink:0}}>
                   {form.name ? form.name.charAt(0) : 'A'}
                 </div>
-                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:t==='glass'?'rgba(255,255,255,0.7)':'#fff',color: '#1e293b',border:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'?2:4,boxShadow:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:t==='glass'?'blur(8px)':'none'}}>
+                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.msgBg,color: textColor,border: t==='neon'?'1px solid rgba(0,255,170,0.2)': isBgDark ? '1px solid rgba(255,255,255,0.08)' : t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'||t==='corporate'?2:4,boxShadow: t==='neon'?'0 0 10px rgba(0,255,170,0.1)':'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:T.blur}}>
                   {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
                 </div>
               </div>
               {/* User */}
-              <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:bg,color:'#fff',borderBottomRightRadius:t==='minimal'?2:4,boxShadow:'0 2px 8px rgba(0,0,0,0.1)'}}>
+              <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.triggerBg,color:t==='neon'?'#0a0a0f':'#fff',borderBottomRightRadius:t==='minimal'||t==='corporate'?2:4,boxShadow:t==='neon'?'0 0 15px rgba(0,255,170,0.2)':'0 2px 8px rgba(0,0,0,0.1)'}}>
                 I have a question!
               </div>
             </>
@@ -141,15 +140,15 @@ function WidgetPreview({ form }) {
         </div>
 
         {/* Input & Footer Branding */}
-        <div style={{background:chatBg,borderTop:'1px solid rgba(0,0,0,0.06)'}}>
+        <div style={{background:T.chatBg,borderTop: isBgDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)'}}>
            <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 16px'}}>
-            <div style={{flex:1,border:'1px solid rgba(0,0,0,0.1)',borderRadius:t==='minimal'?6:14,padding:'9px 14px',fontSize:13.5,color:mutedTextColor,background:'rgba(255,255,255,0.05)'}}>Type a message...</div>
-            <div style={{width:38,height:38,borderRadius:t==='minimal'?6:12,background:bg,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff'}}>
+            <div style={{flex:1,border: isBgDark ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(0,0,0,0.1)',borderRadius:t==='minimal'?6:t==='corporate'?4:14,padding:'9px 14px',fontSize:13.5,color:mutedTextColor,background:T.inputBg}}>Type a message...</div>
+            <div style={{width:38,height:38,borderRadius:t==='minimal'?6:t==='corporate'?4:12,background:T.triggerBg,display:'flex',alignItems:'center',justifyContent:'center',color:t==='neon'?'#0a0a0f':'#fff'}}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </div>
           </div>
           <div style={{textAlign:'center',paddingBottom:8,fontSize:11,color:mutedTextColor}}>
-            Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:isDark(chatBg) ? '#f8fafc' : form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
+            Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:isBgDark ? '#f8fafc' : form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
           </div>
         </div>
       </div>
@@ -177,7 +176,7 @@ function WidgetPreview({ form }) {
             </div>
           )}
           
-          <div style={{width:60, height:60, borderRadius:'50%', background:bg, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 8px 28px rgba(0,0,0,0.22)', position: 'relative'}}>
+          <div style={{width:60, height:60, borderRadius:T.triggerR, background:T.triggerBg, display:'flex', alignItems:'center', justifyContent:'center', color: t==='neon'?'#0a0a0f':'#fff', boxShadow: t==='neon'?'0 0 30px rgba(0,255,170,0.4),0 8px 28px rgba(0,0,0,0.5)':'0 8px 28px rgba(0,0,0,0.22)', position: 'relative'}}>
              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
         </div>
