@@ -524,7 +524,7 @@
       .maic-w-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80}
       #maic-w-min{background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-      #maic-w-messages{flex:1;overflow-y:auto;padding:16px 15px;display:flex;flex-direction:column;gap:10px;min-height:260px;background:${areaBg};scrollbar-width:none !important;-ms-overflow-style:none !important;}
+      #maic-w-messages{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px 15px;display:flex;flex-direction:column;gap:10px;min-height:260px;background:${areaBg};scrollbar-width:none !important;-ms-overflow-style:none !important;}
       #maic-w-messages::-webkit-scrollbar{display:none !important;}
       .maic-w-msg{max-width:84%;padding:8px 14px;border-radius:${T.msgR};font-size:13.5px;line-height:1.4;animation:mwf .3s both}
       @keyframes mwf{from{opacity:0;transform:translateY(10px)}}
