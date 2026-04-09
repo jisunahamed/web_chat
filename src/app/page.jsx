@@ -479,31 +479,31 @@ const LandingPage = () => {
 
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
               <PricingCard 
-                title="Prototype Tier"
+                title="Free Prototype"
                 price="Free"
                 features={[
                   "1 Autonomous Agent Node",
-                  "14-Day Evaluation Phase",
-                  "WordPress Integration",
+                  "Free Forever",
+                  "WhatsApp & Web Integration",
                   "Standard Response Core",
                   "Visual Customization"
                 ]}
-                cta="Deploy Prototype"
+                cta="Start for Free"
                 premium={false}
               />
               <PricingCard 
                 title="Sovereign Protocol"
-                price="500৳"
+                price="600৳"
                 premium
                 features={[
-                  "10 Autonomous Agent Nodes",
+                  "Unlimited Agent Nodes",
                   "Infinite Usage Lifecycle",
                   "Priority Neural Processing",
                   "Whitelabel Integration",
                   "Advanced Lead Analytics",
                   "24/7 Priority Support"
                 ]}
-                cta="Establish Protocol"
+                cta="Upgrade Protocol"
               />
            </div>
            

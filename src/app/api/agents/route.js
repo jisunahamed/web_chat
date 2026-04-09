@@ -28,6 +28,14 @@ export async function POST(request) {
 
     const body = await request.json();
 
+    const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+    if (!dbUser.isPremium) {
+      const agentCount = await prisma.agent.count({ where: { userId: user.id } });
+      if (agentCount >= 1) {
+        return Response.json({ error: 'Free plan is limited to 1 agent. Please upgrade to create unlimited agents.' }, { status: 403 });
+      }
+    }
+
     if (!body.name || !body.companyName || !body.systemPrompt) {
       return Response.json({ error: 'Name, Company Name, and system prompt are required.' }, { status: 400 });
     }

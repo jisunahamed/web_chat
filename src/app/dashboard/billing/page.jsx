@@ -40,7 +40,7 @@ const PaymentBox = ({ title, number, color, icon: Icon }) => {
 const BillingPage = () => {
   const [trxId, setTrxId] = useState('');
   const [method, setMethod] = useState('');
-  const [amount, setAmount] = useState('500');
+  const [amount, setAmount] = useState('600');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -57,9 +57,9 @@ const BillingPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-12">
-      <header>
+       <header>
          <h1 className="text-3xl font-black tracking-tight mb-2 uppercase">Subscription & Billing</h1>
-         <p className="text-zinc-500 text-sm">Upgrade to Professional to unlock 10 AI Agents and unlimited messages.</p>
+         <p className="text-zinc-500 text-sm">Upgrade to Professional to unlock Unlimited AI Agents and unlimited messages.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -96,7 +96,7 @@ const BillingPage = () => {
                      </div>
                      <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-zinc-600 tracking-widest ml-1">Amount (BDT)</label>
-                        <input disabled value="500৳" className="w-full px-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium opacity-50" />
+                        <input disabled value="600৳" className="w-full px-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium opacity-50" />
                      </div>
                   </div>
 
@@ -126,7 +126,7 @@ const BillingPage = () => {
                   </h4>
                   <ul className="space-y-4">
                      {[
-                       "10 Smart AI Agents",
+                       "Unlimited Smart AI Agents",
                        "Unlimited Conversations",
                        "Priority AI Models",
                        "WhatsApp Integration",
