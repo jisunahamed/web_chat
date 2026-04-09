@@ -84,10 +84,20 @@
   };
 
   let isOpen = false, isSending = false, leadShown = false;
+  let hasTrackedClick = false;
+
+  function trackAnalytics(type) {
+    fetch(CONFIG.apiUrl + '/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': CONFIG.apiKey },
+      body: JSON.stringify({ agent_id: CONFIG.agentId, type })
+    }).catch(() => {});
+  }
 
   // ─── Init ─────────────────────────────────────────
   fetchConfig().then(buildWidget);
   function buildWidget() {
+    trackAnalytics('view');
     // Inject Font
     const fontLink = document.createElement('link');
     fontLink.rel = 'stylesheet';
@@ -225,6 +235,10 @@
 
     function toggle() {
       isOpen = !isOpen;
+      if (isOpen && !hasTrackedClick) {
+        hasTrackedClick = true;
+        trackAnalytics('click');
+      }
       chatWin.classList.toggle('maic-w-hidden', !isOpen);
       popup.style.cssText = ''; // Reset inline overrides
       popup.classList.add('maic-w-hidden');
