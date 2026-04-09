@@ -43,141 +43,152 @@ function colorBg(form) {
 // ────────────────────────────── LIVE PREVIEW ──────────────────────────────
 function WidgetPreview({ form }) {
   const t = form.widgetTheme || 'bubble';
-  const P = form.primaryColor || '#000000';
+  const P = form.primaryColor || '#7C3AED';
   const S = form.secondaryColor || P;
   const grad = form.useGradient ? `linear-gradient(135deg, ${P}, ${S})` : P;
   
   const themeConfig = {
-    bubble:    { chatR:28, msgR:22, triggerR:'50%', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:form.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
-    glass:     { chatR:24, msgR:16, triggerR:'50%', chatBg:'rgba(255,255,255,0.92)', msgBg:'rgba(255,255,255,0.75)', headerBg:form.useGradient?`linear-gradient(135deg,${P}dd,${S}dd)`:`${P}dd`, areaBg:form.chatBg||'rgba(248,250,252,0.8)', chatShadow:'0 32px 80px rgba(0,0,0,0.18)', chatBorder:'1px solid rgba(255,255,255,0.25)', blur:'blur(20px)', headerBlur:'blur(16px)', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
-    minimal:   { chatR:12, msgR:10, triggerR:'16px', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:form.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad },
-    mocha:     { chatR:24, msgR:18, triggerR:'50%', chatBg:'#1a1210', msgBg:'#2a1f1a', headerBg:'linear-gradient(135deg, #5c3d2e, #8b6914)', areaBg:form.chatBg||'#1a1210', chatShadow:'0 32px 80px rgba(0,0,0,0.4)', chatBorder:'1px solid rgba(212,165,116,0.15)', blur:'none', headerBlur:'none', textColor:'#f5e6d3', mutedText:'rgba(212,165,116,0.6)', inputBg:'rgba(212,165,116,0.08)', triggerBg:'linear-gradient(135deg, #5c3d2e, #8b6914)' },
-    aurora:    { chatR:24, msgR:18, triggerR:'50%', chatBg:'#ffffff', msgBg:'#f0f4ff', headerBg:`linear-gradient(135deg, ${P}, #06b6d4, #ec4899)`, areaBg:form.chatBg||'#f0f4ff', chatShadow:'0 24px 64px rgba(124,58,237,0.15)', chatBorder:'1px solid rgba(124,58,237,0.12)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(124,58,237,0.04)', triggerBg:`linear-gradient(135deg, ${P}, #06b6d4, #ec4899)` },
-    neon:      { chatR:8, msgR:6, triggerR:'8px', chatBg:'#0a0a0f', msgBg:'#12121a', headerBg:'linear-gradient(135deg, #0a0a0f, #1a1a2e)', areaBg:form.chatBg||'#0a0a0f', chatShadow:`0 0 40px rgba(0,255,170,0.15), 0 24px 64px rgba(0,0,0,0.5)`, chatBorder:'1px solid rgba(0,255,170,0.2)', blur:'none', headerBlur:'none', textColor:'#e0ffe0', mutedText:'rgba(0,255,170,0.5)', inputBg:'rgba(0,255,170,0.06)', triggerBg:'linear-gradient(135deg, #00ffaa, #00d4ff)' },
-    gradient:  { chatR:28, msgR:18, triggerR:'50%', chatBg:`linear-gradient(180deg, ${P}15, ${S || P}15)`, msgBg:'rgba(255,255,255,0.12)', headerBg:grad, areaBg:form.chatBg||`linear-gradient(180deg, ${P}10, #ffffff)`, chatShadow:`0 32px 80px ${P}30`, chatBorder:`1px solid ${P}20`, blur:'blur(12px)', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.15)', triggerBg:grad },
-    corporate: { chatR:4, msgR:4, triggerR:'4px', chatBg:'#ffffff', msgBg:'#f9fafb', headerBg:grad, areaBg:form.chatBg||'#f9fafb', chatShadow:'0 4px 20px rgba(0,0,0,0.08)', chatBorder:'1px solid #e5e7eb', blur:'none', headerBlur:'none', textColor:'#111827', mutedText:'#6b7280', inputBg:'#f3f4f6', triggerBg:grad },
+    bubble:    { chatR:28, msgR:22, triggerR:'50%', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:form.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad, dark:false },
+    glass:     { chatR:24, msgR:16, triggerR:'50%', chatBg:'rgba(255,255,255,0.92)', msgBg:'rgba(255,255,255,0.75)', headerBg:form.useGradient?`linear-gradient(135deg,${P}dd,${S}dd)`:`${P}dd`, areaBg:form.chatBg||'rgba(248,250,252,0.8)', chatShadow:'0 32px 80px rgba(0,0,0,0.18)', chatBorder:'1px solid rgba(255,255,255,0.25)', blur:'blur(20px)', headerBlur:'blur(16px)', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad, dark:false },
+    minimal:   { chatR:12, msgR:10, triggerR:'16px', chatBg:'#ffffff', msgBg:'#ffffff', headerBg:grad, areaBg:form.chatBg||'#f8fafc', chatShadow:'0 24px 64px rgba(0,0,0,0.14)', chatBorder:'1px solid rgba(0,0,0,0.06)', blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.08)', triggerBg:grad, dark:false },
+    mocha:     { chatR:24, msgR:18, triggerR:'50%', chatBg:'#1a1210', msgBg:'#2a1f1a', headerBg:grad, areaBg:form.chatBg||'#1a1210', chatShadow:'0 32px 80px rgba(0,0,0,0.4)', chatBorder:`1px solid ${P}26`, blur:'none', headerBlur:'none', textColor:'#f5e6d3', mutedText:`${P}99`, inputBg:`${P}1A`, triggerBg:grad, dark:true },
+    aurora:    { chatR:24, msgR:18, triggerR:'50%', chatBg:'#ffffff', msgBg:'#f0f4ff', headerBg:`linear-gradient(135deg, ${P}, #06b6d4, ${S})`, areaBg:form.chatBg||'#f0f4ff', chatShadow:`0 24px 64px ${P}26`, chatBorder:`1px solid ${P}1F`, blur:'none', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:`${P}0A`, triggerBg:grad, dark:false },
+    neon:      { chatR:8, msgR:6, triggerR:'8px', chatBg:'#0a0a0f', msgBg:'#12121a', headerBg:'linear-gradient(135deg, #0a0a0f, #1a1a2e)', areaBg:form.chatBg||'#0a0a0f', chatShadow:`0 0 40px ${P}26, 0 24px 64px rgba(0,0,0,0.5)`, chatBorder:`1px solid ${P}33`, blur:'none', headerBlur:'none', textColor:'#e0ffe0', mutedText:`${P}80`, inputBg:`${P}0F`, triggerBg:grad, dark:true },
+    gradient:  { chatR:28, msgR:18, triggerR:'50%', chatBg:`linear-gradient(180deg, ${P}15, ${S}15)`, msgBg:'rgba(255,255,255,0.12)', headerBg:grad, areaBg:form.chatBg||`linear-gradient(180deg, ${P}10, #ffffff)`, chatShadow:`0 32px 80px ${P}30`, chatBorder:`1px solid ${P}20`, blur:'blur(12px)', headerBlur:'none', textColor:'#1e293b', mutedText:'#94a3b8', inputBg:'rgba(255,255,255,0.15)', triggerBg:grad, dark:false },
+    corporate: { chatR:4, msgR:4, triggerR:'4px', chatBg:'#ffffff', msgBg:'#f9fafb', headerBg:grad, areaBg:form.chatBg||'#f9fafb', chatShadow:'0 4px 20px rgba(0,0,0,0.08)', chatBorder:'1px solid #e5e7eb', blur:'none', headerBlur:'none', textColor:'#111827', mutedText:'#6b7280', inputBg:'#f3f4f6', triggerBg:grad, dark:false },
   };
 
   const T = themeConfig[t] || themeConfig.bubble;
-  const isBgDark = ['mocha','neon'].includes(t);
+  const isDark = T.dark;
   
   const chatRadius = T.chatR;
   const msgRadius = T.msgR;
   const headerBg = T.headerBg;
   const chatBg = T.areaBg;
-  const popupBg = form.popupBg || '#ffffff';
+  const popupBg = form.popupBg || (isDark ? '#1a1a2e' : '#ffffff');
   const faqs = form.faqs || [];
   
-  const textColor = isBgDark ? '#f5f5f5' : T.textColor;
-  const mutedTextColor = isBgDark ? T.mutedText : T.mutedText;
-  const cardShadow = T.chatShadow;
-  const cardBorder = T.chatBorder;
-  const backdropFilter = T.blur;
+  const textColor = isDark ? '#f5f5f5' : T.textColor;
+  const mutedTextColor = T.mutedText;
 
   const sl = form.socialLinks || {};
-  const hasSocial = sl.messenger || sl.whatsapp || sl.telegram;
+
+  // Accent color for neon effects
+  const accent = P;
 
   return (
-    <div style={{width:'100%',maxWidth:350,display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
-      {/* Chat Window */}
-      <div style={{width:'100%',background:T.chatBg,borderRadius:chatRadius,boxShadow:cardShadow,display:'flex',flexDirection:'column',overflow:'hidden',border:cardBorder,backdropFilter}}>
-        {/* Header */}
-        <div style={{background:headerBg,color: t==='neon' ? P : '#fff',padding:'18px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:T.headerBlur, borderBottom: t === 'neon' ? `1px solid ${P}33` : 'none'}}>
-          <div style={{display:'flex',alignItems:'center',gap:12}}>
-            <div style={{width:42,height:42,borderRadius:t==='minimal'?8: t==='corporate'?4:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border: t==='neon' ? `2px solid ${P}80` : '2px solid rgba(255,255,255,0.35)'}}>
-              {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
-            </div>
-            <div>
-              <div style={{fontWeight:700,fontSize:15}}>{form.name || 'AI Assistant'}</div>
-              <div style={{fontSize:12,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:7,height:7,borderRadius:'50%',background: t==='neon'?P:'#4ade80',boxShadow: t==='neon'?`0 0 10px ${P}`:'0 0 6px #4ade80'}}></span> Online</div>
-            </div>
-          </div>
-          <div style={{width:30,height:30,borderRadius:t==='minimal'?6:t==='corporate'?4:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </div>
+    <div style={{width:'100%',maxWidth:350,display:'flex',flexDirection:'column',alignItems:'center',gap:0}}>
 
-        {/* Messages / FAQ Starter */}
-        <div style={{padding:'20px 16px',background:chatBg,display:'flex',flexDirection:'column',gap:14,minHeight:200,maxHeight:300,overflowY:'auto'}}>
-          {faqs.length > 0 ? (
-            <div style={{animation:'mwf .3s both'}}>
-              <div style={{textAlign:'center',marginBottom:20}}>
-                <div style={{fontSize:18,fontWeight:700,color:textColor,marginBottom:4}}>Hello :)</div>
-                <div style={{fontSize:12,opacity:0.6,color:textColor}}>Here's what you can ask me</div>
+      {/* ═══════ SECTION 1: Chat Window Preview ═══════ */}
+      <div style={{width:'100%',marginBottom:16}}>
+        <div style={{fontSize:10,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8,opacity:0.6}}>💬 Chat Preview</div>
+        <div style={{width:'100%',background:T.chatBg,borderRadius:chatRadius,boxShadow:T.chatShadow,display:'flex',flexDirection:'column',overflow:'hidden',border:T.chatBorder,backdropFilter:T.blur}}>
+          {/* Header */}
+          <div style={{background:headerBg,color: isDark && t==='neon' ? accent : '#fff',padding:'16px 18px',display:'flex',alignItems:'center',justifyContent:'space-between',borderTopLeftRadius:chatRadius,borderTopRightRadius:chatRadius,backdropFilter:T.headerBlur, borderBottom: t==='neon' ? `1px solid ${accent}33` : 'none'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              <div style={{width:38,height:38,borderRadius:t==='minimal'?8:t==='corporate'?4:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,fontWeight:700,backgroundImage:form.botAvatar?`url(${form.botAvatar})`:'none',backgroundSize:'cover',border: t==='neon' ? `2px solid ${accent}80` : '2px solid rgba(255,255,255,0.35)'}}>
+                {!form.botAvatar && (form.name ? form.name.charAt(0) : 'A')}
               </div>
-              {faqs.map((cat, ci) => (
-                <div key={ci} style={{marginBottom:16}}>
-                  <div style={{fontSize:10,fontWeight:700,color:mutedTextColor,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:8,opacity:0.7}}>{cat.category}</div>
-                  <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                    {cat.questions.map((q, qi) => (
-                      <div key={qi} style={{background:T.msgBg,padding:'8px 12px',borderRadius:20,fontSize:12,fontWeight:600,color:textColor,display:'flex',alignItems:'center',gap:8,boxShadow: t==='neon' ? `0 0 10px ${P}1A` : '0 2px 8px rgba(0,0,0,0.05)',border: t==='neon' ? `1px solid ${P}33` : isBgDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)'}}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color: t==='neon'? P :form.primaryColor}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        {q}
-                      </div>
-                    ))}
+              <div>
+                <div style={{fontWeight:700,fontSize:14}}>{form.name || 'AI Assistant'}</div>
+                <div style={{fontSize:11,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:6,height:6,borderRadius:'50%',background: t==='neon'?accent:'#4ade80',boxShadow: t==='neon'?`0 0 8px ${accent}`:'0 0 6px #4ade80'}}></span> Online</div>
+              </div>
+            </div>
+            <div style={{width:28,height:28,borderRadius:t==='minimal'?6:t==='corporate'?4:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+          </div>
+
+          {/* Messages Area */}
+          <div style={{padding:'16px 14px',background:chatBg,display:'flex',flexDirection:'column',gap:12,minHeight:160,maxHeight:240,overflowY:'auto'}}>
+            {faqs.length > 0 ? (
+              <div>
+                <div style={{textAlign:'center',marginBottom:16}}>
+                  <div style={{fontSize:16,fontWeight:700,color:textColor,marginBottom:3}}>Hello :)</div>
+                  <div style={{fontSize:11,opacity:0.6,color:textColor}}>Here's what you can ask me</div>
+                </div>
+                {faqs.slice(0, 2).map((cat, ci) => (
+                  <div key={ci} style={{marginBottom:12}}>
+                    <div style={{fontSize:9,fontWeight:700,color:mutedTextColor,textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:6,opacity:0.7}}>{cat.category}</div>
+                    <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                      {cat.questions.slice(0, 2).map((q, qi) => (
+                        <div key={qi} style={{background:T.msgBg,padding:'7px 11px',borderRadius:18,fontSize:11,fontWeight:600,color:textColor,display:'flex',alignItems:'center',gap:7,boxShadow: isDark ? `0 0 8px ${accent}1A` : '0 2px 6px rgba(0,0,0,0.04)',border: isDark ? `1px solid ${accent}33` : '1px solid rgba(0,0,0,0.05)'}}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{color: isDark ? accent : P, flexShrink:0}}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                          {q}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                {/* Bot message */}
+                <div style={{display:'flex',gap:7,alignItems:'flex-end'}}>
+                  <div style={{width:24,height:24,borderRadius:t==='minimal'?5:t==='corporate'?2:'50%',background: isDark ? `${accent}26` : `${P}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:isDark?accent:P,border: isDark?`1px solid ${accent}4D`:`1px solid ${P}25`,flexShrink:0}}>
+                    {form.name ? form.name.charAt(0) : 'A'}
+                  </div>
+                  <div style={{maxWidth:'80%',padding:'9px 13px',borderRadius:msgRadius,fontSize:12.5,background:T.msgBg,color:textColor,border: isDark?`1px solid ${accent}33`:t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'||t==='corporate'?2:4,boxShadow: isDark?`0 0 8px ${accent}1A`:'0 1px 3px rgba(0,0,0,0.04)',backdropFilter:T.blur}}>
+                    {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
                   </div>
                 </div>
-              ))}
-              <div style={{fontSize:11,fontWeight:600,color: t==='neon' ? P : form.primaryColor,marginTop:4,cursor:'pointer',display:'inline-block'}}>+ See all suggestions</div>
-            </div>
-          ) : (
-            <>
-              {/* Bot */}
-              <div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
-                <div style={{width:26,height:26,borderRadius:t==='minimal'?6:t==='corporate'?2:'50%',background: t==='neon' ? `${P}26` : `${form.primaryColor}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:t==='neon'?P:form.primaryColor,border: t==='neon'?`1px solid ${P}4D`:`1px solid ${form.primaryColor}25`,flexShrink:0}}>
-                  {form.name ? form.name.charAt(0) : 'A'}
+                {/* User message */}
+                <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'9px 13px',borderRadius:msgRadius,fontSize:12.5,background:T.triggerBg,color:t==='neon'?'#0a0a0f':'#fff',borderBottomRightRadius:t==='minimal'||t==='corporate'?2:4,boxShadow:isDark?`0 0 12px ${accent}33`:'0 2px 8px rgba(0,0,0,0.1)'}}>
+                  I have a question!
                 </div>
-                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.msgBg,color: textColor,border: t==='neon'?`1px solid ${P}33`: isBgDark ? '1px solid rgba(255,255,255,0.08)' : t==='glass'?'1px solid rgba(255,255,255,0.3)':'1px solid #e2e8f0',borderBottomLeftRadius:t==='minimal'||t==='corporate'?2:4,boxShadow: t==='neon'?`0 0 10px ${P}1A`:'0 1px 4px rgba(0,0,0,0.04)',backdropFilter:T.blur}}>
-                  {form.welcomeMessage || 'Hi there! 👋 How can I help?'}
-                </div>
-              </div>
-              {/* User */}
-              <div style={{alignSelf:'flex-end',maxWidth:'80%',padding:'10px 14px',borderRadius:msgRadius,fontSize:13.5,background:T.triggerBg,color:t==='neon'?'#0a0a0f':'#fff',borderBottomRightRadius:t==='minimal'||t==='corporate'?2:4,boxShadow:t==='neon'?`0 0 15px ${P}33`:'0 2px 8px rgba(0,0,0,0.1)'}}>
-                I have a question!
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Input & Footer Branding */}
-        <div style={{background:T.chatBg,borderTop: isBgDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)'}}>
-           <div style={{display:'flex',alignItems:'center',gap:8,padding:'12px 16px'}}>
-            <div style={{flex:1,border: isBgDark ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(0,0,0,0.1)',borderRadius:t==='minimal'?6:t==='corporate'?4:14,padding:'9px 14px',fontSize:13.5,color:mutedTextColor,background:T.inputBg}}>Type a message...</div>
-            <div style={{width:38,height:38,borderRadius:t==='minimal'?6:t==='corporate'?4:12,background:T.triggerBg,display:'flex',alignItems:'center',justifyContent:'center',color:t==='neon'?'#0a0a0f':'#fff'}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </div>
+              </>
+            )}
           </div>
-          <div style={{textAlign:'center',paddingBottom:8,fontSize:11,color:mutedTextColor}}>
-            Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:isBgDark ? '#f8fafc' : form.primaryColor,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
+
+          {/* Input Footer */}
+          <div style={{background:T.chatBg,borderTop: isDark ? `1px solid ${accent}14` : '1px solid rgba(0,0,0,0.06)'}}>
+            <div style={{display:'flex',alignItems:'center',gap:7,padding:'10px 14px'}}>
+              <div style={{flex:1,border: isDark ? `1px solid ${accent}26` : '1px solid rgba(0,0,0,0.1)',borderRadius:t==='minimal'?6:t==='corporate'?4:12,padding:'8px 12px',fontSize:12.5,color:mutedTextColor,background:T.inputBg}}>Type a message...</div>
+              <div style={{width:34,height:34,borderRadius:t==='minimal'?6:t==='corporate'?4:10,background:T.triggerBg,display:'flex',alignItems:'center',justifyContent:'center',color:t==='neon'?'#0a0a0f':'#fff'}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </div>
+            </div>
+            <div style={{textAlign:'center',paddingBottom:6,fontSize:10,color:mutedTextColor}}>
+              Powered by <a href="https://inmetech.com" target="_blank" rel="noreferrer" style={{color:isDark ? '#f8fafc' : P,fontWeight:600,textDecoration:'none'}}>InmeTech.com</a>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Footer / Trigger Area */}
-      <div style={{width:'100%', position: 'relative', marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-        {/* Simplified Popup Preview (Slim Pill) */}
-        {!form.faqs?.length && (
-          <div style={{position:'absolute', bottom: 70, right: 76, minWidth:140, background:popupBg, padding:'8px 16px', borderRadius:50, boxShadow:'0 8px 30px rgba(0,0,0,0.12)', border:'1px solid rgba(0,0,0,0.04)', display:'flex', alignItems:'center', justifyContent: 'center', zIndex:5}}>
-            <div style={{fontSize:12.5, color:'#1e293b', fontWeight:600, whiteSpace: 'nowrap'}}>
-              {form.welcomeMessage?.length > 28 ? form.welcomeMessage.substring(0, 25) + '...' : (form.welcomeMessage || 'Hi!')}
-            </div>
+      {/* ═══════ SECTION 2: Trigger Button + Social Icons ═══════ */}
+      <div style={{width:'100%',display:'flex',justifyContent:'flex-end',alignItems:'center',gap:10,marginBottom:16}}>
+        {sl.whatsapp && (
+          <div style={{width:38, height:38, borderRadius:'50%', background:'#25D366', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 4px 10px rgba(0,0,0,0.12)'}}>
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>
           </div>
         )}
+        {sl.messenger && (
+          <div style={{width:38, height:38, borderRadius:'50%', background:'#0084FF', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 4px 10px rgba(0,0,0,0.12)'}}>
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.44 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>
+          </div>
+        )}
+        <div style={{width:52, height:52, borderRadius:T.triggerR, background:T.triggerBg, display:'flex', alignItems:'center', justifyContent:'center', color: t==='neon'?'#0a0a0f':'#fff', boxShadow: isDark?`0 0 24px ${accent}66,0 6px 20px rgba(0,0,0,0.5)`:'0 6px 22px rgba(0,0,0,0.22)'}}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+      </div>
 
-        <div style={{display:'flex', alignItems:'center', gap:12}}>
-          {sl.whatsapp && (
-            <div style={{width:42, height:42, borderRadius:'50%', background:'#25D366', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
-              <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12.004 2C6.48 2 2.004 6.48 2.004 12c0 1.88.52 3.63 1.43 5.14l-1.43 5.14 5.31-1.43c1.47.88 3.22 1.43 5.14 1.43 5.52 0 10-4.48 10-10s-4.48-10-10-10zm.003 18.06c-1.63 0-3.14-.42-4.43-1.16l-.32-.19-3.15.85.85-3.15-.19-.32c-.74-1.29-1.16-2.8-1.16-4.43 0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4-3.77 8.4-8.4 8.4z"/></svg>
+      {/* ═══════ SECTION 3: Welcome Popup Preview ═══════ */}
+      <div style={{width:'100%'}}>
+        <div style={{fontSize:10,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8,opacity:0.6}}>🔔 Welcome Popup (appears after 3-5s)</div>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <div style={{flex:1,background:popupBg,padding:'12px 18px',borderRadius:t==='corporate'?6:t==='minimal'?10:20,boxShadow: isDark ? `0 8px 30px rgba(0,0,0,0.4), 0 0 20px ${accent}15` : '0 8px 30px rgba(0,0,0,0.12)',border: isDark ? `1px solid ${accent}20` : '1px solid rgba(0,0,0,0.04)',display:'flex',alignItems:'center',gap:10}}>
+            <div style={{width:28,height:28,borderRadius:'50%',background:T.triggerBg,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t==='neon'?'#0a0a0f':'white'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </div>
-          )}
-          {sl.messenger && (
-            <div style={{width:42, height:42, borderRadius:'50%', background:'#0084FF', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', boxShadow:'0 4px 12px rgba(0,0,0,0.15)'}}>
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.49 3.72 7.12V22l3.5-1.92c.88.24 1.81.37 2.78.37 5.52 0 10-4.44 10-9.25S17.52 2 12 2zm1.14 12.33l-2.58-2.75-5.04 2.75 5.54-5.89 2.58 2.75 5.04-2.75-5.54 5.89z"/></svg>
+            <div style={{flex:1}}>
+              <div style={{fontSize:12,color:isDark?'#e0e0e0':'#1e293b',fontWeight:600,lineHeight:1.4}}>
+                {form.welcomeMessage || 'Hi there! 👋 How can I help you today?'}
+              </div>
+              <div style={{fontSize:9,color:mutedTextColor,marginTop:2}}>🔊 Sound notification</div>
             </div>
-          )}
-          
-          <div style={{width:60, height:60, borderRadius:T.triggerR, background:T.triggerBg, display:'flex', alignItems:'center', justifyContent:'center', color: t==='neon'?'#0a0a0f':'#fff', boxShadow: t==='neon'?`0 0 30px ${P}66,0 8px 28px rgba(0,0,0,0.5)`:'0 8px 28px rgba(0,0,0,0.22)', position: 'relative'}}>
-             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div style={{width:18,height:18,borderRadius:'50%',background:isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,cursor:'pointer'}}>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={isDark?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.3)'} strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
           </div>
         </div>
       </div>

@@ -361,7 +361,13 @@
     return `
       <div id="maic-w-social" class="maic-w-pos-${pos}"></div>
       <div id="maic-w-popup" class="maic-w-hidden maic-w-pos-${pos}">
-        <div id="maic-w-p-text">${c.welcome.length > 28 ? c.welcome.substring(0, 25) + '...' : c.welcome}</div>
+        <div id="maic-w-p-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div id="maic-w-p-text">${esc(c.welcome)}</div>
+        <button id="maic-w-p-close" aria-label="Close popup">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <button id="maic-w-trigger" aria-label="Open chat">
         <svg id="maic-w-ic-chat" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -516,14 +522,16 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:5px; min-width:140px; max-width:240px; background:${isBgDark?'#1a1a2e':'#ffffff'}; padding:8px 16px; border-radius:50px; box-shadow:0 8px 30px rgba(0,0,0,${isBgDark?'0.4':'0.12'}); border:1px solid ${isBgDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.04)'}; animation:maic-p-mag .8s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible; display:flex; align-items:center; justify-content:center; }
+      #maic-w-popup { position:absolute; bottom:5px; min-width:180px; max-width:280px; background:${isBgDark?'#1a1a2e':c.popupBg||'#ffffff'}; padding:12px 14px; border-radius:${th==='corporate'?'6px':th==='minimal'?'10px':'18px'}; box-shadow:0 12px 40px rgba(0,0,0,${isBgDark?'0.5':'0.15'}); border:1px solid ${isBgDark?`${P}20`:'rgba(0,0,0,0.06)'}; animation:maic-p-mag .6s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible; display:flex; align-items:flex-start; gap:10px; }
       #maic-w-popup.maic-w-pos-right { right:76px; }
       #maic-w-popup.maic-w-pos-left { left:76px; }
       #maic-w-popup::after { display:none; }
-      #maic-w-p-text { font-size:12.5px; color:${isBgDark?'#e0e0e0':'#1e293b'}; line-height:1.4; font-weight:600; white-space:nowrap; }
-      @keyframes maic-p-mag { from { opacity:0; transform:translateX(30px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
-      #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag-left; }
-      @keyframes maic-p-mag-left { from { opacity:0; transform:translateX(-30px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
+      #maic-w-p-icon { width:28px; height:28px; min-width:28px; border-radius:50%; background:${grad}; display:flex; align-items:center; justify-content:center; color:${th==='neon'?'#0a0a0f':'#fff'}; flex-shrink:0; margin-top:1px; }
+      #maic-w-p-text { font-size:13px; color:${isBgDark?'#e0e0e0':'#1e293b'}; line-height:1.45; font-weight:500; flex:1; word-wrap:break-word; }
+      #maic-w-p-close { position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%; background:${isBgDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)'}; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:${isBgDark?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.3)'}; transition:all .2s; padding:0; }
+      #maic-w-p-close:hover { background:${isBgDark?'rgba(255,255,255,0.15)':'rgba(0,0,0,0.1)'}; }
+      @keyframes maic-p-mag { from { opacity:0; transform:translateY(10px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+      #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag; }
 
       .maic-w-faq-cont { animation:mwf .4s both; }
       .maic-w-faq-h { text-align:center; margin-bottom:20px; }
