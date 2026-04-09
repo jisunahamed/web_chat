@@ -136,7 +136,7 @@
     }
     if (leadSubBtn) leadSubBtn.addEventListener('click', submitLead);
 
-    // ─── Welcome Popup Timer (3s) ───────────────────
+    // ─── Welcome Popup Timer (3-5s) ───────────────────
     const popup = $('#maic-w-popup');
     const pClose = $('#maic-w-p-close');
     const pText = $('#maic-w-p-text');
@@ -145,13 +145,14 @@
       setTimeout(() => {
         if (!isOpen && !localStorage.getItem('maic_p_closed') && chatWin.classList.contains('maic-w-hidden')) {
           popup.classList.remove('maic-w-hidden');
-          popup.style.display = 'flex';
+          popup.style.cssText = 'display:flex !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;';
           playPop();
         }
-      }, 5000);
+      }, 4000);
     }
     if (pClose) pClose.addEventListener('click', (e) => {
       e.stopPropagation();
+      popup.style.cssText = '';
       popup.classList.add('maic-w-hidden');
       localStorage.setItem('maic_p_closed', '1');
     });
@@ -169,7 +170,7 @@
     function toggle() {
       isOpen = !isOpen;
       chatWin.classList.toggle('maic-w-hidden', !isOpen);
-      popup.style.display = 'none'; // Always hide popup when user interacts
+      popup.style.cssText = ''; // Reset inline overrides
       popup.classList.add('maic-w-hidden');
       iconChat.style.display = isOpen ? 'none' : 'block';
       iconClose.style.display = isOpen ? 'block' : 'none';
