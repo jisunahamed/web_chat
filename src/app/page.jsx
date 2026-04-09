@@ -315,23 +315,13 @@ const LandingPage = () => {
             </motion.h1>
 
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8 font-bold leading-relaxed"
-            >
-              Deploy an intelligent AI agent on your website in under 2 minutes. Free plan available.
-            </motion.h2>
-
-            <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-16 font-medium leading-relaxed"
+              transition={{ duration: 1, delay: 0.4 }}
+              className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 font-medium leading-relaxed"
             >
-              Deploy autonomous AI agents that understand your brand, 
-              engage visitors, and convert leads in under 60 seconds. Trusted by businesses in Bangladesh and beyond.
-            </motion.p>
+              Deploy an intelligent autonomous AI agent that understands your brand and converts leads in under 2 minutes. <span className="text-white/90">Trusted by businesses in Bangladesh and beyond.</span> Free plan available.
+            </motion.h2>
 
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
