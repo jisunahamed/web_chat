@@ -32,6 +32,12 @@ export async function PUT(request) {
         ...(body.aiModel !== undefined && { aiModel: body.aiModel }),
         ...(body.aiBaseUrl !== undefined && { aiBaseUrl: body.aiBaseUrl }),
         ...(body.aiApiKey !== undefined && { aiApiKey: body.aiApiKey }),
+        ...(body.planFreeTitle !== undefined && { planFreeTitle: body.planFreeTitle }),
+        ...(body.planFreePrice !== undefined && { planFreePrice: body.planFreePrice }),
+        ...(body.planFreeFeatures !== undefined && { planFreeFeatures: body.planFreeFeatures }),
+        ...(body.planProTitle !== undefined && { planProTitle: body.planProTitle }),
+        ...(body.planProPrice !== undefined && { planProPrice: body.planProPrice }),
+        ...(body.planProFeatures !== undefined && { planProFeatures: body.planProFeatures }),
       },
       create: {
         id: 'global',

@@ -50,7 +50,13 @@ export async function updateSystemSettings(data) {
         siteLogo: data.siteLogo,
         siteDescription: data.siteDescription,
         sitePrimaryColor: data.sitePrimaryColor,
-        supportEmail: data.supportEmail
+        supportEmail: data.supportEmail,
+        planFreeTitle: data.planFreeTitle,
+        planFreePrice: data.planFreePrice,
+        planFreeFeatures: data.planFreeFeatures,
+        planProTitle: data.planProTitle,
+        planProPrice: data.planProPrice,
+        planProFeatures: data.planProFeatures
       },
       create: {
         id: 'global',
@@ -64,7 +70,13 @@ export async function updateSystemSettings(data) {
         siteLogo: data.siteLogo,
         siteDescription: data.siteDescription || 'Premium AI Chatbot SaaS',
         sitePrimaryColor: data.sitePrimaryColor || '#7C3AED',
-        supportEmail: data.supportEmail
+        supportEmail: data.supportEmail,
+        planFreeTitle: data.planFreeTitle,
+        planFreePrice: data.planFreePrice,
+        planFreeFeatures: data.planFreeFeatures,
+        planProTitle: data.planProTitle,
+        planProPrice: data.planProPrice,
+        planProFeatures: data.planProFeatures
       }
     });
 
@@ -96,7 +108,13 @@ export async function getSystemSettings() {
       siteLogo: '',
       siteDescription: 'Premium AI Chatbot SaaS',
       sitePrimaryColor: '#7C3AED',
-      supportEmail: ''
+      supportEmail: '',
+      planFreeTitle: 'Free Prototype',
+      planFreePrice: 'Free',
+      planFreeFeatures: '1 Autonomous Agent Node\nFree Forever\nWhatsApp & Web Integration\nStandard Response Core\nVisual Customization',
+      planProTitle: 'Sovereign Protocol',
+      planProPrice: '600',
+      planProFeatures: 'Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support'
     };
   } catch (error) {
     return null;

@@ -6,6 +6,7 @@ import {
   Copy, Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSystemSettings } from '@/app/actions/adminActions';
 
 const PaymentBox = ({ title, number, color, icon: Icon }) => {
   const [copied, setCopied] = useState(false);
@@ -43,6 +44,14 @@ const BillingPage = () => {
   const [amount, setAmount] = useState('600');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    getSystemSettings().then(res => {
+      setSettings(res);
+      if (res?.planProPrice) setAmount(res.planProPrice);
+    });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,8 +72,8 @@ const BillingPage = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-         <PaymentBox title="bKash" number="017XXXXXXXX" color="rose" icon={Smartphone} />
-         <PaymentBox title="Nagad" number="018XXXXXXXX" color="orange" icon={Smartphone} />
+         <PaymentBox title="bKash" number={settings?.bkashNumber || "017XXXXXXXX"} color="rose" icon={Smartphone} />
+         <PaymentBox title="Nagad" number={settings?.nagadNumber || "018XXXXXXXX"} color="orange" icon={Smartphone} />
       </div>
 
       <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-10 relative overflow-hidden">
@@ -96,7 +105,7 @@ const BillingPage = () => {
                      </div>
                      <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-zinc-600 tracking-widest ml-1">Amount (BDT)</label>
-                        <input disabled value="600৳" className="w-full px-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium opacity-50" />
+                        <input disabled value={`${amount}৳`} className="w-full px-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium opacity-50" />
                      </div>
                   </div>
 
@@ -125,14 +134,7 @@ const BillingPage = () => {
                      <Zap size={16} className="text-violet-500" /> Pro Benefits
                   </h4>
                   <ul className="space-y-4">
-                     {[
-                       "Unlimited Smart AI Agents",
-                       "Unlimited Conversations",
-                       "Priority AI Models",
-                       "WhatsApp Integration",
-                       "Premium Analytics",
-                       "White-label Widget"
-                     ].map((f, i) => (
+                     {(settings?.planProFeatures || "Unlimited Smart AI Agents\nUnlimited Conversations\nPriority AI Models\nWhatsApp Integration\nPremium Analytics\nWhite-label Widget").split('\n').filter(f => f.trim()).map((f, i) => (
                        <li key={i} className="flex items-center gap-3 text-xs text-zinc-400">
                           <CheckCircle size={14} className="text-emerald-500 flex-shrink-0" /> {f}
                        </li>

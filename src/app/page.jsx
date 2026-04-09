@@ -479,30 +479,17 @@ const LandingPage = () => {
 
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
               <PricingCard 
-                title="Free Prototype"
-                price="Free"
-                features={[
-                  "1 Autonomous Agent Node",
-                  "Free Forever",
-                  "WhatsApp & Web Integration",
-                  "Standard Response Core",
-                  "Visual Customization"
-                ]}
+                title={settings?.planFreeTitle || "Free Prototype"}
+                price={settings?.planFreePrice || "Free"}
+                features={(settings?.planFreeFeatures || "1 Autonomous Agent Node\nFree Forever\nWhatsApp & Web Integration\nStandard Response Core\nVisual Customization").split('\n').filter(f => f.trim())}
                 cta="Start for Free"
                 premium={false}
               />
               <PricingCard 
-                title="Sovereign Protocol"
-                price="600৳"
+                title={settings?.planProTitle || "Sovereign Protocol"}
+                price={settings?.planProPrice ? `${settings.planProPrice}৳` : "600৳"}
                 premium
-                features={[
-                  "Unlimited Agent Nodes",
-                  "Infinite Usage Lifecycle",
-                  "Priority Neural Processing",
-                  "Whitelabel Integration",
-                  "Advanced Lead Analytics",
-                  "24/7 Priority Support"
-                ]}
+                features={(settings?.planProFeatures || "Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support").split('\n').filter(f => f.trim())}
                 cta="Upgrade Protocol"
               />
            </div>

@@ -44,6 +44,24 @@ const InputGroup = ({ label, value, onChange, placeholder, type = "text", icon: 
   </div>
 );
 
+const TextAreaGroup = ({ label, value, onChange, placeholder, rows = 4, icon: Icon }) => (
+  <div className="space-y-2 col-span-1 md:col-span-2">
+    <label className="text-[10px] font-black uppercase text-zinc-600 tracking-widest pl-1">{label}</label>
+    <div className="relative group">
+       <div className="absolute left-4 top-4 text-zinc-600 group-hover:text-violet-500 transition-colors">
+          <Icon size={16} />
+       </div>
+       <textarea 
+         value={value}
+         onChange={(e) => onChange(e.target.value)}
+         placeholder={placeholder}
+         rows={rows}
+         className="w-full pl-12 pr-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-violet-600 focus:bg-white/[0.08] transition-all resize-y"
+       />
+    </div>
+  </div>
+);
+
 const GlobalSettings = ({ initialSettings }) => {
   const [bkash, setBkash] = useState(initialSettings?.bkashNumber || '');
   const [nagad, setNagad] = useState(initialSettings?.nagadNumber || '');
@@ -54,6 +72,14 @@ const GlobalSettings = ({ initialSettings }) => {
   const [siteDesc, setSiteDesc] = useState(initialSettings?.siteDescription || '');
   const [siteColor, setSiteColor] = useState(initialSettings?.sitePrimaryColor || '#7C3AED');
   const [supportEmail, setSupportEmail] = useState(initialSettings?.supportEmail || '');
+
+  const [planFreeTitle, setPlanFreeTitle] = useState(initialSettings?.planFreeTitle || 'Free Prototype');
+  const [planFreePrice, setPlanFreePrice] = useState(initialSettings?.planFreePrice || 'Free');
+  const [planFreeFeatures, setPlanFreeFeatures] = useState(initialSettings?.planFreeFeatures || '1 Autonomous Agent Node\nFree Forever\nWhatsApp & Web Integration\nStandard Response Core\nVisual Customization');
+
+  const [planProTitle, setPlanProTitle] = useState(initialSettings?.planProTitle || 'Sovereign Protocol');
+  const [planProPrice, setPlanProPrice] = useState(initialSettings?.planProPrice || '600');
+  const [planProFeatures, setPlanProFeatures] = useState(initialSettings?.planProFeatures || 'Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support');
   
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -71,7 +97,13 @@ const GlobalSettings = ({ initialSettings }) => {
       siteLogo,
       siteDescription: siteDesc,
       sitePrimaryColor: siteColor,
-      supportEmail
+      supportEmail,
+      planFreeTitle,
+      planFreePrice,
+      planFreeFeatures,
+      planProTitle,
+      planProPrice,
+      planProFeatures
     });
     
     if (result.success) {
@@ -128,6 +160,26 @@ const GlobalSettings = ({ initialSettings }) => {
       >
         <InputGroup label="bKash Personal Number" value={bkash} onChange={setBkash} placeholder="Enter 11-digit number" icon={Smartphone} />
         <InputGroup label="Nagad Personal Number" value={nagad} onChange={setNagad} placeholder="Enter 11-digit number" icon={Smartphone} />
+      </ConfigSection>
+
+      <ConfigSection 
+        title="Free Plan Configuration" 
+        desc="Modify the free plan title, price, and features (one per line)."
+        icon={Shield}
+      >
+        <InputGroup label="Plan Title" value={planFreeTitle} onChange={setPlanFreeTitle} placeholder="Free Prototype" icon={Settings} />
+        <InputGroup label="Plan Price" value={planFreePrice} onChange={setPlanFreePrice} placeholder="Free" icon={CreditCard} />
+        <TextAreaGroup label="Features (One per line)" value={planFreeFeatures} onChange={setPlanFreeFeatures} placeholder="- Feature 1\n- Feature 2" icon={Shield} />
+      </ConfigSection>
+
+      <ConfigSection 
+        title="Pro Plan Configuration" 
+        desc="Modify the premium plan title, price, and features (one per line)."
+        icon={Shield}
+      >
+        <InputGroup label="Plan Title" value={planProTitle} onChange={setPlanProTitle} placeholder="Sovereign Protocol" icon={Settings} />
+        <InputGroup label="Plan Price (BDT)" value={planProPrice} onChange={setPlanProPrice} placeholder="600" icon={CreditCard} />
+        <TextAreaGroup label="Features (One per line)" value={planProFeatures} onChange={setPlanProFeatures} placeholder="- Feature 1\n- Feature 2" icon={Shield} />
       </ConfigSection>
     </div>
   );

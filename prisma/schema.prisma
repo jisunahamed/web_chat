@@ -184,6 +184,15 @@ model Settings {
   sitePrimaryColor   String  @default("#7C3AED") @map("site_primary_color")
   supportEmail       String? @map("support_email")
 
+  // Pricing Plan Config
+  planFreeTitle      String  @default("Free Prototype") @map("plan_free_title")
+  planFreePrice      String  @default("Free") @map("plan_free_price")
+  planFreeFeatures   String  @default("1 Autonomous Agent Node\nFree Forever\nWhatsApp & Web Integration\nStandard Response Core\nVisual Customization") @map("plan_free_features")
+  
+  planProTitle       String  @default("Sovereign Protocol") @map("plan_pro_title")
+  planProPrice       String  @default("600") @map("plan_pro_price")
+  planProFeatures    String  @default("Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support") @map("plan_pro_features")
+
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("settings")
