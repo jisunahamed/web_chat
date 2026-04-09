@@ -32,10 +32,10 @@ export async function POST(request) {
 
     // 2. Get agent with full details
     const agent = await prisma.agent.findFirst({
-      where: { id: agent_id, userId: user.id, isActive: true },
+      where: { id: agent_id, userId: user.id },
     });
     if (!agent) {
-      return Response.json({ error: 'Agent not found or inactive.' }, { status: 404, headers: cors });
+      return Response.json({ error: 'Agent not found.' }, { status: 404, headers: cors });
     }
 
     // 3. Resolve AI config: Agent Override → User Default → Admin Global Fallback

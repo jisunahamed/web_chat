@@ -11,7 +11,7 @@ export async function getAdminStats() {
     const [totalUsers, paidUsers, activeAgents, pendingPayments, totalRevenue] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { isPremium: true } }),
-      prisma.agent.count({ where: { isActive: true } }),
+      prisma.agent.count(),
       prisma.payment.count({ where: { status: 'PENDING' } }),
       prisma.payment.aggregate({
         where: { status: 'APPROVED' },

@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
 
   try {
     const agent = await prisma.agent.findFirst({
-      where: { id: params.id, userId: user.id, isActive: true },
+      where: { id: params.id, userId: user.id },
       select: {
         name: true,
         primaryColor: true,
