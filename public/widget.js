@@ -136,6 +136,30 @@
     }
     if (leadSubBtn) leadSubBtn.addEventListener('click', submitLead);
 
+    // ─── Bullet-proof Scroll Lock against Chaining ───
+    if (chatWin) {
+      chatWin.addEventListener('touchmove', (e) => {
+        if (!msgArea.contains(e.target)) e.preventDefault();
+      }, { passive: false });
+    }
+    if (msgArea) {
+      msgArea.addEventListener('wheel', (e) => {
+        const isUp = e.deltaY < 0;
+        const atTop = msgArea.scrollTop <= 0;
+        const atBottom = msgArea.scrollHeight - msgArea.scrollTop <= msgArea.clientHeight + 1;
+        if ((isUp && atTop) || (!isUp && atBottom)) e.preventDefault();
+      }, { passive: false });
+      
+      let startY = 0;
+      msgArea.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+      msgArea.addEventListener('touchmove', (e) => {
+        const isUp = startY < e.touches[0].clientY;
+        const atTop = msgArea.scrollTop <= 0;
+        const atBottom = msgArea.scrollHeight - msgArea.scrollTop <= msgArea.clientHeight + 1;
+        if ((isUp && atTop) || (!isUp && atBottom)) { if (e.cancelable) e.preventDefault(); }
+      }, { passive: false });
+    }
+
     // ─── Welcome Popup Timer (10s) + Browser Notification ───
     const popup = $('#maic-w-popup');
     const pClose = $('#maic-w-p-close');
@@ -420,7 +444,7 @@
             <textarea id="maic-w-input" rows="1" placeholder="Type a message…"></textarea>
             <button id="maic-w-send" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
           </div>
-          <div class="maic-w-branding">Powered by <a href="https://inmetech.com" target="_blank">InmeTech.com</a></div>
+          <div class="maic-w-branding">Powered by <a href="https://chatbot.inmetech.com" target="_blank">InmeTech.com</a></div>
         </div>
       </div>`;
   }
