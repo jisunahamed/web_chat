@@ -2,9 +2,36 @@ import './globals.css';
 import { Providers } from '@/components/Providers';
 import Script from 'next/script';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata = {
-  title: 'InmeTech – Premium AI Chatbot SaaS',
-  description: 'Boost your business with smart AI agents. Setup in minutes.',
+  title: 'InmeTech AI Chatbot | WordPress & Website Chatbot for Businesses in Bangladesh',
+  description: 'InmeTech is a powerful AI chatbot SaaS platform for businesses. Deploy intelligent chatbots on your WordPress or custom website in under 2 minutes. Free plan available. BKash & Nagad supported.',
+  keywords: 'AI chatbot Bangladesh, WordPress chatbot plugin, website chatbot, AI customer support, lead generation chatbot, chatbot SaaS Bangladesh',
+  alternates: {
+    canonical: 'https://chatbot.inmetech.com/',
+  },
+  openGraph: {
+    title: 'InmeTech AI Chatbot – Deploy in 2 Minutes',
+    description: 'Intelligent AI chatbot for WordPress and custom websites. Free plan. BKash & Nagad payment. Bangladesh-focused SaaS.',
+    url: 'https://chatbot.inmetech.com/',
+    type: 'website',
+    images: [
+      {
+        url: 'https://chatbot.inmetech.com/logo.png',
+        alt: 'InmeTech AI Chatbot Logo'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'InmeTech AI Chatbot – Deploy in 2 Minutes',
+    description: 'Intelligent AI chatbot for WordPress and custom websites. Free plan. BKash & Nagad payment. Bangladesh-focused SaaS.',
+    images: ['https://chatbot.inmetech.com/logo.png'],
+  }
 };
 
 export default function RootLayout({ children }) {

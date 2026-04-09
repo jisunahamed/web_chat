@@ -17,9 +17,9 @@ const Logo = ({ className = "", settings = null }) => (
   <div className={`flex items-center gap-3 group ${className}`}>
     <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-cyan-500/50 transition-all duration-500">
       {settings?.siteLogo ? (
-        <img src={settings.siteLogo} alt={settings.siteName} className="w-8 h-8 object-contain" />
+        <img src={settings.siteLogo} alt="InmeTech AI Chatbot Logo" className="w-8 h-8 object-contain" />
       ) : (
-        <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+        <img src="/logo.png" alt="InmeTech AI Chatbot Logo" className="w-8 h-8 object-contain" />
       )}
     </div>
     <span className="text-2xl font-black bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent tracking-tighter uppercase italic">
@@ -256,6 +256,20 @@ const LandingPage = () => {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-[#070708] text-white selection:bg-cyan-500/30 overflow-x-hidden font-sans">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "InmeTech AI Chatbot",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, WordPress",
+        "description": "AI chatbot platform for WordPress and custom websites. Deploy in minutes with BKash and Nagad payment support.",
+        "url": "https://chatbot.inmetech.com",
+        "offers": [
+          { "@type": "Offer", "price": "0", "priceCurrency": "BDT", "name": "Free Plan" },
+          { "@type": "Offer", "price": "600", "priceCurrency": "BDT", "name": "Sovereign Protocol" }
+        ],
+        "provider": { "@type": "Organization", "name": "InmeTech", "url": "https://chatbot.inmetech.com" }
+      }) }} />
       <Navbar settings={settings} />
       
       {/* --- HERO SECTION --- */}
@@ -292,13 +306,22 @@ const LandingPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="text-[10vw] md:text-[7vw] lg:text-[6vw] font-black tracking-[-0.04em] leading-[0.9] mb-10 text-white uppercase italic"
+              className="text-[9vw] md:text-[6vw] lg:text-[5vw] font-black tracking-[-0.04em] leading-[0.9] mb-6 text-white uppercase italic"
             >
-              {settings?.siteName ? settings.siteName.split(' ')[0] : 'Enterprise'} AI <br/> 
+              AI Chatbot for WordPress <br/> 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400 drop-shadow-2xl">
-                {settings?.siteName ? settings.siteName.split(' ').slice(1).join(' ') : 'Evolution.'}
+                & Custom Websites
               </span>
             </motion.h1>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-8 font-bold leading-relaxed"
+            >
+              Deploy an intelligent AI agent on your website in under 2 minutes. Free plan available.
+            </motion.h2>
 
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -307,7 +330,7 @@ const LandingPage = () => {
               className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-16 font-medium leading-relaxed"
             >
               Deploy autonomous AI agents that understand your brand, 
-              engage visitors, and convert leads in under 60 seconds.
+              engage visitors, and convert leads in under 60 seconds. Trusted by businesses in Bangladesh and beyond.
             </motion.p>
 
             <motion.div 
@@ -316,8 +339,8 @@ const LandingPage = () => {
               transition={{ duration: 1, delay: 0.7 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-6"
             >
-              <Link href="/signup" className="group h-16 px-12 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-[24px] font-black text-sm uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-all shadow-[0_10px_60px_-15px_rgba(6,182,212,0.4)]">
-                Launch for Free
+              <Link href="/signup" className="group h-16 px-8 sm:px-12 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-[24px] font-black text-sm uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-all shadow-[0_10px_60px_-15px_rgba(6,182,212,0.4)]">
+                Start Free – No Credit Card Needed
                 <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <div className="flex -space-x-4">
@@ -364,21 +387,21 @@ const LandingPage = () => {
             <BentoCard 
               colSpan="md:col-span-2"
               icon={Cpu} 
-              title="Neural Precision" 
+              title="Smart AI Responses" 
               desc="Our models adapt to your business context, delivering human-like responses with 99.9% semantic accuracy." 
               delay={0.1}
               accent="cyan"
             />
             <BentoCard 
               icon={Globe} 
-              title="Global Matrix" 
+              title="WordPress & Web Integration" 
               desc="Deploy nodes globally. Optimized for WordPress, Shopify, and modern web environments." 
               delay={0.2}
               accent="blue"
             />
             <BentoCard 
               icon={Shield} 
-              title="Quantum Security" 
+              title="Enterprise-Grade Security" 
               desc="Advanced encryption for every session. Your data remains strictly authorized and isolated." 
               delay={0.3}
               accent="purple"
@@ -386,7 +409,7 @@ const LandingPage = () => {
             <BentoCard 
               colSpan="md:col-span-2"
               icon={Layers} 
-              title="Lead Harvesting" 
+              title="Automated Lead Capture" 
               desc="Automatically capture, qualify, and deliver high-intent leads directly to your central console." 
               delay={0.4}
               accent="emerald"
@@ -418,7 +441,7 @@ const LandingPage = () => {
                     </div>
                  </div>
                  <Link href="/login" className="inline-flex items-center gap-3 px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all hover:scale-[1.02]">
-                    Explore Protocol <Layout size={18} className="text-cyan-500" />
+                    See How It Works <Layout size={18} className="text-cyan-500" />
                  </Link>
               </div>
 
@@ -490,13 +513,63 @@ const LandingPage = () => {
                 price={settings?.planProPrice ? `${settings.planProPrice}৳` : "600৳"}
                 premium
                 features={(settings?.planProFeatures || "Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support").split('\n').filter(f => f.trim())}
-                cta="Upgrade Protocol"
+                cta="Upgrade Plan"
               />
            </div>
            
            <p className="text-center mt-20 text-white/20 text-[10px] uppercase font-black tracking-[0.4em]">
               Authorized Gateways: <span className="text-rose-500">BKash</span> • <span className="text-orange-500">Nagad</span> • <span className="text-indigo-500">Nexus</span>
            </p>
+        </div>
+      </section>
+
+      {/* --- FAQ SECTION --- */}
+      <section className="py-32 px-6 bg-[#0c0c0e]/30 border-t border-white/5">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">Frequently Asked Questions</h2>
+          </div>
+          
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How do I add this chatbot to my WordPress website?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Download the InmeTech plugin from your dashboard, enter your API key, and your AI chatbot will be live in under 2 minutes." }
+              },
+              {
+                "@type": "Question",
+                "name": "Is there a free plan available?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Yes, InmeTech offers a free plan with 1 AI agent, WhatsApp and web integration, forever." }
+              },
+              {
+                "@type": "Question",
+                "name": "What payment methods are supported?",
+                "acceptedAnswer": { "@type": "Answer", "text": "We support BKash, Nagad, and Nexus card for subscriptions." }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I use this chatbot on a custom-coded website?",
+                "acceptedAnswer": { "@type": "Answer", "text": "Yes, InmeTech supports both WordPress via plugin and any custom HTML/JS website via embed code." }
+              }
+            ]
+          }) }} />
+
+          <div className="space-y-6">
+            {[
+              { q: "How do I add this chatbot to my WordPress website?", a: "Download the InmeTech plugin from your dashboard, enter your API key, and your AI chatbot will be live in under 2 minutes." },
+              { q: "Is there a free plan available?", a: "Yes, InmeTech offers a free plan with 1 AI agent, WhatsApp and web integration, forever." },
+              { q: "What payment methods are supported?", a: "We support BKash, Nagad, and Nexus card for subscriptions." },
+              { q: "Can I use this chatbot on a custom-coded website?", a: "Yes, InmeTech supports both WordPress via plugin and any custom HTML/JS website via embed code." }
+            ].map((faq, i) => (
+              <div key={i} className="p-8 bg-zinc-900/40 border border-white/5 rounded-[24px]">
+                <h3 className="text-lg font-black text-white mb-3">{faq.q}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -531,9 +604,9 @@ const LandingPage = () => {
 
              <div>
                 <h5 className="font-black text-xs uppercase tracking-widest text-white mb-10">Protocols</h5>
-                <ul className="space-y-6 text-white/40 text-sm font-bold uppercase tracking-wider">
-                   <li><a href="#" className="hover:text-white transition-colors">Data Privacy</a></li>
-                   <li><a href="#" className="hover:text-white transition-colors">Terms of Use</a></li>
+                 <ul className="space-y-6 text-white/40 text-sm font-bold uppercase tracking-wider">
+                   <li><Link href="/privacy" className="hover:text-white transition-colors">Data Privacy</Link></li>
+                   <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
                    <li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
                 </ul>
              </div>
@@ -541,7 +614,7 @@ const LandingPage = () => {
           
           <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5 gap-8">
              <p className="text-white/20 text-[10px] font-black uppercase tracking-widest">
-                © {new Date().getFullYear()} {settings?.siteName ? settings.siteName.toUpperCase() : 'INMETECH NEURAL SYSTEMS'}. ALL PROTOCOLS RESERVED.
+                © {new Date().getFullYear()} InmeTech. All rights reserved. | AI Chatbot for WordPress & Websites
              </p>
              <div className="flex items-center gap-2 text-white/20 text-[10px] font-black uppercase tracking-widest">
                 Engineered for <Sparkles size={12} className="text-cyan-600" /> High Intelligence
