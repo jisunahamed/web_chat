@@ -67,7 +67,7 @@ export async function POST(request) {
     // 1. Validate API key (optional but recommended for public tracking)
     // For simplicity, we just check if agent exists
     const agent = await prisma.agent.findUnique({
-      where: { id: agent_id, isActive: true },
+      where: { id: agent_id },
     });
     if (!agent) {
       return Response.json({ error: 'Agent not found.' }, { status: 404, headers: cors });

@@ -10,6 +10,7 @@ export default function DashboardOverview() {
   const { data: session } = useSession();
   const [stats, setStats] = useState({ agents: 0, conversations: 0, leads: 0, views: 0, clicks: 0 });
   const [recentLeads, setRecentLeads] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
   const [pluginInfo, setPluginInfo] = useState({ version: '1.0.4', path: '/inmetech_chatbot.zip' });
@@ -21,7 +22,7 @@ export default function DashboardOverview() {
           getAgents(),
           getConversations(),
           getLeads(),
-          getAnalytics(),
+          getAnalytics('detailed=true'),
           getSystemSettings()
         ]);
 
@@ -52,6 +53,7 @@ export default function DashboardOverview() {
         if (an.status === 'fulfilled') {
           newStats.views = an.value.views || 0;
           newStats.clicks = an.value.clicks || 0;
+          setLogs(an.value.logs?.slice(0, 15) || []);
         }
 
         setStats(newStats);
@@ -132,6 +134,49 @@ export default function DashboardOverview() {
                         <td className="text-zinc-500 text-xs">{lead.email || lead.phone ||'--'}</td>
                         <td className="text-zinc-400 text-xs">{lead.agent?.name||'--'}</td>
                         <td className="text-zinc-600 text-[10px]">{new Date(lead.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-6 lg:p-10 mb-8">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-black text-xl uppercase tracking-tighter">Recent Analytics</h2>
+            </div>
+            
+            {logs.length === 0 ? (
+              <div className="py-12 flex flex-col items-center justify-center text-center opacity-50">
+                <AlertCircle size={32} className="mb-4 text-zinc-600" />
+                <p className="font-bold uppercase tracking-widest text-xs">No analytics data yet</p>
+                <p className="text-zinc-600 text-[10px] uppercase mt-2">Views and clicks will appear here</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-white/[0.01]">
+                    <tr>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Type</th>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Agent</th>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Date/Time</th>
+                      <th className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">Page URL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {logs.map((log) => (
+                      <tr key={log.id} className="hover:bg-white/[0.02]">
+                        <td className="text-xs">
+                          <span className={`px-2 py-1 rounded inline-block uppercase text-[9px] font-black tracking-widest ${log.type === 'click' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-indigo-500/10 text-indigo-500'}`}>
+                            {log.type}
+                          </span>
+                        </td>
+                        <td className="text-zinc-400 text-xs font-bold">{log.agent?.name||'--'}</td>
+                        <td className="text-zinc-600 text-[10px] uppercase tracking-widest">{new Date(log.createdAt).toLocaleString()}</td>
+                        <td className="text-zinc-500 text-[10px]" style={{maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}} title={log.pageUrl}>
+                          {log.pageUrl||'Unknown Page'}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
