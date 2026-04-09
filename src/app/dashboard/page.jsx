@@ -133,7 +133,14 @@ export default function DashboardOverview() {
                         <td className="font-bold text-white text-sm">{lead.name||'--'}</td>
                         <td className="text-zinc-500 text-xs">{lead.email || lead.phone ||'--'}</td>
                         <td className="text-zinc-400 text-xs">{lead.agent?.name||'--'}</td>
-                        <td className="text-zinc-600 text-[10px]">{new Date(lead.createdAt).toLocaleDateString()}</td>
+                        <td className="text-zinc-600 text-[10px] flex items-center justify-between">
+                          {new Date(lead.createdAt).toLocaleDateString()}
+                          {lead.conversationId && (
+                            <Link href={`/dashboard/conversations?id=${lead.conversationId}`} className="ml-2 text-[9px] font-black uppercase tracking-widest text-violet-500 hover:text-violet-400">
+                               💬 View
+                            </Link>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
