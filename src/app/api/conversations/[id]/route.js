@@ -18,6 +18,14 @@ export async function GET(request, { params }) {
     return Response.json({ error: 'Conversation not found.' }, { status: 404 });
   }
 
+  if (!conversation.isRead) {
+    await prisma.conversation.update({
+      where: { id: conversation.id },
+      data: { isRead: true },
+    });
+    conversation.isRead = true;
+  }
+
   return Response.json({ conversation });
 }
 

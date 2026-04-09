@@ -69,10 +69,13 @@ export async function POST(request) {
     });
     if (!conversation) {
       conversation = await prisma.conversation.create({
-        data: { agentId: agent_id, sessionId: session_id, userInfo: user_info || null },
+        data: { agentId: agent_id, sessionId: session_id, userInfo: user_info || null, isRead: false },
       });
-    } else if (user_info) {
-      await prisma.conversation.update({ where: { id: conversation.id }, data: { userInfo: user_info } });
+    } else {
+      await prisma.conversation.update({ 
+        where: { id: conversation.id }, 
+        data: { userInfo: user_info || conversation.userInfo, isRead: false } 
+      });
     }
 
     // 5. Fetch history

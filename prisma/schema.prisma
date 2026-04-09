@@ -110,6 +110,7 @@ model Conversation {
   sessionId String   @map("session_id")
   userInfo  Json?    @map("user_info")
   status    String   @default("active")
+  isRead    Boolean  @default(false) @map("is_read")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
