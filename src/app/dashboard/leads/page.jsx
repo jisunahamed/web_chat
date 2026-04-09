@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getLeads, deleteLead } from '@/lib/api';
+import Link from 'next/link';
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
@@ -20,7 +21,7 @@ export default function LeadsPage() {
       <div className="card" style={{padding:0}}>
         <div className="table-wrapper"><table className="data-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Agent</th><th>Date</th><th></th></tr></thead><tbody>
           {loading ? <tr><td colSpan={6} style={{textAlign:'center',color:'var(--text-secondary)'}}>Loading…</td></tr> : leads.length===0 ? <tr><td colSpan={6} style={{textAlign:'center',color:'var(--text-secondary)'}}>No leads yet.</td></tr> :
-            leads.map(lead=>(<tr key={lead.id}><td style={{fontWeight:500}}>{lead.name||'–'}</td><td>{lead.email||'–'}</td><td>{lead.phone||'–'}</td><td>{lead.agent?.name||'–'}</td><td>{new Date(lead.createdAt).toLocaleDateString()}</td><td><button className="btn btn-danger btn-sm" onClick={()=>handleDelete(lead.id)}>×</button></td></tr>))
+            leads.map(lead=>(<tr key={lead.id}><td style={{fontWeight:500}}>{lead.name||'–'}</td><td>{lead.email||'–'}</td><td>{lead.phone||'–'}</td><td>{lead.agent?.name||'–'}</td><td>{new Date(lead.createdAt).toLocaleDateString()}</td><td><div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>{lead.conversationId && <Link href={`/dashboard/conversations?id=${lead.conversationId}`} className="btn btn-secondary btn-sm" style={{borderColor:'var(--primary)',color:'var(--primary)'}}>💬 View Chat</Link>}<button className="btn btn-danger btn-sm" onClick={()=>handleDelete(lead.id)}>×</button></div></td></tr>))
           }
         </tbody></table></div>
         {totalPages>1 && <div style={{padding:'12px 16px',borderTop:'1px solid var(--border)',display:'flex',justifyContent:'center',gap:8}}><button className="btn btn-secondary btn-sm" disabled={page<=1} onClick={()=>load(page-1)}>← Prev</button><span style={{padding:'7px 14px',fontSize:13,color:'var(--text-secondary)'}}>Page {page} of {totalPages}</span><button className="btn btn-secondary btn-sm" disabled={page>=totalPages} onClick={()=>load(page+1)}>Next →</button></div>}

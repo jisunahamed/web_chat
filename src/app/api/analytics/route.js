@@ -31,13 +31,25 @@ export async function GET(request) {
       return Response.json({ views: 0, clicks: 0, total: 0 });
     }
 
+    const detailed = searchParams.get('detailed') === 'true';
+
     // 2. Count by type using simple count queries (TEXT compatibility)
     const [views, clicks] = await Promise.all([
       prisma.analytics.count({ where: { agentId: { in: agentIds }, type: 'view' } }),
       prisma.analytics.count({ where: { agentId: { in: agentIds }, type: 'click' } })
     ]);
 
-    return Response.json({ views, clicks, total: views + clicks });
+    let logs = [];
+    if (detailed) {
+      logs = await prisma.analytics.findMany({
+        where: { agentId: { in: agentIds } },
+        orderBy: { createdAt: 'desc' },
+        take: 200,
+        include: { agent: { select: { name: true } } }
+      });
+    }
+
+    return Response.json({ views, clicks, total: views + clicks, logs });
   } catch (err) {
     console.error('ANALYTICS FETCH ERROR:', err);
     return Response.json({ error: 'Failed to load stats', detail: err.message }, { status: 500 });
@@ -46,7 +58,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const { agent_id, type } = await request.json();
+    const { agent_id, type, page_url } = await request.json();
 
     if (!agent_id || !['view', 'click'].includes(type)) {
       return Response.json({ error: 'Missing agent_id or invalid type.' }, { status: 400, headers: cors });
@@ -63,7 +75,7 @@ export async function POST(request) {
 
     // 2. Log event
     await prisma.analytics.create({
-      data: { agentId: agent_id, type },
+      data: { agentId: agent_id, type, pageUrl: page_url || null },
     });
 
     return Response.json({ success: true }, { headers: cors });

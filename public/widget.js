@@ -90,7 +90,7 @@
     fetch(CONFIG.apiUrl + '/api/analytics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Api-Key': CONFIG.apiKey },
-      body: JSON.stringify({ agent_id: CONFIG.agentId, type })
+      body: JSON.stringify({ agent_id: CONFIG.agentId, type, page_url: window.location.href })
     }).catch(() => {});
   }
 

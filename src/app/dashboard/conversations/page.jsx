@@ -8,7 +8,15 @@ export default function ConversationsPage() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { getConversations().then(d=>setConversations(d.conversations||[])).catch(()=>{}).finally(()=>setLoading(false)); }, []);
+  useEffect(() => { 
+    getConversations().then(d => {
+      setConversations(d.conversations||[]);
+      if (typeof window !== 'undefined') {
+        const targetId = new URLSearchParams(window.location.search).get('id');
+        if (targetId) view(targetId);
+      }
+    }).catch(()=>{}).finally(()=>setLoading(false)); 
+  }, []);
 
   const view = async (id) => { try { const d = await getConversation(id); setSelected(d.conversation); setMessages(d.conversation.messages||[]); setConversations(prev => prev.map(c => c.id === id ? { ...c, isRead: true } : c)); } catch{} };
   const handleDelete = async (id) => { if(!confirm('Delete?')) return; try { await deleteConversation(id); setConversations(conversations.filter(c=>c.id!==id)); if(selected?.id===id){setSelected(null);setMessages([]);} } catch{} };

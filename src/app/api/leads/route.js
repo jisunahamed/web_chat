@@ -32,5 +32,16 @@ export async function GET(request) {
     prisma.lead.count({ where }),
   ]);
 
-  return Response.json({ leads, total, page, limit });
+  const sessionIds = leads.map(l => l.sessionId).filter(Boolean);
+  const convos = await prisma.conversation.findMany({
+    where: { agentId: { in: ids }, sessionId: { in: sessionIds } },
+    select: { id: true, sessionId: true, agentId: true }
+  });
+
+  const formattedLeads = leads.map(l => {
+    const c = convos.find(c => c.sessionId === l.sessionId && c.agentId === l.agentId);
+    return { ...l, conversationId: c ? c.id : null };
+  });
+
+  return Response.json({ leads: formattedLeads, total, page, limit });
 }

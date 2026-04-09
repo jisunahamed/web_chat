@@ -98,6 +98,7 @@ model Analytics {
   id        String   @id @default(uuid())
   agentId   String   @map("agent_id")
   type      String   // "view" or "click"
+  pageUrl   String?  @map("page_url")
   createdAt DateTime @default(now()) @map("created_at")
 
   agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
