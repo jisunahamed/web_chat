@@ -174,20 +174,17 @@ function WidgetPreview({ form }) {
 
       {/* ═══════ SECTION 3: Welcome Popup Preview ═══════ */}
       <div style={{width:'100%'}}>
-        <div style={{fontSize:10,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8,opacity:0.6}}>🔔 Welcome Popup (appears after 3-5s)</div>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{flex:1,background:popupBg,padding:'12px 18px',borderRadius:t==='corporate'?6:t==='minimal'?10:20,boxShadow: isDark ? `0 8px 30px rgba(0,0,0,0.4), 0 0 20px ${accent}15` : '0 8px 30px rgba(0,0,0,0.12)',border: isDark ? `1px solid ${accent}20` : '1px solid rgba(0,0,0,0.04)',display:'flex',alignItems:'center',gap:10}}>
-            <div style={{width:28,height:28,borderRadius:'50%',background:T.triggerBg,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={t==='neon'?'#0a0a0f':'white'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div style={{fontSize:10,fontWeight:700,color:'var(--text-secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8,opacity:0.6}}>🔔 Welcome Popup (10s delay + 🔊 + 🔔 Browser Notif)</div>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <div style={{flex:1,background:popupBg,padding:'9px 28px 9px 10px',borderRadius:t==='corporate'?6:t==='minimal'?8:14,boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.45)' : '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)',display:'flex',alignItems:'center',gap:8,position:'relative'}}>
+            <div style={{width:22,height:22,borderRadius:'50%',background:T.triggerBg,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={t==='neon'?'#0a0a0f':'white'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </div>
-            <div style={{flex:1}}>
-              <div style={{fontSize:12,color:isDark?'#e0e0e0':'#1e293b',fontWeight:600,lineHeight:1.4}}>
-                {form.welcomeMessage || 'Hi there! 👋 How can I help you today?'}
-              </div>
-              <div style={{fontSize:9,color:mutedTextColor,marginTop:2}}>🔊 Sound notification</div>
+            <div style={{fontSize:11.5,color:isDark?'#d4d4d8':'#374151',fontWeight:500,lineHeight:1.4,flex:1}}>
+              {form.welcomeMessage || 'Hi there! 👋 How can I help you today?'}
             </div>
-            <div style={{width:18,height:18,borderRadius:'50%',background:isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,cursor:'pointer'}}>
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={isDark?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.3)'} strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <div style={{position:'absolute',top:5,right:5,width:14,height:14,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+              <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke={isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.25)'} strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </div>
           </div>
         </div>

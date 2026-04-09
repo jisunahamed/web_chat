@@ -136,19 +136,25 @@
     }
     if (leadSubBtn) leadSubBtn.addEventListener('click', submitLead);
 
-    // ─── Welcome Popup Timer (3-5s) ───────────────────
+    // ─── Welcome Popup Timer (10s) + Browser Notification ───
     const popup = $('#maic-w-popup');
     const pClose = $('#maic-w-p-close');
     const pText = $('#maic-w-p-text');
+
+    // Request notification permission early (silent)
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
 
     if (popup && pText) {
       setTimeout(() => {
         if (!isOpen && !localStorage.getItem('maic_p_closed') && chatWin.classList.contains('maic-w-hidden')) {
           popup.classList.remove('maic-w-hidden');
           popup.style.cssText = 'display:flex !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;';
-          playPop();
+          playNotifSound();
+          showBrowserNotification();
         }
-      }, 4000);
+      }, 10000);
     }
     if (pClose) pClose.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -157,11 +163,37 @@
       localStorage.setItem('maic_p_closed', '1');
     });
 
-    function playPop() {
+    function playNotifSound() {
       try {
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-        audio.volume = 0.3;
-        audio.play();
+        // Generate a pleasant notification "ding" via Web Audio API
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.5);
+      } catch (e) {}
+    }
+
+    function showBrowserNotification() {
+      try {
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const n = new Notification(CONFIG.botName + ' says:', {
+            body: CONFIG.welcome,
+            icon: CONFIG.botAvatar || undefined,
+            tag: 'maic-popup-' + CONFIG.agentId,
+            silent: true,
+          });
+          n.onclick = () => { window.focus(); toggle(); n.close(); };
+          setTimeout(() => n.close(), 8000);
+        }
       } catch (e) {}
     }
 
@@ -523,15 +555,16 @@
       .maic-w-social-show .maic-w-social-icon { opacity:1; transform:scale(1); }
       .maic-w-social-icon:hover { transform:scale(1.1) translateY(-3px); }
       
-      #maic-w-popup { position:absolute; bottom:5px; min-width:180px; max-width:280px; background:${isBgDark?'#1a1a2e':c.popupBg||'#ffffff'}; padding:12px 14px; border-radius:${th==='corporate'?'6px':th==='minimal'?'10px':'18px'}; box-shadow:0 12px 40px rgba(0,0,0,${isBgDark?'0.5':'0.15'}); border:1px solid ${isBgDark?`${P}20`:'rgba(0,0,0,0.06)'}; animation:maic-p-mag .6s cubic-bezier(0.19, 1, 0.22, 1) both; z-index:5; visibility:visible; display:flex; align-items:flex-start; gap:10px; }
-      #maic-w-popup.maic-w-pos-right { right:76px; }
-      #maic-w-popup.maic-w-pos-left { left:76px; }
+      #maic-w-popup { position:absolute; bottom:8px; min-width:160px; max-width:260px; background:${c.popupBg||(isBgDark?'#1e1e2e':'#ffffff')}; padding:10px 30px 10px 12px; border-radius:${th==='corporate'?'6px':th==='minimal'?'8px':'14px'}; box-shadow:0 8px 32px rgba(0,0,0,${isBgDark?'0.45':'0.12'}),0 2px 8px rgba(0,0,0,0.06); border:1px solid ${isBgDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.05)'}; animation:maic-p-mag .5s cubic-bezier(0.34,1.56,0.64,1) both; z-index:5; visibility:visible; display:flex; align-items:center; gap:9px; backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px); }
+      #maic-w-popup.maic-w-pos-right { right:74px; }
+      #maic-w-popup.maic-w-pos-left { left:74px; }
       #maic-w-popup::after { display:none; }
-      #maic-w-p-icon { width:28px; height:28px; min-width:28px; border-radius:50%; background:${grad}; display:flex; align-items:center; justify-content:center; color:${th==='neon'?'#0a0a0f':'#fff'}; flex-shrink:0; margin-top:1px; }
-      #maic-w-p-text { font-size:13px; color:${isBgDark?'#e0e0e0':'#1e293b'}; line-height:1.45; font-weight:500; flex:1; word-wrap:break-word; }
-      #maic-w-p-close { position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%; background:${isBgDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)'}; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:${isBgDark?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.3)'}; transition:all .2s; padding:0; }
-      #maic-w-p-close:hover { background:${isBgDark?'rgba(255,255,255,0.15)':'rgba(0,0,0,0.1)'}; }
-      @keyframes maic-p-mag { from { opacity:0; transform:translateY(10px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+      #maic-w-p-icon { width:24px; height:24px; min-width:24px; border-radius:50%; background:${grad}; display:flex; align-items:center; justify-content:center; color:${th==='neon'?'#0a0a0f':'#fff'}; flex-shrink:0; }
+      #maic-w-p-icon svg { width:11px; height:11px; }
+      #maic-w-p-text { font-size:12.5px; color:${isBgDark?'#d4d4d8':'#374151'}; line-height:1.4; font-weight:500; flex:1; word-wrap:break-word; }
+      #maic-w-p-close { position:absolute; top:6px; right:6px; width:16px; height:16px; border-radius:50%; background:transparent; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:${isBgDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.25)'}; transition:all .2s; padding:0; }
+      #maic-w-p-close:hover { background:${isBgDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.06)'}; color:${isBgDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)'}; }
+      @keyframes maic-p-mag { from { opacity:0; transform:translateY(8px) scale(0.92); } to { opacity:1; transform:translateY(0) scale(1); } }
       #maic-w-popup.maic-w-pos-left { animation-name: maic-p-mag; }
 
       .maic-w-faq-cont { animation:mwf .4s both; }
