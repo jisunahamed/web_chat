@@ -98,9 +98,9 @@ const BillingPage = () => {
                           onChange={(e) => setMethod(e.target.value)}
                           className="w-full px-6 py-3.5 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-violet-600 transition-all cursor-pointer"
                         >
-                           <option value="">Select Method</option>
-                           <option value="BKASH">bKash</option>
-                           <option value="NAGAD">Nagad</option>
+                           <option value="" style={{ background: '#18181b', color: '#fff' }}>Select Method</option>
+                           <option value="BKASH" style={{ background: '#18181b', color: '#fff' }}>bKash</option>
+                           <option value="NAGAD" style={{ background: '#18181b', color: '#fff' }}>Nagad</option>
                         </select>
                      </div>
                      <div className="space-y-2">
