@@ -231,12 +231,69 @@ export default function AgentsPage() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState('');
   const [saving, setSaving] = useState(false);
+  const [sharingAgent, setSharingAgent] = useState(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shares, setShares] = useState([]);
+  const [sharingLoading, setSharingLoading] = useState(false);
+  const [me, setMe] = useState(null);
 
   const upd = (key) => (e) => { const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value; setForm({ ...form, [key]: val }); };
   const updSocial = (key) => (e) => { setForm({ ...form, socialLinks: { ...(form.socialLinks || {}), [key]: e.target.value } }); };
   const loadAgents = () => { getAgents().then(d => setAgents(d.agents || [])).catch(() => {}).finally(() => setLoading(false)); };
 
-  useEffect(() => { loadAgents(); getMe().then(d => setApiKey(d.user.apiKey)).catch(() => {}); }, []);
+  useEffect(() => { 
+    loadAgents(); 
+    getMe().then(d => {
+      setApiKey(d.user.apiKey);
+      setMe(d.user);
+    }).catch(() => {}); 
+  }, []);
+
+  const openSharing = async (agent) => {
+    setSharingAgent(agent);
+    setShareEmail('');
+    setSharingLoading(true);
+    try {
+      const res = await fetch(`/api/agents/${agent.id}/share`);
+      const data = await res.json();
+      setShares(data.shares || []);
+    } catch (e) { console.error(e); }
+    finally { setSharingLoading(false); }
+  };
+
+  const handleAddShare = async (e) => {
+    e.preventDefault();
+    if (!shareEmail) return;
+    setSharingLoading(true);
+    try {
+      const res = await fetch(`/api/agents/${sharingAgent.id}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: shareEmail })
+      });
+      const data = await res.json();
+      if (data.error) alert(data.error);
+      else {
+        setShareEmail('');
+        openSharing(sharingAgent);
+      }
+    } catch (e) { alert('Failed to share'); }
+    finally { setSharingLoading(false); }
+  };
+
+  const handleRemoveShare = async (shareId) => {
+    if (!confirm('Revoke access?')) return;
+    setSharingLoading(true);
+    try {
+      await fetch(`/api/agents/${sharingAgent.id}/share`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shareId })
+      });
+      openSharing(sharingAgent);
+    } catch (e) { alert('Failed to revoke access'); }
+    finally { setSharingLoading(false); }
+  };
 
   const handleEdit = (agent) => {
     setForm({
@@ -306,13 +363,21 @@ export default function AgentsPage() {
           <div className="card-grid">
             {agents.map(agent => (
               <div className="card" key={agent.id} style={{ cursor: 'pointer', overflow: 'hidden' }} onClick={() => handleEdit(agent)}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 12 }}>
                   <div>
-                    <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>{agent.name}</h3>
-                    <span className={`badge ${agent.isActive ? 'badge-active' : 'badge-inactive'}`}>{agent.isActive ? 'Active' : 'Inactive'}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{agent.name}</h3>
+                      {agent.isShared && (
+                        <span style={{ fontSize: 10, background: 'rgba(124,58,237,0.1)', color: 'var(--primary-light)', padding: '2px 6px', borderRadius: 6, fontWeight: 700, textTransform: 'uppercase' }}>Shared</span>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span className={`badge ${agent.isActive ? 'badge-active' : 'badge-inactive'}`}>{agent.isActive ? 'Active' : 'Inactive'}</span>
+                      {agent.isShared && (
+                        <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>by {agent.ownerName}</span>
+                      )}
+                    </div>
                   </div>
                   <div style={{ width: 20, height: 20, borderRadius: '50%', background: agent.useGradient && agent.secondaryColor ? `linear-gradient(135deg, ${agent.primaryColor}, ${agent.secondaryColor})` : agent.primaryColor || '#7C3AED', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}></div>
-                </div>
                 <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
                   <span><strong>{agent._count?.conversations || 0}</strong> chats</span>
                   <span><strong>{agent._count?.leads || 0}</strong> leads</span>
@@ -323,7 +388,16 @@ export default function AgentsPage() {
                 <div style={{ display: 'flex', gap: 8 }} onClick={e => e.stopPropagation()}>
                   <button className="btn btn-secondary btn-sm" style={{ flex: 1 }} onClick={() => setShowEmbed(agent)}>Embed</button>
                   <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(agent)}>Edit</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(agent.id)}>Delete</button>
+                  {!agent.isShared && (me?.isPremium || me?.role === 'admin') && (
+                    <button className="btn btn-secondary btn-sm" title="Share Agent" onClick={() => openSharing(agent)}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.8 }}>
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8m-11-4 3-3 3 3m-3-3v12"/>
+                      </svg>
+                    </button>
+                  )}
+                  {!agent.isShared && (
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(agent.id)}>Delete</button>
+                  )}
                 </div>
               </div>
             ))}
@@ -706,6 +780,70 @@ API Key:       ${apiKey}`}
             </div>
 
             <div className="modal-actions"><button className="btn btn-primary btn-block" onClick={() => setShowEmbed(null)}>Close</button></div>
+          </div>
+        </div>
+      )}
+      {/* ─── SHARING MODAL ─── */}
+      {sharingAgent && (
+        <div className="modal-overlay" onClick={() => setSharingAgent(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ fontSize: 20 }}>Share &quot;{sharingAgent.name}&quot;</h2>
+              <button onClick={() => setSharingAgent(null)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: 24 }}>×</button>
+            </div>
+
+            <form onSubmit={handleAddShare} style={{ marginBottom: 24 }}>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>INVITE BY EMAIL</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input 
+                  type="email" 
+                  className="form-input" 
+                  placeholder="user@example.com" 
+                  value={shareEmail} 
+                  onChange={e => setShareEmail(e.target.value)} 
+                  required 
+                />
+                <button type="submit" className="btn btn-primary" disabled={sharingLoading}>
+                  {sharingLoading ? '...' : 'Invite'}
+                </button>
+              </div>
+            </form>
+
+            <div>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12 }}>PEOPLE WITH ACCESS</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>
+                      {me?.name?.charAt(0) || 'Y'}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 600 }}>{me?.name} (You)</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Owner</div>
+                    </div>
+                  </div>
+                </div>
+
+                {shares.length > 0 ? shares.map(s => (
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--bg-input)', color: 'var(--text-secondary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>
+                        {s.user.name?.charAt(0) || 'U'}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 600 }}>{s.user.name}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{s.user.email} • Editor</div>
+                      </div>
+                    </div>
+                    <button className="btn btn-danger btn-sm" style={{ padding: '4px 8px' }} onClick={() => handleRemoveShare(s.id)}>Remove</button>
+                  </div>
+                )) : null}
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ marginTop: 32 }}>
+              <button className="btn btn-secondary btn-block" onClick={() => setSharingAgent(null)}>Done</button>
+            </div>
           </div>
         </div>
       )}

@@ -7,13 +7,22 @@ export async function GET(request, { params }) {
   if (!user) return unauthorized();
 
   const agent = await prisma.agent.findFirst({
-    where: { id: params.id, userId: user.id },
-    include: { _count: { select: { conversations: true, leads: true, webhookLogs: true } } },
+    where: { 
+      id: params.id,
+      OR: [
+        { userId: user.id },
+        { shares: { some: { userId: user.id } } }
+      ]
+    },
+    include: { 
+      _count: { select: { conversations: true, leads: true, webhookLogs: true } },
+      user: { select: { name: true } }
+    },
   });
 
   if (!agent) return Response.json({ error: 'Agent not found.' }, { status: 404 });
 
-  return Response.json({ agent });
+  return Response.json({ agent: { ...agent, isShared: agent.userId !== user.id, ownerName: agent.user.name } });
 }
 
 // PUT /api/agents/[id]
@@ -22,7 +31,13 @@ export async function PUT(request, { params }) {
   if (!user) return unauthorized();
 
   const existing = await prisma.agent.findFirst({
-    where: { id: params.id, userId: user.id },
+    where: { 
+      id: params.id,
+      OR: [
+        { userId: user.id },
+        { shares: { some: { userId: user.id } } }
+      ]
+    },
   });
   if (!existing) return Response.json({ error: 'Agent not found.' }, { status: 404 });
 
@@ -53,7 +68,7 @@ export async function DELETE(request, { params }) {
   const existing = await prisma.agent.findFirst({
     where: { id: params.id, userId: user.id },
   });
-  if (!existing) return Response.json({ error: 'Agent not found.' }, { status: 404 });
+  if (!existing) return Response.json({ error: 'Agent not found or you are not the owner.' }, { status: 404 });
 
   await prisma.agent.delete({ where: { id: params.id } });
 

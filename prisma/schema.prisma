@@ -28,6 +28,7 @@ model User {
   aiBaseUrl    String?       @map("user_ai_base_url")
   aiModel      String?       @map("user_ai_model")
   agents       Agent[]
+  shares       AgentShare[]
   couponUsages CouponUsage[]
   payments     Payment[]
 
@@ -69,6 +70,7 @@ model Agent {
   conversations   Conversation[]
   leads           Lead[]
   webhookLogs     WebhookLog[]
+  shares          AgentShare[]
 
   @@map("agents")
 }
@@ -206,4 +208,15 @@ model CouponUsage {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("coupon_usages")
+}model AgentShare {
+  id        String   @id @default(uuid())
+  agentId   String   @map("agent_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, userId])
+  @@map("agent_shares")
 }

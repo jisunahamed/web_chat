@@ -19,9 +19,14 @@ export async function GET(request) {
   const agentId = searchParams.get('agent_id');
 
   try {
-    // 1. Get all agents for this user to count their analytics
+    // 1. Get all agents for this user (owned or shared) to count their analytics
     const agents = await prisma.agent.findMany({
-      where: { userId: user.id },
+      where: { 
+        OR: [
+          { userId: user.id },
+          { shares: { some: { userId: user.id } } }
+        ]
+      },
       select: { id: true }
     });
 

@@ -12,11 +12,16 @@ export async function GET(request) {
   const limit = parseInt(searchParams.get('limit') || '50');
   const skip = (page - 1) * limit;
 
-  const agentIds = await prisma.agent.findMany({
-    where: { userId: user.id },
+  const agents = await prisma.agent.findMany({
+    where: { 
+      OR: [
+        { userId: user.id },
+        { shares: { some: { userId: user.id } } }
+      ]
+    },
     select: { id: true },
   });
-  const ids = agentIds.map((a) => a.id);
+  const ids = agents.map((a) => a.id);
 
   const where = { agentId: { in: ids } };
   if (agentId) where.agentId = agentId;

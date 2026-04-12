@@ -7,13 +7,41 @@ export async function GET(request) {
     const user = await getAuthUser(request);
     if (!user) return unauthorized();
 
-    const agents = await prisma.agent.findMany({
+    // 1. Get agents owned by the user
+    const ownedAgents = await prisma.agent.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
-      include: { _count: { select: { conversations: true, leads: true } } },
+      include: { 
+        _count: { select: { conversations: true, leads: true } },
+        user: { select: { name: true } }
+      },
     });
 
-    return Response.json({ agents });
+    // 2. Get agents shared with the user
+    const sharedShares = await prisma.agentShare.findMany({
+      where: { userId: user.id },
+      include: {
+        agent: {
+          include: {
+            _count: { select: { conversations: true, leads: true } },
+            user: { select: { name: true } }
+          }
+        }
+      }
+    });
+
+    const sharedAgents = sharedShares.map(share => ({
+      ...share.agent,
+      isShared: true,
+      ownerName: share.agent.user.name
+    }));
+
+    const allAgents = [
+      ...ownedAgents.map(a => ({ ...a, isShared: false })),
+      ...sharedAgents
+    ];
+
+    return Response.json({ agents: allAgents });
   } catch (err) {
     console.error('List agents error:', err);
     return Response.json({ error: 'Failed to fetch agents.', detail: err.message }, { status: 500 });
