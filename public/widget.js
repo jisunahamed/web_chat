@@ -554,7 +554,6 @@
 
     // Mocha warm accent
     const mochaExtra = th === 'mocha' ? `
-      .maic-w-dot{background:#d4a574;box-shadow:0 0 8px rgba(212,165,116,0.6)}
       .maic-w-faq-title,.maic-w-faq-sub{color:#f5e6d3 !important}
       .maic-w-faq-cat{color:rgba(212,165,116,0.7) !important}
       .maic-w-faq-pill{background:#2a1f1a !important;color:#f5e6d3 !important;border-color:rgba(212,165,116,0.15) !important}
