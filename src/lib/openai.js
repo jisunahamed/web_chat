@@ -1,10 +1,10 @@
 import OpenAI from 'openai';
 
 const TONE_MAP = {
-  friendly: 'You are friendly, warm, and helpful.',
-  sales: 'You are a persuasive and professional sales assistant.',
-  support: 'You are a patient and thorough customer support agent.',
-  professional: 'You are professional, concise, and authoritative.',
+  friendly: 'TONE: Friendly & Warm. You are approachable, use helpful language, and aim to build a positive relationship with the user. Use occasional emojis where appropriate.',
+  sales: 'TONE: Persuasive & Sales-Oriented. You are a high-performing sales closer. Focus on benefits, create subtle urgency, and steer the conversation towards conversion or lead capture.',
+  support: 'TONE: Patient & Supportive. You are a dedicated support specialist. Be thorough, empathetic, and solve problems step-by-step with maximum patience.',
+  professional: 'TONE: Professional & Expert. Use formal, concise, and authoritative language. Be direct, skip all fluff, and provide accurate, high-quality information.',
 };
 
 /**
@@ -22,8 +22,8 @@ const PROVIDER_BASE_URLS = {
 const LANGUAGE_MAP = {
   bn: 'Bangla (বাংলা)',
   en: 'English',
-  hi: 'Hindi (हिन्दी)',
-  ur: 'Urdu (اردو)',
+  hi: 'Hindi (হিन्दी)',
+  ur: 'Urdu (اردো)',
   ar: 'Arabic (العربية)',
   es: 'Spanish (Español)',
   fr: 'French (Français)',
@@ -57,43 +57,47 @@ export async function getChatCompletion({ systemPrompt, model, history, userMess
     baseURL: baseUrl || process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
   });
 
-  // Build system content with context
-  const parts = [systemPrompt];
+  // 1. Build Comprehensive System Content
+  const systemParts = [systemPrompt];
   
-  // Tone
-  parts.push(TONE_MAP[tone] || TONE_MAP.friendly);
+  // High-priority Tone instruction
+  systemParts.push(TONE_MAP[tone] || TONE_MAP.friendly);
 
   // Language enforcement
   if (languages && Array.isArray(languages) && languages.length > 0) {
     const langNames = languages.map(code => LANGUAGE_MAP[code] || code).join(', ');
-    parts.push(`You MUST respond ONLY in the following language(s): ${langNames}. Do not switch to any other language.`);
+    systemParts.push(`MANDATORY LANGUAGE: Respond ONLY in ${langNames}. Failure to do so violates protocol.`);
   } else {
-    parts.push('Always respond in the same language the user writes in.');
+    systemParts.push('LANGUAGE POLICY: Always respond in the exact same language the human user uses.');
   }
 
   // Page URL context
   if (pageUrl) {
-    parts.push(`The user is currently browsing this page: ${pageUrl}`);
+    systemParts.push(`CONTEXT: The user is currently viewing this webpage: ${pageUrl}`);
   }
 
-  const systemContent = parts.join('\n');
+  const systemMessage = {
+    role: 'system',
+    content: systemParts.join('\n\n')
+  };
 
-  let unifiedPrompt = `System: ${systemContent}\n\n`;
-
+  // 2. Build Message History
+  const messages = [systemMessage];
+  
   for (const m of history) {
-    if (m.role === 'user') {
-      unifiedPrompt += `Human: ${m.content}\n`;
-    } else if (m.role === 'assistant') {
-      unifiedPrompt += `AI: ${m.content}\n`;
-    }
+    messages.push({
+      role: m.role || 'user',
+      content: m.content
+    });
   }
 
-  unifiedPrompt += `Human: ${userMessage}\nAI:`;
+  // 3. Add Current Message
+  messages.push({
+    role: 'user',
+    content: userMessage
+  });
 
-  const messages = [
-    { role: 'user', content: unifiedPrompt.trim() }
-  ];
-
+  // 4. Execute AI Call
   const completion = await client.chat.completions.create({
     model: model || 'gpt-4o-mini',
     messages,
