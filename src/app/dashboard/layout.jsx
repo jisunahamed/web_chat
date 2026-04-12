@@ -20,17 +20,41 @@ function NavIcon({ d }) {
   );
 }
 
+import { useSession } from 'next-auth/react';
+
 export default function DashboardLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (!getToken()) { router.replace('/login'); return; }
-    getMe().then((d) => setUser(d.user)).catch(() => logout());
-  }, [router]);
+    const checkAuth = async () => {
+      const token = getToken();
+      
+      // If we have neither a custom token nor a NextAuth session, redirect to login
+      if (!token && status === 'unauthenticated') {
+        router.replace('/login');
+        return;
+      }
 
-  if (!user) return <div className="auth-wrapper"><p style={{color:'var(--text-secondary)'}}>Initializing Ecosystem...</p></div>;
+      // If we are still loading the session, wait
+      if (status === 'loading') return;
+
+      try {
+        const d = await getMe();
+        setUser(d.user);
+      } catch (err) {
+        // If API fails but we have a session, maybe try again or logout
+        if (!session) logout();
+      }
+    };
+
+    checkAuth();
+  }, [router, status, session]);
+
+  if (status === 'loading' || (!user && status === 'authenticated')) return <div className="auth-wrapper"><p style={{color:'var(--text-secondary)'}}>Initializing Ecosystem...</p></div>;
+  if (!user && status === 'unauthenticated') return null;
 
   return (
     <div className="dashboard">

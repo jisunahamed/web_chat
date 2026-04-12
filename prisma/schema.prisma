@@ -9,126 +9,119 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String?
-  name      String
-  company   String?
-  role      String   @default("user") // "user" | "admin"
-  apiKey    String   @unique @default(uuid()) @map("api_key")
-  
-  // Subscription Fields
-  isPremium      Boolean   @default(false) @map("is_premium")
-  proStartedAt   DateTime? @map("pro_started_at")
-  proExpiresAt   DateTime? @map("pro_expires_at")
-  trialEndsAt    DateTime? @map("trial_ends_at")
-  agentLimit     Int       @default(1) @map("agent_limit") // 1 for trial, 10 for pro
-
-  // AI Configuration (per-user)
-  aiProvider     String   @default("openai") @map("ai_provider")    // "openai" | "gemini" | "grok" | "custom"
-  aiApiKey       String?  @map("user_ai_api_key")                   // User's own AI API key
-  aiBaseUrl      String?  @map("user_ai_base_url")                  // Custom base URL (for custom provider)
-  aiModel        String?  @map("user_ai_model")                     // User's preferred default model
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  agents   Agent[]
-  payments Payment[]
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String?
+  name         String
+  company      String?
+  apiKey       String        @unique @default(uuid()) @map("api_key")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  role         String        @default("user")
+  isPremium    Boolean       @default(false) @map("is_premium")
+  proStartedAt DateTime?     @map("pro_started_at")
+  proExpiresAt DateTime?     @map("pro_expires_at")
+  trialEndsAt  DateTime?     @map("trial_ends_at")
+  agentLimit   Int           @default(1) @map("agent_limit")
+  aiProvider   String        @default("openai") @map("ai_provider")
+  aiApiKey     String?       @map("user_ai_api_key")
+  aiBaseUrl    String?       @map("user_ai_base_url")
+  aiModel      String?       @map("user_ai_model")
+  agents       Agent[]
   couponUsages CouponUsage[]
+  payments     Payment[]
+
   @@map("users")
 }
 
 model Agent {
-  id             String   @id @default(uuid())
-  userId         String   @map("user_id")
-  name           String
-  companyName    String?  @map("company_name")
-  integrationType String  @default("both") @map("integration_type")
-  socialLinks    Json?    @map("social_links")
-  systemPrompt   String   @map("system_prompt") @db.Text
-  websiteUrl     String?  @map("website_url")
-  tone           String   @default("friendly")
-  model          String   @default("gpt-4o-mini")
-  webhookUrl     String?  @map("webhook_url")
-  collectLeads   Boolean  @default(false) @map("collect_leads")
-  allowedDomains String?  @map("allowed_domains")
-  primaryColor    String   @default("#6C5CE7") @map("primary_color")
-  secondaryColor  String?  @map("secondary_color")
-  chatBg          String   @default("#f8fafc") @map("chat_bg")
-  useGradient     Boolean  @default(false) @map("use_gradient")
-  widgetTheme     String   @default("bubble") @map("widget_theme")
-  popupBg         String   @default("#ffffff") @map("popup_bg")
-  welcomeMessage  String   @default("Hi there! How can I help you today?") @map("welcome_message")
-  botAvatar       String?  @map("bot_avatar")
-  faqs            Json?    @map("faqs")
-  languages       Json?    @map("languages")      // Array of max 2 language codes, e.g. ["bn", "en"]
-  // AI Override (per-agent, optional — overrides user default)
-  agentAiProvider String?  @map("agent_ai_provider")
-  agentAiApiKey   String?  @map("agent_ai_api_key")
-  agentAiBaseUrl  String?  @map("agent_ai_base_url")
-  isActive       Boolean  @default(true) @map("is_active")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  id              String         @id @default(uuid())
+  userId          String         @map("user_id")
+  name            String
+  systemPrompt    String         @map("system_prompt")
+  websiteUrl      String?        @map("website_url")
+  tone            String         @default("friendly")
+  model           String         @default("gpt-4o-mini")
+  webhookUrl      String?        @map("webhook_url")
+  collectLeads    Boolean        @default(false) @map("collect_leads")
+  allowedDomains  String?        @map("allowed_domains")
+  primaryColor    String         @default("#6C5CE7") @map("primary_color")
+  welcomeMessage  String         @default("Hi there! How can I help you today?") @map("welcome_message")
+  botAvatar       String?        @map("bot_avatar")
+  isActive        Boolean        @default(true) @map("is_active")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  secondaryColor  String?        @map("secondary_color")
+  useGradient     Boolean        @default(false) @map("use_gradient")
+  widgetTheme     String         @default("bubble") @map("widget_theme")
+  companyName     String?        @map("company_name")
+  integrationType String         @default("both") @map("integration_type")
+  socialLinks     Json?          @map("social_links")
+  chatBg          String         @default("#f8fafc") @map("chat_bg")
+  popupBg         String         @default("#ffffff") @map("popup_bg")
+  faqs            Json?          @map("faqs")
+  agentAiApiKey   String?        @map("agent_ai_api_key")
+  agentAiBaseUrl  String?        @map("agent_ai_base_url")
+  agentAiProvider String?        @map("agent_ai_provider")
+  languages       Json?          @map("languages")
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analytics       Analytics[]
+  conversations   Conversation[]
+  leads           Lead[]
+  webhookLogs     WebhookLog[]
 
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conversations Conversation[]
-  leads         Lead[]
-  webhookLogs   WebhookLog[]
-  analytics     Analytics[]
   @@map("agents")
 }
 
 model Payment {
-  id          String   @id @default(uuid())
-  userId      String   @map("user_id")
-  trxId       String   @unique @map("trx_id")
-  amount      Float
-  method      String   // "BKASH" | "NAGAD"
-  status      String   @default("PENDING") // "PENDING" | "APPROVED" | "DECLINED"
-  plan        String   @default("PRO_MONTHLY")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  trxId     String   @unique @map("trx_id")
+  amount    Float
+  method    String
+  status    String   @default("PENDING")
+  plan      String   @default("PRO_MONTHLY")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@map("payments")
 }
 
 model Analytics {
-  id        String   @id @default(uuid())
-  agentId   String   @map("agent_id")
-  type      String   // "view" or "click"
-  pageUrl   String?  @map("page_url")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  agentId   String    @map("agent_id")
+  type      String
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
   @@map("analytics")
 }
 
 model Conversation {
-  id        String   @id @default(uuid())
-  agentId   String   @map("agent_id")
-  sessionId String   @map("session_id")
-  userInfo  Json?    @map("user_info")
-  status    String   @default("active")
-  isRead    Boolean  @default(false) @map("is_read")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  agentId   String    @map("agent_id")
+  sessionId String    @map("session_id")
+  userInfo  Json?     @map("user_info")
+  status    String    @default("active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  isRead    Boolean   @default(false) @map("is_read")
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages  Message[]
 
-  agent    Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  messages Message[]
   @@unique([agentId, sessionId])
   @@map("conversations")
 }
 
 model Message {
-  id             String   @id @default(uuid())
-  conversationId String   @map("conversation_id")
+  id             String       @id @default(uuid())
+  conversationId String       @map("conversation_id")
   role           String
-  content        String   @db.Text
-  createdAt      DateTime @default(now()) @map("created_at")
+  content        String
+  createdAt      DateTime     @default(now()) @map("created_at")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   @@map("messages")
 }
 
@@ -141,8 +134,8 @@ model Lead {
   phone     String?
   source    String?
   createdAt DateTime @default(now()) @map("created_at")
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
-  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
   @@map("leads")
 }
 
@@ -152,50 +145,36 @@ model WebhookLog {
   sessionId  String?  @map("session_id")
   payload    Json
   statusCode Int?     @map("status_code")
-  response   String?  @db.Text
+  response   String?
   createdAt  DateTime @default(now()) @map("created_at")
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
-  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
   @@map("webhook_logs")
 }
 
 model Settings {
-  id        String   @id @default("global")
-  
-  // AI Config
-  aiModel   String   @default("openai-gpt-oss-120b") @map("ai_model")
-  aiBaseUrl String?  @map("ai_base_url")
-  aiApiKey  String?  @map("ai_api_key")
-  
-  // Payment Config
-  bkashNumber String? @map("bkash_number")
-  nagadNumber String? @map("nagad_number")
-
-  // Auth Config
-  googleClientId     String? @map("google_client_id")
-  googleClientSecret String? @map("google_client_secret")
-
-  // Plugin Config
-  pluginZipPath String? @map("plugin_zip_path")
-  pluginVersion String? @map("plugin_version") @default("1.0.4")
-
-  // Branding & SEO
-  siteName           String  @default("Inmetech Bot") @map("site_name")
-  siteLogo           String? @map("site_logo")
-  siteDescription    String? @default("Premium AI Chatbot SaaS") @map("site_description")
-  sitePrimaryColor   String  @default("#7C3AED") @map("site_primary_color")
-  supportEmail       String? @map("support_email")
-
-  // Pricing Plan Config
-  planFreeTitle      String  @default("Free Prototype") @map("plan_free_title")
-  planFreePrice      String  @default("Free") @map("plan_free_price")
-  planFreeFeatures   String  @default("1 Autonomous Agent Node\nFree Forever\nWhatsApp & Web Integration\nStandard Response Core\nVisual Customization") @map("plan_free_features")
-  
-  planProTitle       String  @default("Sovereign Protocol") @map("plan_pro_title")
-  planProPrice       String  @default("600") @map("plan_pro_price")
-  planProFeatures    String  @default("Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support") @map("plan_pro_features")
-
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                 String   @id @default("global")
+  aiModel            String   @default("openai-gpt-oss-120b") @map("ai_model")
+  aiBaseUrl          String?  @map("ai_base_url")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  aiApiKey           String?  @map("ai_api_key")
+  bkashNumber        String?  @map("bkash_number")
+  googleClientId     String?  @map("google_client_id")
+  googleClientSecret String?  @map("google_client_secret")
+  nagadNumber        String?  @map("nagad_number")
+  pluginVersion      String?  @default("1.0.4") @map("plugin_version")
+  pluginZipPath      String?  @map("plugin_zip_path")
+  siteDescription    String?  @default("Premium AI Chatbot SaaS") @map("site_description")
+  siteLogo           String?  @map("site_logo")
+  siteName           String   @default("Inmetech Bot") @map("site_name")
+  sitePrimaryColor   String   @default("#7C3AED") @map("site_primary_color")
+  supportEmail       String?  @map("support_email")
+  planFreeFeatures   String   @default("1 Autonomous Agent Node\nFree Forever\nWhatsApp & Web Integration\nStandard Response Core\nVisual Customization") @map("plan_free_features")
+  planFreePrice      String   @default("Free") @map("plan_free_price")
+  planFreeTitle      String   @default("Free Prototype") @map("plan_free_title")
+  planProFeatures    String   @default("Unlimited Agent Nodes\nInfinite Usage Lifecycle\nPriority Neural Processing\nWhitelabel Integration\nAdvanced Lead Analytics\n24/7 Priority Support") @map("plan_pro_features")
+  planProPrice       String   @default("600") @map("plan_pro_price")
+  planProTitle       String   @default("Sovereign Protocol") @map("plan_pro_title")
 
   @@map("settings")
 }
@@ -203,8 +182,8 @@ model Settings {
 model Coupon {
   id             String        @id @default(uuid())
   code           String        @unique
-  discount       Float         // 10.0 for 10% or 500 for 500৳
-  type           String        @default("PERCENT") // "PERCENT" | "FLAT"
+  discount       Float
+  type           String        @default("PERCENT")
   durationMonths Int           @default(1) @map("duration_months")
   isActive       Boolean       @default(true) @map("is_active")
   maxUses        Int?          @map("max_uses")
@@ -212,19 +191,18 @@ model Coupon {
   expiresAt      DateTime?     @map("expires_at")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
-
   usages         CouponUsage[]
+
   @@map("coupons")
 }
 
 model CouponUsage {
-  id        String   @id @default(uuid())
-  couponId  String   @map("coupon_id")
-  userId    String   @map("user_id")
-  usedAt    DateTime @default(now()) @map("used_at")
+  id       String   @id @default(uuid())
+  couponId String   @map("coupon_id")
+  userId   String   @map("user_id")
+  usedAt   DateTime @default(now()) @map("used_at")
+  coupon   Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@map("coupon_usages")
 }
-

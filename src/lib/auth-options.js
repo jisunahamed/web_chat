@@ -9,6 +9,7 @@ export const authOptions = {
       clientId: (process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_ID || "").replace(/"/g, '').trim(),
       clientSecret: (process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_SECRET || "").replace(/"/g, '').trim(),
       async profile(profile) {
+        console.log("NextAuth: Google profile received for", profile.email);
         try {
           if (!profile.email) {
             throw new Error("No email found in Google profile");
@@ -25,6 +26,8 @@ export const authOptions = {
               agentLimit: 1,
             },
           });
+          
+          console.log("NextAuth: User upserted/found in DB:", user.id);
           return { id: user.id, name: user.name, email: user.email, role: user.role };
         } catch (error) {
           console.error("CRITICAL AUTH ERROR (Profile Callback):", error);
