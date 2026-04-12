@@ -78,11 +78,33 @@ export async function POST(request) {
     );
     const resolvedModel = agentOwner?.aiModel || globalSettings.ai_model || 'gpt-4o-mini';
 
-    // 4. Get/create conversation (truncated for brevity in replacement)
-    // ... existing logic up to history ...
-    
-    // 6. Build the enhanced prompt
-    const fullSystemPrompt = `Agent Name: ${agent.name}
+    // 4. Get or create conversation
+    let conversation = await prisma.conversation.findUnique({
+      where: { agentId_sessionId: { agentId: agent_id, sessionId: session_id } },
+    });
+    if (!conversation) {
+      conversation = await prisma.conversation.create({
+        data: { agentId: agent_id, sessionId: session_id, userInfo: user_info || null, isRead: false },
+      });
+    } else {
+      await prisma.conversation.update({ 
+        where: { id: conversation.id }, 
+        data: { userInfo: user_info || conversation.userInfo, isRead: false } 
+      });
+    }
+
+    // 5. Fetch history
+    const history = await prisma.message.findMany({
+      where: { conversationId: conversation.id },
+      orderBy: { createdAt: 'asc' },
+      take: 50,
+      select: { role: true, content: true },
+    });
+
+    // 6. Call AI with resolved config + page URL + languages
+    let reply;
+    try {
+      const fullSystemPrompt = `Agent Name: ${agent.name}
 Company Name: ${agent.companyName || 'Not specified'}
 
 STRICT COMPLIANCE MANDATE:
