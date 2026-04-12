@@ -82,6 +82,8 @@ export async function updateSystemSettings(data) {
 
     revalidatePath('/');
     revalidatePath('/dashboard');
+    revalidatePath('/dashboard/billing');
+    revalidatePath('/dashboard/agents');
     revalidatePath('/admin/settings');
     revalidatePath('/admin/plugin');
     return { success: true, settings };

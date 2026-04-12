@@ -72,8 +72,8 @@ const BillingPage = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-         <PaymentBox title="bKash" number={settings?.bkashNumber || "017XXXXXXXX"} color="rose" icon={Smartphone} />
-         <PaymentBox title="Nagad" number={settings?.nagadNumber || "018XXXXXXXX"} color="orange" icon={Smartphone} />
+         <PaymentBox title="bKash" number={settings?.bkashNumber || "(Not Set in Admin)"} color="rose" icon={Smartphone} />
+         <PaymentBox title="Nagad" number={settings?.nagadNumber || "(Not Set in Admin)"} color="orange" icon={Smartphone} />
       </div>
 
       <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-10 relative overflow-hidden">
