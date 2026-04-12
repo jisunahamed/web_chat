@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getAgents, getLeads, getConversations, getAnalytics } from '@/lib/api';
+import { getAgents, getLeads, getConversations, getAnalytics, getMe } from '@/lib/api';
 import { getSystemSettings } from '@/app/actions/adminActions';
 import { Download, Zap, Shield, AlertCircle, CheckCircle, Package, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -227,7 +227,7 @@ export default function DashboardOverview() {
                    </div>
                    <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-500">Agent Nodes</span>
-                      <span className="text-white font-bold">{stats.agents} / {userInfo.agentLimit}</span>
+                      <span className="text-white font-bold">{stats.agents} / {userInfo?.agentLimit || 0}</span>
                    </div>
                 </div>
               ) : (
@@ -243,7 +243,7 @@ export default function DashboardOverview() {
                    <div className="pt-4 border-t border-white/5">
                       <div className="flex items-center justify-between text-[10px] mb-2">
                          <span className="text-zinc-500 uppercase font-black">Agent Usage</span>
-                         <span className="text-white font-bold">{stats.agents} / {userInfo.agentLimit}</span>
+                         <span className="text-white font-bold">{stats.agents} / {userInfo?.agentLimit || 0}</span>
                       </div>
                       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                          <div 
