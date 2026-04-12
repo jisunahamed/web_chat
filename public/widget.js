@@ -408,7 +408,7 @@
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.+?)\*/g, '<em>$1</em>')
         .replace(/`(.+?)`/g, '<code>$1</code>')
-        .replace(/\[\[BUTTON:(.*?)\|(.*?)\]\]/g, '<a href="$2" target="_blank" class="maic-w-btn-link">$1</a>')
+        .replace(/\[\[BUTTON:\s*(.*?)\s*\|\s*(.*?)\s*\]\]/g, '<a href="$2" target="_blank" class="maic-w-btn-link">$1</a>')
         .replace(/\n/g, '<br>');
     }
 
