@@ -9,13 +9,26 @@ export async function GET(request, { params }) {
   const conversation = await prisma.conversation.findUnique({
     where: { id: params.id },
     include: {
-      agent: { select: { name: true, userId: true } },
+      agent: { 
+        select: { 
+          name: true, 
+          userId: true,
+          shares: { where: { userId: user.id } }
+        } 
+      },
       messages: { orderBy: { createdAt: 'asc' } },
     },
   });
 
-  if (!conversation || conversation.agent.userId !== user.id) {
+  if (!conversation) {
     return Response.json({ error: 'Conversation not found.' }, { status: 404 });
+  }
+
+  const isOwner = conversation.agent.userId === user.id;
+  const isCollaborator = conversation.agent.shares.length > 0;
+
+  if (!isOwner && !isCollaborator) {
+    return Response.json({ error: 'Access denied.' }, { status: 403 });
   }
 
   if (!conversation.isRead) {
