@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { getAgents, createAgent, updateAgent, deleteAgent, getMe } from '@/lib/api';
 
 const THEMES = [
