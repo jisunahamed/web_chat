@@ -101,6 +101,17 @@ function WidgetPreview({ form }) {
 
           {/* Messages Area */}
           <div style={{padding:'16px 14px',background:chatBg,display:'flex',flexDirection:'column',gap:12,minHeight:160,maxHeight:240,overflowY:'auto'}}>
+            {form.collectLeads && (
+              <div style={{background:T.msgBg, padding:'12px', borderRadius:msgRadius, border: isDark?`1px solid ${accent}40`:'1px solid #e2e8f0', marginBottom:4, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', backdropFilter:T.blur}}>
+                <div style={{fontSize:11, fontWeight:800, marginBottom:8, color:textColor, textTransform:'uppercase', letterSpacing:'0.5px'}}>Contact Information</div>
+                <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                  <div style={{height:26, border: isDark ? `1px solid ${accent}26` : '1px solid #e2e8f0', borderRadius:6, fontSize:10, display:'flex', alignItems:'center', paddingLeft:8, color:mutedTextColor, background:T.inputBg}}>Your Name</div>
+                  <div style={{height:26, border: isDark ? `1px solid ${accent}26` : '1px solid #e2e8f0', borderRadius:6, fontSize:10, display:'flex', alignItems:'center', paddingLeft:8, color:mutedTextColor, background:T.inputBg}}>Email or Phone</div>
+                  <div style={{width:'100%', height:28, background:T.triggerBg, borderRadius:6, color: t==='neon'?'#0a0a0f':'#fff', fontSize:11, fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', marginTop:2, cursor:'pointer'}}>SUBMIT</div>
+                </div>
+              </div>
+            )}
+
             {faqs.length > 0 ? (
               <div>
                 <div style={{textAlign:'center',marginBottom:16}}>

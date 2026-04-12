@@ -248,7 +248,7 @@ export default function DashboardOverview() {
                       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                          <div 
                            className="h-full bg-violet-600 transition-all duration-1000" 
-                           style={{ width: `${Math.min((stats.agents / userInfo.agentLimit) * 100, 100)}%` }} 
+                           style={{ width: userInfo ? `${Math.min((stats.agents / userInfo.agentLimit) * 100, 100)}%` : '0%' }} 
                          />
                       </div>
                    </div>
