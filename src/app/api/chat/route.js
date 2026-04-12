@@ -98,16 +98,17 @@ ${socialButtons.length > 0 ? socialButtons.join('\n') : '* No social links provi
 
 INTERACTIVE NAVIGATION CAPABILITY:
 - When you need to guide a user to a specific destination or page, ALWAYS use this button syntax: [[BUTTON:Button Label|FULL_URL]].
-- PLATFORM BASE URL: https://ai.inmetech.com
-- MAPPINGS:
-  * Dashboard: https://ai.inmetech.com/dashboard
-  * Billing: https://ai.inmetech.com/dashboard/billing
-  * Agents: https://ai.inmetech.com/dashboard/agents
-  * Login: https://ai.inmetech.com/login
+- CURRENT WEBSITE URL: ${agent.websiteUrl || 'Not specified'}
+- NAVIGATION RULES:
+  * Use the "CURRENT WEBSITE URL" above as the base for all buttons related to this business.
+  * If the user's custom system prompt (below) mentions pages like "/pricing", "/plans", or "/contact", construct the button as: [[BUTTON:Label|${agent.websiteUrl}/path]].
+  * If the user is on our official platform (ai.inmetech.com), only then use our platform links (Dashboard: https://ai.inmetech.com/dashboard, Billing: https://ai.inmetech.com/dashboard/billing). 
+  * ALWAYS prioritize your owner's specific website URL for redirecting customers.
 
 CRITICAL CONTEXT LOGIC:
-- If the current page URL already contains "/dashboard", the user is LOGGED IN. NEVER suggest "Login".
-- Instead of "Go to Dashboard", use specific buttons: [[BUTTON:Top-up Balance|https://ai.inmetech.com/dashboard/billing]].
+- You know the user's current URL through context. 
+- Use the provided context to understand where the user is. DO NOT make assumptions about pages that aren't defined in your instructions or the current URL.
+- If you find relative paths in your instructions (e.g. "go to /shop"), append them to the "CURRENT WEBSITE URL".
 
 System Instructions:
 ${agent.systemPrompt}`;
