@@ -27,6 +27,7 @@ export default function DashboardLayout({ children }) {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const [user, setUser] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -50,7 +51,19 @@ export default function DashboardLayout({ children }) {
       }
     };
 
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch('/api/conversations/unread-count');
+        const data = await res.json();
+        setUnreadCount(data.count || 0);
+      } catch (err) {}
+    };
+
     checkAuth();
+    fetchUnread();
+    // Poll for new messages every 30 seconds
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
   }, [router, status, session]);
 
   if (status === 'loading' || (!user && status === 'authenticated')) return <div className="auth-wrapper"><p style={{color:'var(--text-secondary)'}}>Initializing Ecosystem...</p></div>;
@@ -59,17 +72,24 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="dashboard">
       <aside className="sidebar">
-        <div className="sidebar-logo">
-           <div style={{width:28,height:28,background:'var(--primary)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',marginRight:10}}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-           </div>
-           InmeTech
+        <div className="sidebar-logo" style={{ background: 'none', webkitTextFillColor: 'initial', color: 'white' }}>
+           <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-0.05em', textTransform: 'uppercase', fontStyle: 'italic' }}>
+              INMETECH
+              <span style={{ color: 'var(--primary-light)', marginLeft: 6 }}>BOT</span>
+           </span>
         </div>
         <nav className="sidebar-nav">
           {NAV.map((item) => (
-            <Link key={item.href} href={item.href} className={`sidebar-link ${pathname === item.href ? 'active' : ''}`}>
-              <NavIcon d={item.icon} />
-              {item.label}
+            <Link key={item.href} href={item.href} className={`sidebar-link ${pathname === item.href ? 'active' : ''}`} style={{justifyContent:'space-between'}}>
+              <div style={{display:'flex', alignItems:'center', gap:12}}>
+                <NavIcon d={item.icon} />
+                {item.label}
+              </div>
+              {item.label === 'Conversations' && unreadCount > 0 && (
+                <span style={{background:'var(--danger)', color:'white', fontSize:9, fontWeight:900, padding:'2px 6px', borderRadius:10, minWidth:18, textAlign:'center'}}>
+                  {unreadCount}
+                </span>
+              )}
             </Link>
           ))}
           {user.role === 'admin' && (

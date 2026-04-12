@@ -488,7 +488,7 @@
     const T = themeConfig[th] || themeConfig.bubble;
     const areaBg = T.areaBg;
     
-    // Brightness detection for auto-text color
+    // Brightness & Green detection for auto-coloring
     const isDark = (col) => {
       if (!col) return false;
       if (col.startsWith('rgba')) return false;
@@ -502,7 +502,31 @@
       const r=parseInt(hex.substring(0,2),16),g=parseInt(hex.substring(2,4),16),b=parseInt(hex.substring(4,6),16);
       return (r*0.299+g*0.587+b*0.114)<128;
     };
+    
+    const isGreen = (col) => {
+      if (!col || typeof col !== 'string') return false;
+      let r, g, b;
+      if (col.startsWith('#')) {
+        const hex = col.replace('#','');
+        r = parseInt(hex.substring(0,2),16);
+        g = parseInt(hex.substring(2,4),16);
+        b = parseInt(hex.substring(4,6),16);
+      } else if (col.startsWith('linear')) {
+        const m = col.match(/#([A-Fa-f0-9]{6})/);
+        if (!m) return false;
+        r = parseInt(m[1].substring(0,2),16);
+        g = parseInt(m[1].substring(2,4),16);
+        b = parseInt(m[1].substring(4,6),16);
+      } else return false;
+      // Simple Green check: G is much higher than R and B, or specific Green shades
+      return (g > r * 1.2 && g > b * 1.2) || (g > 180 && r < 150 && b < 150);
+    };
+
     const isBgDark = isDark(areaBg) || ['mocha','neon'].includes(th);
+    const isHeaderGreen = isGreen(T.headerBg);
+    const dotColor = isHeaderGreen ? '#ffffff' : '#4ade80';
+    const dotShadow = isHeaderGreen ? '0 0 6px rgba(255,255,255,0.6)' : '0 0 6px #4ade80';
+
     const fgText = isBgDark ? '#f5f5f5' : T.textColor;
     const mutedText = isBgDark ? T.mutedText : T.mutedText;
     const botMsgBg = isBgDark ? T.msgBg : T.msgBg;
@@ -559,7 +583,7 @@
       .maic-w-hav{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;background-size:cover;border:2px solid rgba(255,255,255,0.3)}
       .maic-w-hname{font-weight:700;font-size:15px}
       .maic-w-hstatus{font-size:12px;opacity:.9;display:flex;align-items:center;gap:6px}
-      .maic-w-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80}
+      .maic-w-dot{width:8px;height:8px;border-radius:50%;background:${dotColor};box-shadow:${dotShadow}}
       #maic-w-min{background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
       #maic-w-messages{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px 15px;display:flex;flex-direction:column;gap:10px;min-height:260px;background:${areaBg};scrollbar-width:none !important;-ms-overflow-style:none !important;}

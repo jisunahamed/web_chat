@@ -91,7 +91,15 @@ function WidgetPreview({ form }) {
               </div>
               <div>
                 <div style={{fontWeight:700,fontSize:14}}>{form.name || 'AI Assistant'}</div>
-                <div style={{fontSize:11,opacity:.9,display:'flex',alignItems:'center',gap:5}}><span style={{width:6,height:6,borderRadius:'50%',background: t==='neon'?accent:'#4ade80',boxShadow: t==='neon'?`0 0 8px ${accent}`:'0 0 6px #4ade80'}}></span> Online</div>
+                <div style={{fontSize:11,opacity:.9,display:'flex',alignItems:'center',gap:5}}>
+                  <span style={{
+                    width:6,
+                    height:6,
+                    borderRadius:'50%',
+                    background: (P === '#22c55e' || P === 'green' || P?.includes('green') || (t==='neon' && accent==='#4ade80')) ? '#ffffff' : (t==='neon'?accent:'#4ade80'),
+                    boxShadow: (P === '#22c55e' || P === 'green' || P?.includes('green') || (t==='neon' && accent==='#4ade80')) ? '0 0 8px rgba(255,255,255,0.6)' : (t==='neon'?`0 0 8px ${accent}`:'0 0 6px #4ade80')
+                  }}></span> Online
+                </div>
               </div>
             </div>
             <div style={{width:28,height:28,borderRadius:t==='minimal'?6:t==='corporate'?4:8,background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -352,6 +360,32 @@ export default function AgentsPage() {
           <h1>Agents</h1>
           <button className="btn btn-primary" onClick={openNew}>+ New Agent</button>
         </div>
+
+        {/* AI Configuration Warning */}
+        {me && (!me.hasAiKey || !me.aiModel) && (
+          <div style={{
+            background: 'rgba(251, 191, 36, 0.1)',
+            border: '1px solid rgba(251, 191, 36, 0.3)',
+            borderRadius: 16,
+            padding: '16px 20px',
+            marginBottom: 24,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16
+          }}>
+            <div style={{ fontSize: 24 }}>⚠️</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, color: '#fbbf24', fontSize: 15, marginBottom: 2 }}>AI Configuration Incomplete</div>
+              <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Your agents won't be able to respond until you configure your AI provider. 
+                Please go to <Link href="/dashboard/settings" style={{ color: '#fbbf24', textDecoration: 'underline', fontWeight: 600 }}>Settings</Link> to add your API Key and select a Model.
+              </p>
+            </div>
+            <Link href="/dashboard/settings" className="btn btn-sm" style={{ background: '#fbbf24', color: '#000', border: 'none' }}>
+              Repair Now
+            </Link>
+          </div>
+        )}
 
         {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading...</p> : agents.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: 60 }}>
