@@ -408,6 +408,7 @@
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.+?)\*/g, '<em>$1</em>')
         .replace(/`(.+?)`/g, '<code>$1</code>')
+        .replace(/\[\[BUTTON:(.*?)\|(.*?)\]\]/g, '<a href="$2" target="_blank" class="maic-w-btn-link">$1</a>')
         .replace(/\n/g, '<br>');
     }
 
@@ -589,6 +590,8 @@
       #maic-w-messages{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:16px 15px;display:flex;flex-direction:column;gap:10px;min-height:260px;background:${areaBg};scrollbar-width:none !important;-ms-overflow-style:none !important;}
       #maic-w-messages::-webkit-scrollbar{display:none !important;}
       .maic-w-msg{max-width:84%;padding:8px 14px;border-radius:${T.msgR};font-size:13.5px;line-height:1.4;animation:mwf .3s both}
+      .maic-w-btn-link{display:block;width:100%;background:${grad};color:#fff !important;text-decoration:none !important;padding:10px 14px;border-radius:12px;text-align:center;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;margin:10px 0;transition:all 0.3s cubic-bezier(0.18,0.89,0.32,1.28);box-shadow:0 4px 12px ${P}33;border:1px solid rgba(255,255,255,0.1)}
+      .maic-w-btn-link:hover{transform:scale(1.03) translateY(-2px);box-shadow:0 6px 18px ${P}4D}
       @keyframes mwf{from{opacity:0;transform:translateY(10px)}}
       .maic-w-bot{background:${botMsgBg};color:${botMsgColor};border:${botMsgBorder};border-bottom-left-radius:4px}
       .maic-w-usr{align-self:flex-end;background:${th==='neon'?'linear-gradient(135deg,#00ffaa,#00d4ff)':grad};color:${th==='neon'?'#0a0a0f':'#fff'};border-bottom-right-radius:4px}
