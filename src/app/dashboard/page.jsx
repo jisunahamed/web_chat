@@ -18,12 +18,13 @@ export default function DashboardOverview() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [a, c, l, an, settings] = await Promise.allSettled([
+        const [a, c, l, an, settings, me] = await Promise.allSettled([
           getAgents(),
           getConversations(),
           getLeads(),
           getAnalytics('detailed=true'),
-          getSystemSettings()
+          getSystemSettings(),
+          getMe()
         ]);
 
         if (settings.status === 'fulfilled' && settings.value) {
@@ -37,14 +38,18 @@ export default function DashboardOverview() {
         
         if (a.status === 'fulfilled') {
           newStats.agents = a.value.agents?.length || 0;
-          
+        }
+
+        if (me.status === 'fulfilled' && me.value?.user) {
+          const u = me.value.user;
           const isAdmin = session?.user?.role === 'admin';
           setUserInfo({
-            isPremium: isAdmin || false,
-            trialEndsAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-            agentLimit: isAdmin ? 999 : 1
+            isPremium: u.isPremium || isAdmin || false,
+            trialEndsAt: u.trialEndsAt ? new Date(u.trialEndsAt) : null,
+            agentLimit: u.agentLimit || (isAdmin ? 999 : 1)
           });
         }
+
         if (c.status === 'fulfilled') newStats.conversations = c.value.total || 0;
         if (l.status === 'fulfilled') {
           newStats.leads = l.value.total || 0;
@@ -64,7 +69,7 @@ export default function DashboardOverview() {
       }
     };
     fetchStats();
-  }, []);
+  }, [session]);
 
   if (loading) return <p className="text-zinc-500 p-8">Initializing neural dashboard...</p>;
 
@@ -214,17 +219,41 @@ export default function DashboardOverview() {
 
            <div className="bg-[#0c0c0e] border border-white/5 rounded-[32px] p-8">
               <h4 className="font-bold text-sm mb-4 uppercase tracking-widest text-zinc-400">Account status</h4>
-              {!userInfo?.isPremium && (
+              {userInfo?.isPremium ? (
                 <div className="space-y-4">
                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-zinc-500">Trial Period</span>
-                      <span className="text-white font-bold">14 Days Left</span>
+                      <span className="text-zinc-500">Plan</span>
+                      <span className="text-emerald-500 font-black uppercase tracking-widest">Premium Active</span>
                    </div>
-                   <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div className="h-full w-[80%] bg-violet-600" />
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Agent Nodes</span>
+                      <span className="text-white font-bold">{stats.agents} / {userInfo.agentLimit}</span>
                    </div>
-                   <p className="text-[10px] text-zinc-600 leading-relaxed">
-                      Your 14-day free trial will end on {userInfo?.trialEndsAt.toLocaleDateString()}. Upgrade to Pro to keep your agents alive.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Plan</span>
+                      <span className="text-violet-400 font-black uppercase tracking-widest">Free Prototype</span>
+                   </div>
+                   <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-500">Status</span>
+                      <span className="text-white font-bold uppercase tracking-widest text-[10px]">Active (Lifetime)</span>
+                   </div>
+                   <div className="pt-4 border-t border-white/5">
+                      <div className="flex items-center justify-between text-[10px] mb-2">
+                         <span className="text-zinc-500 uppercase font-black">Agent Usage</span>
+                         <span className="text-white font-bold">{stats.agents} / {userInfo.agentLimit}</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                         <div 
+                           className="h-full bg-violet-600 transition-all duration-1000" 
+                           style={{ width: `${Math.min((stats.agents / userInfo.agentLimit) * 100, 100)}%` }} 
+                         />
+                      </div>
+                   </div>
+                   <p className="text-[10px] text-zinc-600 leading-relaxed mt-4">
+                      You are using the Free Prototype plan. Upgrade to Sovereign Protocol for unlimited agent nodes.
                    </p>
                 </div>
               )}

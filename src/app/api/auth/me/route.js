@@ -9,6 +9,7 @@ export async function GET(request) {
     where: { id: user.id },
     select: {
       id: true, email: true, name: true, company: true, role: true, apiKey: true, createdAt: true,
+      isPremium: true, trialEndsAt: true, agentLimit: true,
       aiProvider: true, aiApiKey: true, aiBaseUrl: true, aiModel: true,
       _count: { select: { agents: true } },
     },
